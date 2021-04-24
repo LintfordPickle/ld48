@@ -4,6 +4,8 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.screens.BaseGameScreen;
+import net.ruse.ld48.controllers.CameraFollowController;
+import net.ruse.ld48.controllers.CameraZoomController;
 import net.ruse.ld48.controllers.LevelController;
 import net.ruse.ld48.data.Level;
 import net.ruse.ld48.renderers.LevelRenderer;
@@ -19,6 +21,8 @@ public class GameScreen extends BaseGameScreen {
 
 	// Controllers
 	private LevelController mLevelController;
+	private CameraFollowController mCameraFollowController;
+	private CameraZoomController mCameraZoomController;
 
 	// Renderers
 	private LevelRenderer mLevelRenderer;
@@ -90,11 +94,16 @@ public class GameScreen extends BaseGameScreen {
 	private void createControllers(LintfordCore pCore) {
 		final var lControllerManager = pCore.controllerManager();
 
+		mCameraZoomController = new CameraZoomController(lControllerManager, mGameCamera, entityGroupID());
+		mCameraFollowController = new CameraFollowController(lControllerManager, mGameCamera, null, entityGroupID());
+
 		mLevelController = new LevelController(lControllerManager, mLevel, entityGroupID());
 
 	}
 
 	private void initializeControllers(LintfordCore pCore) {
+		mCameraZoomController.initialize(pCore);
+		mCameraFollowController.initialize(pCore);
 		mLevelController.initialize(pCore);
 
 	}

@@ -150,7 +150,7 @@ public class BaseGame extends LintfordCore {
 
 			@Override
 			public boolean stretchGameResolution() {
-				return true;
+				return false;
 			}
 
 			@Override

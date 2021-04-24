@@ -1,42 +1,35 @@
 package net.ruse.ld48.controllers;
 
-import org.lwjgl.glfw.GLFW;
-
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
-import net.ruse.ld48.data.Level;
+import net.lintford.library.core.camera.ICamera;
+import net.ruse.ld48.GameConstants;
 
-public class LevelController extends BaseController {
+public class CameraZoomController extends BaseController {
 
 	// ---------------------------------------------
 	// Constants
 	// ---------------------------------------------
 
-	public static final String CONTROLLER_NAME = "Level Controller";
+	public static final String CONTROLLER_NAME = "Camera Zoom Controller";
 
 	// ---------------------------------------------
 	// Variables
 	// ---------------------------------------------
 
-	private Level mLevel;
+	private ICamera mGameCamera;
 
-	// ---------------------------------------------
-	// Properties
-	// ---------------------------------------------
-
-	public Level level() {
-		return mLevel;
-	}
+	private final int mTargetPixelsWide = 15 * GameConstants.BLOCK_SIZE;
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public LevelController(ControllerManager pControllerManager, Level pLevel, int pEntityGroupID) {
+	public CameraZoomController(ControllerManager pControllerManager, ICamera pGameCamera, int pEntityGroupID) {
 		super(pControllerManager, CONTROLLER_NAME, pEntityGroupID);
 
-		mLevel = pLevel;
+		mGameCamera = pGameCamera;
 
 	}
 
@@ -46,39 +39,34 @@ public class LevelController extends BaseController {
 
 	@Override
 	public boolean isInitialized() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void initialize(LintfordCore pCore) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void unload() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_R)) {
-			mLevel.loadLevel();
-		}
-
 		return super.handleInput(pCore);
 
 	}
 
-	// ---------------------------------------------
-	// Methods
-	// ---------------------------------------------
+	@Override
+	public void update(LintfordCore pCore) {
+		super.update(pCore);
 
-	public void loadLevelFromFile(String pFilename) {
-		mLevel.loadLevel();
+		final float lCameraWidth = mGameCamera.windowWidth();
+		final float lTargetZoomFactor = lCameraWidth / mTargetPixelsWide;
+
+		mGameCamera.setZoomFactor(lTargetZoomFactor);
+
 	}
 
 }
