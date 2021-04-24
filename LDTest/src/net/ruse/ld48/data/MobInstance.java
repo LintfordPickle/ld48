@@ -6,6 +6,9 @@ import net.ruse.ld48.GameConstants;
 
 public class MobInstance extends CellEntity {
 
+	public static final String MOB_TYPE_DWARF = "DWARF";
+	public static final String MOB_TYPE_GOBLIN = "GOBLIN";
+
 	// --------------------------------------
 	// Constants
 	// --------------------------------------
@@ -25,10 +28,19 @@ public class MobInstance extends CellEntity {
 	public boolean diggingFlag;
 
 	public float inputCooldownTimer;
+	private String mMobTypeName;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean isAssigned() {
+		return mMobTypeName != null;
+	}
+
+	public String mobTypeName() {
+		return mMobTypeName;
+	}
 
 	public boolean isInputCooldownElapsed() {
 		return inputCooldownTimer <= 0.f;
@@ -41,11 +53,18 @@ public class MobInstance extends CellEntity {
 	public MobInstance(int pPoolUid) {
 		super(pPoolUid);
 
+		mMobTypeName = null;
+
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void initialise(String pMobTypeName) {
+		mMobTypeName = pMobTypeName;
+
+	}
 
 	public void update(LintfordCore pCore) {
 		if (inputCooldownTimer > 0.0f)

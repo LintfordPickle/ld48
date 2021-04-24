@@ -1,0 +1,32 @@
+{
+	"name":"EMITTER_DIG",
+	"displayName":"EMITTER_DIG", 
+	
+	"childEmitters" :
+	[
+	    {
+	  		"name":"EMITTER_FIRE_CHILD_DIG",
+	  		"displayName":"EMITTER_FIRE_CHILD_DIG_1",
+			"particleSystemName":"PARTICLESYSTEM_DIG",
+			"emitTimeMin":40,
+			"emitTimeMax":80,
+			"emitAmountMin":1,
+			"emitAmountMax":3,
+			"PositionRelOffsetX":0,
+			"PositionRelOffsetY":-10
+	  	},
+		{
+			"name":"EMITTER_FIRE_CHILD_DIG",
+			"displayName":"EMITTER_FIRE_CHILD_DIG_2",
+			"particleSystemName":"PARTICLESYSTEM_DIG",
+			"emitTimeMin":10,
+			"emitTimeMax":20,
+			"emitAmountMin":1,
+			"emitAmountMax":2,
+			"PositionRelOffsetX":0,
+			"PositionRelOffsetY":0
+	  	}
+	  	
+	]
+	
+}

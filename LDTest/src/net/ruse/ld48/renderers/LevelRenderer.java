@@ -21,7 +21,10 @@ public class LevelRenderer extends BaseRenderer {
 
 	private static final Rectangle NO_SRC_RECT = null;
 	private static final Rectangle DIRT_SRC_RECT = new Rectangle(0, 0, 32, 32);
+	private static final Rectangle DIRT_DAMAGED_SRC_RECT = new Rectangle(160, 0, 32, 32);
+
 	private static final Rectangle DIRT_TOP_SRC_RECT = new Rectangle(64, 0, 32, 32);
+	private static final Rectangle DIRT_TOP_DAMAGED_SRC_RECT = new Rectangle(192, 0, 32, 32);
 	private static final Rectangle AIR_DEBUG_SRC_RECT = new Rectangle(32, 0, 32, 32);
 
 	// --------------------------------------
@@ -71,7 +74,6 @@ public class LevelRenderer extends BaseRenderer {
 		if (lLevel == null)
 			return;
 
-		final var lFontUnit = rendererManager().textFont();
 		final var lTextureBatch = rendererManager().uiTextureBatch();
 
 		lTextureBatch.begin(pCore.gameCamera());
@@ -84,13 +86,23 @@ public class LevelRenderer extends BaseRenderer {
 				if (lBlockIndex == Level.LEVEL_TILE_COORD_INVALID)
 					continue;
 
+				final byte lBlockHealth = lLevel.getBlockHealth(x, y);
+
 				var lSrcRect = NO_SRC_RECT;
 				switch (lBlockIndex) {
 				case Level.LEVEL_TILE_INDEX_DIRT_TOP:
-					lSrcRect = DIRT_TOP_SRC_RECT;
+					if (lBlockHealth < 3) {
+						lSrcRect = DIRT_TOP_DAMAGED_SRC_RECT;
+					} else
+						lSrcRect = DIRT_TOP_SRC_RECT;
+
 					break;
 				case Level.LEVEL_TILE_INDEX_DIRT:
-					lSrcRect = DIRT_SRC_RECT;
+
+					if (lBlockHealth < 3) {
+						lSrcRect = DIRT_DAMAGED_SRC_RECT;
+					} else
+						lSrcRect = DIRT_SRC_RECT;
 					break;
 				default:
 					lSrcRect = AIR_DEBUG_SRC_RECT;

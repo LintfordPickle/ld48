@@ -1,0 +1,52 @@
+{
+  "outputDataFilename": "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\res\\spritesheets\\spritesheetMobs.json",
+  "outputImageFilename": "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\res\\textures\\textureMobs.png",
+  "workingDirectory": "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets",
+  "spriteSheetName": "SPRITESHEET_",
+  "textureName": "TEXTURE_",
+  "sortMode": "Area",
+  "borderPadding": 0,
+  "shapeOutlines": false,
+  "crop": false,
+  "trim": false,
+  "allowRotations": false,
+  "spritePadding": 0,
+  "textureWidthMax": 256,
+  "textureWidthActual": 96,
+  "textureHeightMax": 256,
+  "textureHeightActual": 96,
+  "forcePoTTextures": true,
+  "autoSizeTexture": false,
+  "itemFilenames": [
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\dwarf\\idle 00.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\dwarf\\idle 01.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\dwarf\\idle 02.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\dwarf\\idle 03.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\goblin\\idle 00.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\goblin\\idle 01.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\goblin\\idle 02.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\goblin\\idle 03.png"
+  ],
+  "animationItems": {
+    "dwarf_idle": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "IDLE_00",
+        "IDLE_01",
+        "IDLE_02",
+        "IDLE_03"
+      ]
+    },
+    "goblin_idle": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "IDLE_00",
+        "IDLE_01",
+        "IDLE_02",
+        "IDLE_02"
+      ]
+    }
+  }
+}

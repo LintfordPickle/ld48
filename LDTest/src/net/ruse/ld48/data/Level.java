@@ -124,6 +124,14 @@ public class Level extends BaseInstanceData {
 
 	}
 
+	public byte getBlockHealth(int pTileX, int pTileY) {
+		final int lTileCoord = getLevelTileCoord(pTileX, pTileY);
+		if (lTileCoord == LEVEL_TILE_COORD_INVALID)
+			return (byte) 255;
+
+		return mLevelBlockHealth[lTileCoord];
+	}
+
 	public boolean placeBlock() {
 		return false;
 	}

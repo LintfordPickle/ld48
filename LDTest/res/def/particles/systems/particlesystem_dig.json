@@ -1,0 +1,65 @@
+{
+	"name":"PARTICLESYSTEM_DIG",
+	"maxParticleCount":128,
+	"textureName":"ParticleTexture",
+	"textureFilename":"res/textures/textureParticles.png",
+	"textureFilterMode":"0",
+	"particleLife":"250",
+	
+	"initializers" : [ 
+	
+		{ 
+			"className":"ParticleSourceRegionInitializer",
+			"srcX":32,
+			"srcY":4,
+			"srcW":8,
+			"srcH":8
+		}, 
+		
+		{ 
+			"className":"ParticleDestinationRegionInitializer",
+			"width":8,
+			"height":8
+		}, 
+		
+		{
+			"className":"ParticleRandomSizeInitializer",
+			"minValue":0.5,
+			"maxValue":1.0
+		},
+		
+		{
+			"className":"ParticleFireColorInitializer",
+			"redMin":"255",
+			"redMax":"255",
+			"greenMin":"128",
+			"greenMax":"255",
+			"blueMin":"0",
+			"blueMax":"30"
+		},
+		{
+			"className":"ParticleRandomOffsetInitializer",
+			"minValue0":-3,
+			"maxValue0":3,
+			"minValue1":-2,
+			"maxValue1":2
+		}
+	
+	],
+	
+	"modifiers" : [
+	
+		{
+			"className":"ParticleLifetimeAlphaFadeOutModifier"
+		}, 
+		{
+			"className":"ParticleGravityModifier",
+			"gravity": -0.98
+		}, 
+		{
+			"className":"ParticlePhysicsModifier"
+		}
+	
+	]
+	
+}

@@ -20,7 +20,7 @@ public class MobRenderer extends BaseRenderer {
 	// Variables
 	// --------------------------------------
 
-	SpriteSheetDefinition mDwarfSpriteSheet;
+	SpriteSheetDefinition mMobSpriteSheet;
 
 	private MobController mMobController;
 
@@ -52,7 +52,7 @@ public class MobRenderer extends BaseRenderer {
 	public void loadGLContent(ResourceManager pResourceManager) {
 		super.loadGLContent(pResourceManager);
 
-		mDwarfSpriteSheet = pResourceManager.spriteSheetManager().loadSpriteSheet("res/spritesheets/spritesheetDwarf.json", entityGroupID());
+		mMobSpriteSheet = pResourceManager.spriteSheetManager().loadSpriteSheet("res/spritesheets/spritesheetMobs.json", entityGroupID());
 
 	}
 
@@ -78,7 +78,7 @@ public class MobRenderer extends BaseRenderer {
 			final var lMobSpriteInstance = lMobInstance.currentSprite;
 
 			if (lMobSpriteInstance == null) {
-				lMobInstance.currentSprite = mDwarfSpriteSheet.getSpriteInstance("idle");
+				lMobInstance.currentSprite = mMobSpriteSheet.getSpriteInstance(lMobInstance.mobTypeName() + "_IDLE");
 				continue;
 
 			}
@@ -86,7 +86,7 @@ public class MobRenderer extends BaseRenderer {
 			lMobSpriteInstance.setCenterPosition(lMobX, lMobY);
 			lMobSpriteInstance.update(pCore);
 
-			lSpriteBatch.draw(mDwarfSpriteSheet, lMobSpriteInstance, -0.1f, ColorConstants.WHITE);
+			lSpriteBatch.draw(mMobSpriteSheet, lMobSpriteInstance, -0.1f, ColorConstants.WHITE);
 
 		}
 

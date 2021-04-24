@@ -5,6 +5,8 @@ import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.maths.MathHelper;
 import net.ruse.ld48.GameConstants;
+import net.ruse.ld48.data.Level;
+import net.ruse.ld48.data.MobInstance;
 import net.ruse.ld48.data.MobManager;
 
 public class MobController extends BaseController {
@@ -21,6 +23,7 @@ public class MobController extends BaseController {
 
 	private MobManager mMobManager;
 
+	private PlayerController mPlayerController;
 	private LevelController mLevelController;
 
 	// --------------------------------------
@@ -55,6 +58,7 @@ public class MobController extends BaseController {
 	@Override
 	public void initialize(LintfordCore pCore) {
 		mLevelController = (LevelController) pCore.controllerManager().getControllerByNameRequired(LevelController.CONTROLLER_NAME, entityGroupID());
+		mPlayerController = (PlayerController) pCore.controllerManager().getControllerByNameRequired(PlayerController.CONTROLLER_NAME, entityGroupID());
 
 	}
 
@@ -63,7 +67,6 @@ public class MobController extends BaseController {
 
 	}
 
-	// TODO: Time permitting - refactor
 	@Override
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
@@ -78,72 +81,90 @@ public class MobController extends BaseController {
 
 			lMobInstance.update(pCore);
 
-			// Digging (in mob controller?)
 			// TODO: LEFT / RIGHT
 			if (lMobInstance.diggingFlag) {
-				System.out.println("digging");
-				lLevel.digBlock(lMobInstance.cellX, lMobInstance.cellY + 1, (byte) 1);
+				mLevelController.digLevel(lMobInstance.cellX, lMobInstance.cellY + 1, (byte) 1);
 
 			}
 
-			// gravity
-			final float lGravAmt = (float) GameConstants.BLOCK_SIZE / 9.6f;
-			lMobInstance.velocityY += 0.0096f; //lGravAmt;
-			lMobInstance.velocityX = MathHelper.clamp(lMobInstance.velocityX, -0.05f, 0.05f);
+			if (!lMobInstance.isPlayerControlled)
+				updateEnemyAi(pCore, lLevel, lMobInstance);
 
-			lMobInstance.fractionX += lMobInstance.velocityX;
-			lMobInstance.fractionY += lMobInstance.velocityY;
+			updateMobPhysics(pCore, lLevel, lMobInstance);
 
-			// grid based collision check
-			if (lMobInstance.fractionX < .3f && lLevel.hasCollision(lMobInstance.cellX - 1, lMobInstance.cellY)) {
-				lMobInstance.fractionX = 0.3f;
+		}
 
-			}
+	}
 
-			if (lMobInstance.fractionX > .7f && lLevel.hasCollision(lMobInstance.cellX + 1, lMobInstance.cellY)) {
-				lMobInstance.fractionX = 0.7f;
+	private void updateMobPhysics(LintfordCore pCore, Level pLevel, MobInstance pMobInstance) {
 
-			}
+		// gravity
+		pMobInstance.velocityY += 0.0096f;
+		pMobInstance.velocityX = MathHelper.clamp(pMobInstance.velocityX, -0.05f, 0.05f);
 
-			if (lMobInstance.fractionY < .3f && lLevel.hasCollision(lMobInstance.cellX, lMobInstance.cellY - 1)) {
-				lMobInstance.fractionY = 0.3f;
+		pMobInstance.fractionX += pMobInstance.velocityX;
+		pMobInstance.fractionY += pMobInstance.velocityY;
 
-			}
+		// grid based collision check
+		if (pMobInstance.fractionX < .3f && pLevel.hasCollision(pMobInstance.cellX - 1, pMobInstance.cellY)) {
+			pMobInstance.fractionX = 0.3f;
 
-			lMobInstance.groundFlag = false;
-			if (lMobInstance.fractionY > .7f && lLevel.hasCollision(lMobInstance.cellX, lMobInstance.cellY + 1)) {
-				lMobInstance.fractionY = 0.7f;
-				lMobInstance.groundFlag = true;
-			}
+		}
 
-			while (lMobInstance.fractionX < 0) {
-				lMobInstance.fractionX++;
-				lMobInstance.cellX--;
-			}
+		if (pMobInstance.fractionX > .7f && pLevel.hasCollision(pMobInstance.cellX + 1, pMobInstance.cellY)) {
+			pMobInstance.fractionX = 0.7f;
 
-			while (lMobInstance.fractionX > 1) {
-				lMobInstance.fractionX--;
-				lMobInstance.cellX++;
-			}
+		}
 
-			while (lMobInstance.fractionY < 0) {
-				lMobInstance.fractionY++;
-				lMobInstance.cellY--;
-			}
+		if (pMobInstance.fractionY < .3f && pLevel.hasCollision(pMobInstance.cellX, pMobInstance.cellY - 1)) {
+			pMobInstance.fractionY = 0.3f;
 
-			while (lMobInstance.fractionY > 1) {
-				lMobInstance.fractionY--;
-				lMobInstance.cellY++;
-			}
+		}
 
-			// update mob instance
+		pMobInstance.groundFlag = false;
+		if (pMobInstance.fractionY > .7f && pLevel.hasCollision(pMobInstance.cellX, pMobInstance.cellY + 1)) {
+			pMobInstance.fractionY = 0.7f;
+			pMobInstance.groundFlag = true;
+		}
 
-			lMobInstance.worldPositionX = (float) (lMobInstance.cellX + lMobInstance.fractionX) * GameConstants.BLOCK_SIZE;
-			lMobInstance.worldPositionY = (float) (lMobInstance.cellY + lMobInstance.fractionY) * GameConstants.BLOCK_SIZE;
+		while (pMobInstance.fractionX < 0) {
+			pMobInstance.fractionX++;
+			pMobInstance.cellX--;
+		}
 
-			lMobInstance.velocityX *= .72f;
-			lMobInstance.velocityY *= .96f;
+		while (pMobInstance.fractionX > 1) {
+			pMobInstance.fractionX--;
+			pMobInstance.cellX++;
+		}
 
+		while (pMobInstance.fractionY < 0) {
+			pMobInstance.fractionY++;
+			pMobInstance.cellY--;
+		}
+
+		while (pMobInstance.fractionY > 1) {
+			pMobInstance.fractionY--;
+			pMobInstance.cellY++;
+		}
+
+		// update mob instance
+
+		pMobInstance.worldPositionX = (float) (pMobInstance.cellX + pMobInstance.fractionX) * GameConstants.BLOCK_SIZE;
+		pMobInstance.worldPositionY = (float) (pMobInstance.cellY + pMobInstance.fractionY) * GameConstants.BLOCK_SIZE;
+
+		pMobInstance.velocityX *= .72f;
+		pMobInstance.velocityY *= .96f;
+	}
+
+	private void updateEnemyAi(LintfordCore pCore, Level pLevel, MobInstance pMobInstance) {
+		final var lPlayerMobInstance = mPlayerController.playerMobInstance();
+
+		if (pMobInstance.worldPositionX - 16.f < lPlayerMobInstance.worldPositionX) {
+			pMobInstance.velocityX += 0.005f;
+		}
+
+		if (pMobInstance.worldPositionX + 16.f > lPlayerMobInstance.worldPositionX) {
+			pMobInstance.velocityX -= 0.005f;
 		}
 
 	}

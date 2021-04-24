@@ -1,0 +1,117 @@
+{
+  "spriteSheetName": "SPRITESHEET_MOBS",
+  "textureName": "TEXTURE_MOBS",
+  "textureFilename": "res//textures//textureMobs.png",
+  "frameMap": {
+    "DWARF_IDLE_00": {
+      "x": 0,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_IDLE_01": {
+      "x": 32,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_IDLE_02": {
+      "x": 64,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_IDLE_03": {
+      "x": 0,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_IDLE_00": {
+      "x": 32,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_IDLE_01": {
+      "x": 64,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_IDLE_02": {
+      "x": 0,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_IDLE_03": {
+      "x": 32,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    }
+  },
+  "spriteMap": {
+    "DWARF_IDLE": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "DWARF_IDLE_00",
+        "DWARF_IDLE_01",
+        "DWARF_IDLE_02",
+        "DWARF_IDLE_03"
+      ]
+    },
+    "GOBLIN_IDLE": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "GOBLIN_IDLE_00",
+        "GOBLIN_IDLE_01",
+        "GOBLIN_IDLE_02",
+        "GOBLIN_IDLE_03"
+      ]
+    }
+  }
+}
