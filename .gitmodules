@@ -1,0 +1,3 @@
+[submodule "LintfordLib"]
+	path = LintfordLib
+	url = https://github.com/LintfordPickle/LintfordLib.git
