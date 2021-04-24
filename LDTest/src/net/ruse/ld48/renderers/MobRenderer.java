@@ -83,7 +83,7 @@ public class MobRenderer extends BaseRenderer {
 
 			}
 
-			lMobSpriteInstance.setPosition(lMobX, lMobY);
+			lMobSpriteInstance.setCenterPosition(lMobX, lMobY);
 			lMobSpriteInstance.update(pCore);
 
 			lSpriteBatch.draw(mDwarfSpriteSheet, lMobSpriteInstance, -0.1f, ColorConstants.WHITE);

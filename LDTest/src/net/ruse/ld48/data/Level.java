@@ -34,7 +34,7 @@ public class Level extends BaseInstanceData {
 		return mLevelBlockIndices;
 	}
 
-	public int getLevelBlockIndex(int pTileX, int pTileY) {
+	public int getLevelBlockType(int pTileX, int pTileY) {
 		final int lTileCoord = getLevelTileCoord(pTileX, pTileY);
 		if (lTileCoord == LEVEL_TILE_COORD_INVALID)
 			return LEVEL_TILE_COORD_INVALID;
@@ -68,7 +68,7 @@ public class Level extends BaseInstanceData {
 		clearLevel();
 
 		final int lFloorHeight = 3;
-		for (int x = 0; x < GameConstants.LEVEL_TILES_WIDE; x++) {
+		for (int x = 1; x < GameConstants.LEVEL_TILES_WIDE; x++) {
 			final int lTileCoord = getLevelTileCoord(x, lFloorHeight);
 
 			if (lTileCoord == LEVEL_TILE_COORD_INVALID)
@@ -93,6 +93,20 @@ public class Level extends BaseInstanceData {
 
 			}
 		}
+	}
+
+	public boolean hasCollision(int pTileX, int pTileY) {
+		if (pTileX < 0 || pTileY < 0)
+			return true;
+		if (pTileX >= GameConstants.LEVEL_TILES_WIDE || pTileY >= GameConstants.LEVEL_TILES_HIGH)
+			return true;
+
+		final int lTileIndex = getLevelTileCoord(pTileX, pTileY);
+		if (lTileIndex == LEVEL_TILE_COORD_INVALID)
+			return true;
+
+		return mLevelBlockIndices[lTileIndex] > LEVEL_TILE_INDEX_AIR;
+
 	}
 
 }

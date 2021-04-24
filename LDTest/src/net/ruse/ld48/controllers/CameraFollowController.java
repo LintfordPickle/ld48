@@ -94,25 +94,25 @@ public class CameraFollowController extends BaseController {
 
 		final float speed = CAMERA_MAN_MOVE_SPEED / mGameCamera.getZoomFactor();
 
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_A)) {
+		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT)) {
 			mVelocity.x -= speed;
 			mIsTrackingPlayer = false;
 
 		}
 
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_D)) {
+		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_RIGHT)) {
 			mVelocity.x += speed;
 			mIsTrackingPlayer = false;
 
 		}
 
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_S)) {
+		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_DOWN)) {
 			mVelocity.y += speed;
 			mIsTrackingPlayer = false;
 
 		}
 
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_W)) {
+		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_UP)) {
 			mVelocity.y -= speed;
 			mIsTrackingPlayer = false;
 

@@ -1,6 +1,7 @@
 package net.ruse.ld48.data;
 
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
+import net.ruse.ld48.GameConstants;
 
 public class MobInstance extends CellEntity {
 
@@ -16,6 +17,7 @@ public class MobInstance extends CellEntity {
 
 	public transient SpriteInstance currentSprite;
 	public boolean isPlayerControlled;
+	public boolean groundFlag;
 
 	// --------------------------------------
 	// Constructor 
@@ -29,5 +31,21 @@ public class MobInstance extends CellEntity {
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
+
+	public void setPosition(float pWorldPositionX, float pWorldPositionY) {
+
+		worldPositionX = pWorldPositionX;
+		worldPositionY = pWorldPositionY;
+
+		cellX = (int) (worldPositionX / GameConstants.BLOCK_SIZE);
+		cellY = (int) (worldPositionY / GameConstants.BLOCK_SIZE);
+
+		fractionX = worldPositionX - (cellX * GameConstants.BLOCK_SIZE);
+		fractionY = worldPositionY - (cellY * GameConstants.BLOCK_SIZE);
+
+		velocityX = 0.f;
+		velocityY = 0.f;
+
+	}
 
 }

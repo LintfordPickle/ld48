@@ -65,8 +65,9 @@ public class LevelController extends BaseController {
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
 
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_R)) {
+		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_R)) {
 			mLevel.loadLevel();
+
 		}
 
 		return super.handleInput(pCore);

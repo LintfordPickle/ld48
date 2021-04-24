@@ -9,6 +9,12 @@ public abstract class CellEntity extends WorldEntity {
 	public int cellX;
 	public int cellY;
 
+	public float fractionX;
+	public float fractionY;
+
+	public float velocityX;
+	public float velocityY;
+
 	public CellEntity(int pPoolUid) {
 		super(pPoolUid);
 	}

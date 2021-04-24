@@ -80,7 +80,7 @@ public class LevelRenderer extends BaseRenderer {
 
 		for (int y = 0; y < GameConstants.LEVEL_TILES_HIGH; y++) {
 			for (int x = 0; x < GameConstants.LEVEL_TILES_HIGH; x++) {
-				final int lBlockIndex = lLevel.getLevelBlockIndex(x, y);
+				final int lBlockIndex = lLevel.getLevelBlockType(x, y);
 				if (lBlockIndex == Level.LEVEL_TILE_COORD_INVALID)
 					continue;
 
