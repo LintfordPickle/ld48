@@ -1,1 +1,1 @@
-aseprite -b --ignore-empty <absolute path to aseprite file> --save-as "D:\dev\java\ludumdare\test\projects\<project name>\raw\spritesheets\{layer}\{tag} 00.png"
+aseprite -b --ignore-empty D:\dev\java\ludumdare\ld48\projects\LDTest\raw\aseprite\dwarf.aseprite --save-as "D:\dev\java\ludumdare\ld48\projects\LDTest\raw\spritesheets\{layer}\{tag} 00.png"
