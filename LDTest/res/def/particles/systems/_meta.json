@@ -2,7 +2,9 @@
 	"rootDirectory":"res//def//particles//systems//",
 	"itemFileLocations" : [
 	
-		"particlesystem_dig"
+		"particlesystem_dig",
+		"particlesystem_blood",
+		"particlesystem_dust"
 
 	]
 }

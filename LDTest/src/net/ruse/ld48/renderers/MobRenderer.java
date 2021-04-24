@@ -113,16 +113,6 @@ public class MobRenderer extends BaseRenderer {
 
 			}
 
-			Debug.debugManager().drawers().drawCircleImmediate(pCore.gameCamera(), lMobX, lMobY, lMobR);
-
-			if (lMobInstance.swingingFlag) {
-				Debug.debugManager().drawers().drawCircleImmediate(
-						pCore.gameCamera(), 
-						lMobInstance.attackPointWorldX, 
-						lMobInstance.attackPointWorldY,
-						4.f);
-			}
-
 		}
 
 		lSpriteBatch.end();

@@ -5,9 +5,12 @@ import java.util.List;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.controllers.core.particles.ParticleFrameworkController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.maths.MathHelper;
+import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.maths.Vector2f;
+import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 import net.ruse.ld48.GameConstants;
 import net.ruse.ld48.data.CellEntity;
 import net.ruse.ld48.data.Level;
@@ -31,6 +34,10 @@ public class MobController extends BaseController {
 
 	private PlayerController mPlayerController;
 	private LevelController mLevelController;
+
+	private ParticleFrameworkController mParticleFrameworkController;
+	private ParticleSystemInstance mBloodBlockParticles;
+	private ParticleSystemInstance mDustBlockParticles;
 
 	// --------------------------------------
 	// Properties
@@ -65,6 +72,10 @@ public class MobController extends BaseController {
 	public void initialize(LintfordCore pCore) {
 		mLevelController = (LevelController) pCore.controllerManager().getControllerByNameRequired(LevelController.CONTROLLER_NAME, entityGroupID());
 		mPlayerController = (PlayerController) pCore.controllerManager().getControllerByNameRequired(PlayerController.CONTROLLER_NAME, entityGroupID());
+		mParticleFrameworkController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, entityGroupID());
+
+		mBloodBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_BLOOD");
+		mDustBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DUST");
 
 	}
 
@@ -101,7 +112,11 @@ public class MobController extends BaseController {
 			lMobInstance.update(pCore);
 
 			if (lMobInstance.diggingFlag && lMobInstance.isInputCooldownElapsed()) {
-				mLevelController.digLevel(lMobInstance.cellX, lMobInstance.cellY + 1, (byte) 1);
+				final int lSignum = lMobInstance.isLeftFacing ? -1 : 1;
+
+				final boolean lSideWaysDigging = GameConstants.GAME_SIDEWAYS_DIGGING;
+
+				mLevelController.digLevel(lMobInstance.cellX + (lSideWaysDigging ? lSignum : 0), lMobInstance.cellY + 1, (byte) 1);
 				lMobInstance.inputCooldownTimer = 300;
 
 			}
@@ -188,6 +203,13 @@ public class MobController extends BaseController {
 		if (pMobInstance.fractionY > .7f && pLevel.hasCollision(pMobInstance.cellX, pMobInstance.cellY + 1)) {
 			pMobInstance.fractionY = 0.7f;
 			pMobInstance.groundFlag = true;
+
+			if (Math.abs(pMobInstance.velocityX) > 0.01f && RandomNumbers.getRandomChance(33.f)) {
+				mDustBlockParticles.spawnParticle(pMobInstance.worldPositionX + RandomNumbers.random(-8.f, 8.f), pMobInstance.worldPositionY + 16.f, pMobInstance.velocityX * RandomNumbers.random(0.f, 150.f),
+						RandomNumbers.random(0.f, 0.f));
+
+			}
+
 			if (pMobInstance.velocityY > 0)
 				pMobInstance.velocityY = 0;
 
@@ -255,7 +277,7 @@ public class MobController extends BaseController {
 
 		}
 
-		final float lMaxDist = pAttackingMob.radius + pReceivingMob.radius;
+		final float lMaxDist = 12.f + pReceivingMob.radius;
 
 		final float lMobAX = pAttackingMob.attackPointWorldX;
 		final float lMobAY = pAttackingMob.attackPointWorldY;
@@ -266,6 +288,7 @@ public class MobController extends BaseController {
 		final float lDistSq = Vector2f.distance2(lMobAX, lMobAY, lMobBX, lMobBY);
 
 		if (lDistSq <= lMaxDist * lMaxDist) {
+			mBloodBlockParticles.spawnParticle(lMobBX, lMobBY, RandomNumbers.random(-150.f, 150.f), RandomNumbers.random(-200.f, -50.f));
 			pReceivingMob.dealDamage(1, true);
 
 		}

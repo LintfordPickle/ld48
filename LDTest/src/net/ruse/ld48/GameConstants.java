@@ -8,6 +8,8 @@ public class GameConstants {
 	public static final int WINDOW_WIDTH = 640;
 	public static final int WINDOW_HEIGHT = 480;
 
+	public static final boolean GAME_SIDEWAYS_DIGGING = true;
+
 	// LEVELS
 
 	public static final int LEVEL_TILES_WIDE = 16;
