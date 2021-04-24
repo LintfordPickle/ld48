@@ -4,6 +4,9 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.screens.BaseGameScreen;
+import net.ruse.ld48.controllers.LevelController;
+import net.ruse.ld48.data.Level;
+import net.ruse.ld48.renderers.LevelRenderer;
 
 public class GameScreen extends BaseGameScreen {
 
@@ -11,12 +14,23 @@ public class GameScreen extends BaseGameScreen {
 	// Variables
 	// ---------------------------------------------
 
+	// Data
+	private Level mLevel;
+
+	// Controllers
+	private LevelController mLevelController;
+
+	// Renderers
+	private LevelRenderer mLevelRenderer;
+
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
 	public GameScreen(ScreenManager pScreenManager) {
 		super(pScreenManager);
+
+		mLevel = new Level();
 
 	}
 
@@ -27,6 +41,15 @@ public class GameScreen extends BaseGameScreen {
 	@Override
 	public void initialize() {
 		super.initialize();
+
+		final var lCore = screenManager.core();
+
+		createControllers(lCore);
+		initializeControllers(lCore);
+
+		createRenderers(lCore);
+
+		mLevelController.loadLevelFromFile("");
 
 	}
 
@@ -57,6 +80,28 @@ public class GameScreen extends BaseGameScreen {
 	@Override
 	public void draw(LintfordCore pCore) {
 		super.draw(pCore);
+
+	}
+
+	// ---------------------------------------------
+	// Methods
+	// ---------------------------------------------
+
+	private void createControllers(LintfordCore pCore) {
+		final var lControllerManager = pCore.controllerManager();
+
+		mLevelController = new LevelController(lControllerManager, mLevel, entityGroupID());
+
+	}
+
+	private void initializeControllers(LintfordCore pCore) {
+		mLevelController.initialize(pCore);
+
+	}
+
+	private void createRenderers(LintfordCore pCore) {
+		mLevelRenderer = new LevelRenderer(rendererManager, entityGroupID());
+		mLevelRenderer.initialize(pCore);
 
 	}
 
