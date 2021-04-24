@@ -63,6 +63,7 @@ public class MobController extends BaseController {
 
 	}
 
+	// TODO: Time permitting - refactor
 	@Override
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
@@ -75,7 +76,17 @@ public class MobController extends BaseController {
 		for (int i = 0; i < lNumMobs; i++) {
 			final var lMobInstance = lMobList.get(i);
 
-			// grav
+			lMobInstance.update(pCore);
+
+			// Digging (in mob controller?)
+			// TODO: LEFT / RIGHT
+			if (lMobInstance.diggingFlag) {
+				System.out.println("digging");
+				lLevel.digBlock(lMobInstance.cellX, lMobInstance.cellY + 1, (byte) 1);
+
+			}
+
+			// gravity
 			final float lGravAmt = (float) GameConstants.BLOCK_SIZE / 9.6f;
 			lMobInstance.velocityY += 0.0096f; //lGravAmt;
 			lMobInstance.velocityX = MathHelper.clamp(lMobInstance.velocityX, -0.05f, 0.05f);

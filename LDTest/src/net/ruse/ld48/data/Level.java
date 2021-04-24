@@ -1,5 +1,7 @@
 package net.ruse.ld48.data;
 
+import java.util.Arrays;
+
 import net.lintford.library.core.entity.BaseInstanceData;
 import net.ruse.ld48.GameConstants;
 
@@ -25,6 +27,7 @@ public class Level extends BaseInstanceData {
 	// ---------------------------------------------
 
 	private final int[] mLevelBlockIndices = new int[GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH];
+	private final byte[] mLevelBlockHealth = new byte[GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH];
 
 	// ---------------------------------------------
 	// Properties
@@ -82,17 +85,9 @@ public class Level extends BaseInstanceData {
 	}
 
 	private void clearLevel() {
-		for (int y = 0; y < GameConstants.LEVEL_TILES_HIGH; y++) {
-			for (int x = 0; x < GameConstants.LEVEL_TILES_WIDE; x++) {
-				final int lTileCoord = getLevelTileCoord(x, y);
+		Arrays.fill(mLevelBlockHealth, (byte) 5);
+		Arrays.fill(mLevelBlockIndices, LEVEL_TILE_INDEX_AIR);
 
-				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
-					continue;
-
-				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_AIR;
-
-			}
-		}
 	}
 
 	public boolean hasCollision(int pTileX, int pTileY) {
@@ -107,6 +102,30 @@ public class Level extends BaseInstanceData {
 
 		return mLevelBlockIndices[lTileIndex] > LEVEL_TILE_INDEX_AIR;
 
+	}
+
+	public void digBlock(int pTileX, int pTileY, byte pDamageAmount) {
+		// first check block is present
+		final int lTileIndex = getLevelTileCoord(pTileX, pTileY);
+		if (lTileIndex == LEVEL_TILE_COORD_INVALID)
+			return;
+
+		// then deduct damage
+		byte lBlockHealth = mLevelBlockHealth[lTileIndex];
+
+		lBlockHealth -= pDamageAmount;
+		if (lBlockHealth < 0) {
+			lBlockHealth = 0;
+			mLevelBlockIndices[lTileIndex] = LEVEL_TILE_INDEX_AIR;
+
+		}
+
+		mLevelBlockHealth[lTileIndex] = lBlockHealth;
+
+	}
+
+	public boolean placeBlock() {
+		return false;
 	}
 
 }

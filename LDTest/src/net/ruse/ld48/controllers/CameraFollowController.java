@@ -55,14 +55,13 @@ public class CameraFollowController extends BaseController {
 	// Constructor
 	// ---------------------------------------------
 
-	public CameraFollowController(ControllerManager pControllerManager, ICamera pCamera, WorldEntity pTrackEntity, int pControllerGroup) {
+	public CameraFollowController(ControllerManager pControllerManager, ICamera pCamera, int pControllerGroup) {
 		super(pControllerManager, CONTROLLER_NAME, pControllerGroup);
 
 		mVelocity = new Vector2f();
 
 		//
 		mGameCamera = pCamera;
-		mTrackedEntity = pTrackEntity;
 		mIsTrackingPlayer = true;
 
 	}
@@ -129,7 +128,7 @@ public class CameraFollowController extends BaseController {
 
 		mIsTrackingPlayer = mTrackedEntity != null;
 		if (mIsTrackingPlayer) {
-			mGameCamera.setPosition(-mTrackedEntity.worldPositionX, -mTrackedEntity.worldPositionY);
+			mGameCamera.setPosition(mTrackedEntity.worldPositionX, mTrackedEntity.worldPositionY);
 
 		} else {
 			// Cap
@@ -164,9 +163,8 @@ public class CameraFollowController extends BaseController {
 	// Methods
 	// ---------------------------------------------
 
-	public void zoomIn(float pZoomFactor) {
-		mGameCamera.setZoomFactor(pZoomFactor);
-
+	public void setFollowEntity(WorldEntity pFollowEntity) {
+		mTrackedEntity = pFollowEntity;
 	}
 
 }

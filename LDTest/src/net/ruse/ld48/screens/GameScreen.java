@@ -105,7 +105,7 @@ public class GameScreen extends BaseGameScreen {
 		final var lControllerManager = pCore.controllerManager();
 
 		mCameraZoomController = new CameraZoomController(lControllerManager, mGameCamera, entityGroupID());
-		mCameraFollowController = new CameraFollowController(lControllerManager, mGameCamera, null, entityGroupID());
+		mCameraFollowController = new CameraFollowController(lControllerManager, mGameCamera, entityGroupID());
 
 		mLevelController = new LevelController(lControllerManager, mLevel, entityGroupID());
 
@@ -138,6 +138,8 @@ public class GameScreen extends BaseGameScreen {
 		mMobManager.addMobInstance(lPlayerMob);
 
 		mPlayerController.playerMobInstance(lPlayerMob);
+
+		mCameraFollowController.setFollowEntity(lPlayerMob);
 
 	}
 

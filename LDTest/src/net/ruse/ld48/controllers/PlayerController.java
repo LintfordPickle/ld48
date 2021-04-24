@@ -62,17 +62,31 @@ public class PlayerController extends BaseController {
 
 	}
 
+	// NOTE: Player cannot move when digging
+
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
 
 		final var lKeyboard = pCore.input().keyboard();
 
+		// Digging
+		mPlayerMobInstance.diggingFlag = false;
+		if (mPlayerMobInstance.isInputCooldownElapsed() && lKeyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
+			mPlayerMobInstance.diggingFlag = true;
+			mPlayerMobInstance.inputCooldownTimer = MobInstance.COOLDOWN_DIG;
+
+		}
+
 		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_A)) {
-			mPlayerMobInstance.velocityX -= .1f;
+			if (!mPlayerMobInstance.diggingFlag)
+				mPlayerMobInstance.velocityX -= .1f;
+
 		}
 
 		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_D)) {
-			mPlayerMobInstance.velocityX += .1f;
+			if (!mPlayerMobInstance.diggingFlag)
+				mPlayerMobInstance.velocityX += .1f;
+
 		}
 
 		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_SPACE) && mPlayerMobInstance.groundFlag) {
