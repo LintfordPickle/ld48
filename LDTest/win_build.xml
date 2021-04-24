@@ -1,31 +1,25 @@
 <!-- ====================================================================== 
      21.04.2021
 
-     Project     :	empty LintfordCore game
-     Description :	An empty project for use with the LintfordCore engine
-     
-     Don't forget to fill in the following variables below:
-     
-     + name
-     + project.name
-     + main-class (fully qualified)
+     Project     :	Ludum Dare 48 - Deeper and deeper
+     Description :	
 
 ====================================================================== -->
 
-<project name="" basedir="." default="main">
+<project name="LD48" basedir="." default="main">
 
 	<!-- External dependency directories -->
 	<property name="LDLibrary.dir">d:/dist/libs/LDLibrary</property>
-	
+
 	<property name="JavaLauncher.dir">d:/dist/tools/build/launcher</property>
 	<property name="JDK.input.dir">D:/IDE/java/jdk-12.0.1</property>
 	<property name="jre.output.dir">jre</property>
 
 	<!-- Porject variables -->
 	<property name="build-drive">d:</property>
-	<property name="project.name"></property>
+	<property name="project.name">LD48</property>
 
-	<property name="main-class"></property>
+	<property name="main-class">net.ruse.ld48.BaseGame</property>
 
 	<!-- Input directories -->
 	<property name="input.src.dir" value="src" />
@@ -42,7 +36,7 @@
 	<property name="dist.lib" value="${dist.dir}/libs/" />
 	<property name="dist.doc" value="${dist.dir}/docs/" />
 	<property name="dist.res" value="${dist.dir}/res/" />
-	<property name="dist.jre" value="${dist.dir}/${jre.output.dir}/"/>
+	<property name="dist.jre" value="${dist.dir}/${jre.output.dir}/" />
 
 	<!-- clean build -->
 	<target name="clean">
@@ -78,11 +72,11 @@
 		<copy todir="${dist.dir}/">
 			<fileset dir="${LDLibrary.dir}/bin">
 				<include name="**/*.jar" />
-				<exclude name="**/*javadoc*"/>
-				<exclude name="**/*sources*"/>
-				<exclude name="**/*linux*"/>
-				<exclude name="**/*macos*"/>
-				<exclude name="LDLibrary.jar"/>
+				<exclude name="**/*javadoc*" />
+				<exclude name="**/*sources*" />
+				<exclude name="**/*linux*" />
+				<exclude name="**/*macos*" />
+				<exclude name="LDLibrary.jar" />
 			</fileset>
 		</copy>
 
@@ -96,10 +90,10 @@
 		<!-- Copy any other JAR dependency files declared by the game. -->
 		<copy todir="${dist.lib}">
 			<fileset dir="${basedir}/${input.lib.dir}">
-				<exclude name="**/*javadoc*"/>
-				<exclude name="**/*src*"/>
-				<exclude name="**/*linux*"/>
-				<exclude name="**/*macos*"/>
+				<exclude name="**/*javadoc*" />
+				<exclude name="**/*src*" />
+				<exclude name="**/*linux*" />
+				<exclude name="**/*macos*" />
 				<include name="**/*.*" />
 			</fileset>
 		</copy>
@@ -153,19 +147,19 @@
 			<arg value='${JDK.input.dir}/bin/jlink --module-path "${JDK.input.dir}/jmods" --add-modules java.base,java.sql,java.desktop,java.management,java.xml,jdk.unsupported,jdk.management --output ${dist.jre} --strip-debug --compress 2 --no-header-files --no-man-pages' />
 		</exec>
 	</target>
-	
+
 	<target name="help">
-	  <exec executable="java">
-	    <arg value="--list-modules"/>
-	  </exec>
+		<exec executable="java">
+			<arg value="--list-modules" />
+		</exec>
 	</target>
 
 	<target name="check.jre">
 		<condition property="jre.dir.exists">
-			<available file="${dist.jre}" type="dir"/>
+			<available file="${dist.jre}" type="dir" />
 		</condition>
 	</target>
-	
+
 	<target name="notify.jre" depends="check.jre" if="jre.dir.exists">
 		<echo message="${dist.jre} exists. Not copying JRE" />
 	</target>
@@ -186,7 +180,7 @@
 		<echo message="Bundling JRE" />
 		<exec executable="cmd">
 			<arg value="/c" />
-			<arg value='${dist.dir}/JavaLauncher -c  -jre ${jre.output.dir} -n ${project.name} -j core -p "debug=info" -w https://lintfordpickleld.itch.io/' />
+			<arg value='${dist.dir}/JavaLauncher -c  -jre ${jre.output.dir} -n ${project.name} -j core x-w https://lintfordpickleld.itch.io/' />
 		</exec>
 	</target>
 
