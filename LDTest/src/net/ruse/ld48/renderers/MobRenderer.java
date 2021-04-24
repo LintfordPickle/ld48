@@ -1,7 +1,5 @@
 package net.ruse.ld48.renderers;
 
-import org.lwjgl.opengl.GL11;
-
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.debug.Debug;
@@ -81,8 +79,18 @@ public class MobRenderer extends BaseRenderer {
 
 			final var lMobSpriteInstance = lMobInstance.currentSprite;
 
-			if (lMobSpriteInstance == null) {
-				lMobInstance.currentSprite = mMobSpriteSheet.getSpriteInstance(lMobInstance.mobTypeName() + "_IDLE");
+			String lCurrentAnimationName = lMobInstance.mobTypeName() + "_IDLE";
+			if (lMobInstance.diggingFlag || lMobInstance.swingingFlag) {
+				lCurrentAnimationName = lMobInstance.mobTypeName() + "_SWING";
+
+			}
+
+			if (lMobSpriteInstance == null || lMobInstance.mCurrentAnimationName == null || !lMobInstance.mCurrentAnimationName.equals(lCurrentAnimationName)) {
+				lMobInstance.currentSprite = mMobSpriteSheet.getSpriteInstance(lCurrentAnimationName);
+				if (lMobInstance.currentSprite != null) {
+					lMobInstance.mCurrentAnimationName = lCurrentAnimationName;
+
+				}
 				continue;
 
 			}
@@ -90,14 +98,35 @@ public class MobRenderer extends BaseRenderer {
 			lMobSpriteInstance.setCenterPosition(lMobX, lMobY);
 			lMobSpriteInstance.update(pCore);
 
-			lSpriteBatch.draw(mMobSpriteSheet, lMobSpriteInstance, -0.1f, ColorConstants.WHITE);
+			final float lMobWidth = lMobInstance.currentSprite.width();
 
-			GL11.glLineWidth(2.f);
+			var lTintColor = ColorConstants.WHITE;
+			if (!lMobInstance.isDamageCooldownElapsed() && lMobInstance.damageCooldownTimer % 200 < 100) {
+				lTintColor = ColorConstants.getColor(100, 100, 100, 1);
+			}
+
+			if (lMobInstance.isLeftFacing) {
+				lSpriteBatch.draw(mMobSpriteSheet, lMobSpriteInstance.currentSpriteFrame(), lMobX + 16.f, lMobY - 16.f, -lMobWidth, 32, -0.1f, lTintColor);
+
+			} else {
+				lSpriteBatch.draw(mMobSpriteSheet, lMobSpriteInstance.currentSpriteFrame(), lMobX - 16.f, lMobY - 16.f, lMobWidth, 32, -0.1f, lTintColor);
+
+			}
+
 			Debug.debugManager().drawers().drawCircleImmediate(pCore.gameCamera(), lMobX, lMobY, lMobR);
+
+			if (lMobInstance.swingingFlag) {
+				Debug.debugManager().drawers().drawCircleImmediate(
+						pCore.gameCamera(), 
+						lMobInstance.attackPointWorldX, 
+						lMobInstance.attackPointWorldY,
+						4.f);
+			}
 
 		}
 
 		lSpriteBatch.end();
 
 	}
+
 }

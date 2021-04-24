@@ -71,9 +71,14 @@ public class PlayerController extends BaseController {
 
 		// Digging
 		mPlayerMobInstance.diggingFlag = false;
-		if (mPlayerMobInstance.isInputCooldownElapsed() && lKeyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
+		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
 			mPlayerMobInstance.diggingFlag = true;
-			mPlayerMobInstance.inputCooldownTimer = MobInstance.COOLDOWN_DIG;
+
+		}
+
+		mPlayerMobInstance.swingingFlag = false;
+		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_RIGHT_SHIFT)) {
+			mPlayerMobInstance.swingingFlag = true;
 
 		}
 

@@ -3,6 +3,7 @@ package net.ruse.ld48.data;
 import java.util.Arrays;
 
 import net.lintford.library.core.entity.BaseInstanceData;
+import net.lintford.library.core.maths.RandomNumbers;
 import net.ruse.ld48.GameConstants;
 
 public class Level extends BaseInstanceData {
@@ -15,6 +16,9 @@ public class Level extends BaseInstanceData {
 	public static final int LEVEL_TILE_INDEX_STONE = 2;
 	public static final int LEVEL_TILE_INDEX_ENTRY = 3;
 	public static final int LEVEL_TILE_INDEX_EXIT = 4;
+
+	public static final int LEVEL_TILE_INDEX_GOLD = 6;
+	public static final int LEVEL_TILE_INDEX_SOLID = 7;
 
 	// ---------------------------------------------
 	// Constants
@@ -46,7 +50,40 @@ public class Level extends BaseInstanceData {
 	}
 
 	public int getLevelTileCoord(int pTileX, int pTileY) {
-		return pTileY * GameConstants.LEVEL_TILES_WIDE + pTileX;
+		final int lTileCoord = pTileY * GameConstants.LEVEL_TILES_WIDE + pTileX;
+		if (lTileCoord < 0 || lTileCoord >= GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH)
+			return LEVEL_TILE_COORD_INVALID;
+
+		return lTileCoord;
+
+	}
+
+	public int getTopBlockIndex(int pTileIndex) {
+		if (pTileIndex < GameConstants.LEVEL_TILES_WIDE)
+			return LEVEL_TILE_COORD_INVALID;
+
+		return pTileIndex - GameConstants.LEVEL_TILES_WIDE;
+	}
+
+	public int getBottomBlockIndex(int pTileIndex) {
+		if (pTileIndex > GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH - GameConstants.LEVEL_TILES_WIDE)
+			return LEVEL_TILE_COORD_INVALID;
+
+		return pTileIndex + GameConstants.LEVEL_TILES_WIDE;
+	}
+
+	public int getLeftBlockIndex(int pTileIndex) {
+		if (pTileIndex % GameConstants.LEVEL_TILES_WIDE == 0)
+			return LEVEL_TILE_COORD_INVALID;
+
+		return pTileIndex - 1;
+	}
+
+	public int getRightBlockIndex(int pTileIndex) {
+		if (pTileIndex % GameConstants.LEVEL_TILES_WIDE == GameConstants.LEVEL_TILES_WIDE - 1)
+			return LEVEL_TILE_COORD_INVALID;
+
+		return pTileIndex + 1;
 	}
 
 	// ---------------------------------------------
@@ -72,13 +109,55 @@ public class Level extends BaseInstanceData {
 
 		final int lFloorHeight = 3;
 		for (int x = 1; x < GameConstants.LEVEL_TILES_WIDE; x++) {
-			final int lTileCoord = getLevelTileCoord(x, lFloorHeight);
+			{
+				final int lTileCoord = getLevelTileCoord(x, lFloorHeight);
+				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
+					continue;
+				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT_TOP;
+				mLevelBlockIndices[lTileCoord + GameConstants.LEVEL_TILES_WIDE] = LEVEL_TILE_INDEX_DIRT;
+			}
 
-			if (lTileCoord == LEVEL_TILE_COORD_INVALID)
-				continue;
+			{
+				final int lTileCoord = getLevelTileCoord(x, GameConstants.LEVEL_TILES_HIGH - 1);
+				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
+					continue;
+				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+			}
 
-			mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT_TOP;
-			mLevelBlockIndices[lTileCoord + GameConstants.LEVEL_TILES_WIDE] = LEVEL_TILE_INDEX_DIRT;
+		}
+
+		for (int y = 0; y < GameConstants.LEVEL_TILES_HIGH; y++) {
+			{
+				final int lTileCoord = getLevelTileCoord(0, y);
+				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
+					continue;
+				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+			}
+
+			{
+				final int lTileCoord = getLevelTileCoord(GameConstants.LEVEL_TILES_WIDE - 1, y);
+				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
+					continue;
+				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+			}
+
+		}
+
+		// Random blocks
+		final int lNumRandomBlocks = (int) (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH * 0.4);
+		for (int i = 0; i < lNumRandomBlocks; i++) {
+			final int lTileCoord = RandomNumbers.random(lFloorHeight * GameConstants.LEVEL_TILES_WIDE, (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1);
+
+			mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+
+		}
+
+		// gold blocks
+		final int lNumGoldBlocks = 600 / 10;
+		for (int i = 0; i < lNumGoldBlocks; i++) {
+			final int lTileCoord = RandomNumbers.random((lFloorHeight + 1) * GameConstants.LEVEL_TILES_WIDE, (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1);
+
+			mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_GOLD;
 
 		}
 
@@ -104,11 +183,13 @@ public class Level extends BaseInstanceData {
 
 	}
 
-	public void digBlock(int pTileX, int pTileY, byte pDamageAmount) {
+	public boolean digBlock(int pTileX, int pTileY, byte pDamageAmount) {
 		// first check block is present
 		final int lTileIndex = getLevelTileCoord(pTileX, pTileY);
 		if (lTileIndex == LEVEL_TILE_COORD_INVALID)
-			return;
+			return false;
+
+		boolean wasBlockRemoved = false;
 
 		// then deduct damage
 		byte lBlockHealth = mLevelBlockHealth[lTileIndex];
@@ -117,10 +198,13 @@ public class Level extends BaseInstanceData {
 		if (lBlockHealth < 0) {
 			lBlockHealth = 0;
 			mLevelBlockIndices[lTileIndex] = LEVEL_TILE_INDEX_AIR;
+			wasBlockRemoved = true;
 
 		}
 
 		mLevelBlockHealth[lTileIndex] = lBlockHealth;
+
+		return wasBlockRemoved;
 
 	}
 

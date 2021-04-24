@@ -10,9 +10,11 @@ public class GameConstants {
 
 	// LEVELS
 
-	public static final int LEVEL_TILES_WIDE = 40;
-	public static final int LEVEL_TILES_HIGH = 32;
+	public static final int LEVEL_TILES_WIDE = 16;
+	public static final int LEVEL_TILES_HIGH = 20;
 
 	public static final int BLOCK_SIZE = 32;
+
+	public static final int GOLD_BLOCK_VALUE = 10;
 
 }

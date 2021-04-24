@@ -6,6 +6,8 @@ import net.ruse.ld48.GameConstants;
 
 public class MobInstance extends CellEntity {
 
+	public static final boolean GOD_MODE = false;
+
 	public static final String MOB_TYPE_DWARF = "DWARF";
 	public static final String MOB_TYPE_GOBLIN = "GOBLIN";
 
@@ -21,14 +23,29 @@ public class MobInstance extends CellEntity {
 	// Variables
 	// --------------------------------------
 
+	public String mCurrentAnimationName;
 	public transient SpriteInstance currentSprite;
 	public boolean isPlayerControlled;
 
 	public boolean groundFlag;
 	public boolean diggingFlag;
+	public boolean swingingFlag;
 
 	public float inputCooldownTimer;
 	private String mMobTypeName;
+
+	public boolean isLeftFacing;
+
+	public int health;
+	public float damageCooldownTimer;
+
+	public float attackPointWorldX;
+	public float attackPointWorldY;
+
+	/* some mob swing for the enemies (e.g. goblins), and some deal damage on touch (e.g. spiders) */
+	public boolean damagesOnCollide;
+	public boolean swingAttackEnabled;
+	public float swingRange;
 
 	// --------------------------------------
 	// Properties
@@ -46,6 +63,10 @@ public class MobInstance extends CellEntity {
 		return inputCooldownTimer <= 0.f;
 	}
 
+	public boolean isDamageCooldownElapsed() {
+		return damageCooldownTimer <= 0;
+	}
+
 	// --------------------------------------
 	// Constructor 
 	// --------------------------------------
@@ -55,18 +76,26 @@ public class MobInstance extends CellEntity {
 
 		mMobTypeName = null;
 
+		radius = 13.f;
+
 	}
 
 	// --------------------------------------
 	// Methods
 	// --------------------------------------
 
-	public void initialise(String pMobTypeName) {
+	public void initialise(String pMobTypeName, int pHealth) {
 		mMobTypeName = pMobTypeName;
+		health = pHealth;
 
 	}
 
 	public void update(LintfordCore pCore) {
+		if (damageCooldownTimer > 0.0f) {
+			damageCooldownTimer -= pCore.gameTime().elapsedTimeMilli();
+
+		}
+
 		if (inputCooldownTimer > 0.0f)
 			inputCooldownTimer -= pCore.gameTime().elapsedTimeMilli();
 
@@ -85,6 +114,20 @@ public class MobInstance extends CellEntity {
 
 		velocityX = 0.f;
 		velocityY = 0.f;
+
+	}
+
+	public void dealDamage(int pAmt, boolean respectCooldown) {
+		if (respectCooldown && !isDamageCooldownElapsed() || GOD_MODE)
+			return;
+
+		health -= pAmt;
+
+		if (isPlayerControlled)
+			damageCooldownTimer = 1250.f;
+		else {
+			damageCooldownTimer = 250.f;
+		}
 
 	}
 

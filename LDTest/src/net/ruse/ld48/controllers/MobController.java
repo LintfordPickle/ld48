@@ -1,5 +1,8 @@
 package net.ruse.ld48.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
@@ -24,6 +27,7 @@ public class MobController extends BaseController {
 	// --------------------------------------
 
 	private MobManager mMobManager;
+	private final List<MobInstance> mMobInstancesToUpdate = new ArrayList<>();
 
 	private PlayerController mPlayerController;
 	private LevelController mLevelController;
@@ -78,21 +82,62 @@ public class MobController extends BaseController {
 		final var lMobList = mMobManager.mobInstances();
 		final int lNumMobs = lMobList.size();
 
+		mMobInstancesToUpdate.clear();
 		for (int i = 0; i < lNumMobs; i++) {
 			final var lMobInstance = lMobList.get(i);
+			mMobInstancesToUpdate.add(lMobInstance);
+
+		}
+
+		for (int i = 0; i < lNumMobs; i++) {
+			final var lMobInstance = mMobInstancesToUpdate.get(i);
+
+			if (lMobInstance.health <= 0) {
+				lMobList.remove(lMobInstance);
+				continue;
+
+			}
 
 			lMobInstance.update(pCore);
 
-			// TODO: LEFT / RIGHT
-			if (lMobInstance.diggingFlag) {
+			if (lMobInstance.diggingFlag && lMobInstance.isInputCooldownElapsed()) {
 				mLevelController.digLevel(lMobInstance.cellX, lMobInstance.cellY + 1, (byte) 1);
+				lMobInstance.inputCooldownTimer = 300;
 
+			}
+
+			if (lMobInstance.swingingFlag && lMobInstance.isInputCooldownElapsed()) {
+
+				// calculate the point of the attack (in world space)
+				final float lSignum = lMobInstance.isLeftFacing ? -1 : 1;
+				lMobInstance.attackPointWorldX = lMobInstance.worldPositionX + 32.f * lSignum;
+				lMobInstance.attackPointWorldY = lMobInstance.worldPositionY;
+
+				for (int j = 0; j < lNumMobs; j++) {
+					final var lOtherMobInstance = mMobInstancesToUpdate.get(j);
+
+					if (lMobInstance == lOtherMobInstance || !lOtherMobInstance.swingAttackEnabled)
+						continue;
+
+					updateMobAttackCollisions(pCore, lLevel, lMobInstance, lOtherMobInstance);
+
+				}
+
+				lMobInstance.inputCooldownTimer = 300;
 			}
 
 			if (!lMobInstance.isPlayerControlled) {
 				updateEnemyAi(pCore, lLevel, lMobInstance);
 
-				updateEnemyPlayerCollision(pCore, lLevel, lMobInstance);
+			}
+
+			for (int j = i + 0; j < lNumMobs; j++) {
+				final var lOtherMobInstance = mMobInstancesToUpdate.get(j);
+
+				if (lMobInstance == lOtherMobInstance)
+					continue;
+
+				updateEnemyPlayerCollision(pCore, lLevel, lMobInstance, lOtherMobInstance);
 
 			}
 
@@ -108,6 +153,8 @@ public class MobController extends BaseController {
 		pMobInstance.velocityY += 0.0096f;
 		pMobInstance.velocityY = MathHelper.clamp(pMobInstance.velocityY, -0.2f, 0.4f);
 		pMobInstance.velocityX = MathHelper.clamp(pMobInstance.velocityX, -0.05f, 0.05f);
+
+		pMobInstance.isLeftFacing = pMobInstance.velocityX < 0f;
 
 		pMobInstance.fractionX += pMobInstance.velocityX;
 		pMobInstance.fractionY += pMobInstance.velocityY;
@@ -133,7 +180,7 @@ public class MobController extends BaseController {
 			pMobInstance.fractionY = 0.3f;
 
 			if (pMobInstance.velocityY < 0)
-				pMobInstance.velocityY = 0;
+				pMobInstance.velocityY *= 0.7f;
 
 		}
 
@@ -178,6 +225,14 @@ public class MobController extends BaseController {
 	private void updateEnemyAi(LintfordCore pCore, Level pLevel, MobInstance pMobInstance) {
 		final var lPlayerMobInstance = mPlayerController.playerMobInstance();
 
+		final float lDistSq = getDistSq(lPlayerMobInstance, pMobInstance);
+		final float lSeeDistSq = 128 * 128;
+
+		if (lDistSq > lSeeDistSq) {
+			pMobInstance.swingingFlag = false;
+			return;
+		}
+
 		if (pMobInstance.worldPositionX - 16.f < lPlayerMobInstance.worldPositionX) {
 			pMobInstance.velocityX += 0.005f;
 		}
@@ -186,36 +241,71 @@ public class MobController extends BaseController {
 			pMobInstance.velocityX -= 0.005f;
 		}
 
+		if (lDistSq < 32.f * 32.f)
+			pMobInstance.swingingFlag = true;
+		else
+			pMobInstance.swingingFlag = false;
+
 	}
 
-	private void updateEnemyPlayerCollision(LintfordCore pCore, Level pLevel, MobInstance pMobInstance) {
-		final var lPlayerMobInstance = mPlayerController.playerMobInstance();
-
-		// first check the cells
-		if (Math.abs(lPlayerMobInstance.cellX - pMobInstance.cellX) >= 2 || Math.abs(lPlayerMobInstance.cellY - pMobInstance.cellY) >= 2) {
+	private void updateMobAttackCollisions(LintfordCore pCore, Level pLevel, MobInstance pAttackingMob, MobInstance pReceivingMob) {
+		final int lMinCellClearance = 3;
+		if (Math.abs(pAttackingMob.cellX - pReceivingMob.cellX) >= lMinCellClearance || Math.abs(pAttackingMob.cellY - pReceivingMob.cellY) >= lMinCellClearance) {
 			return;
 
 		}
 
-		// then check the circus colls
-		if (overlaps(pMobInstance, lPlayerMobInstance)) {
-			final float lAngle = (float) Math.atan2(lPlayerMobInstance.worldPositionY - pMobInstance.worldPositionY, lPlayerMobInstance.worldPositionX - pMobInstance.worldPositionX);
+		final float lMaxDist = pAttackingMob.radius + pReceivingMob.radius;
 
-			final float lRepelPower = 0.03f;
+		final float lMobAX = pAttackingMob.attackPointWorldX;
+		final float lMobAY = pAttackingMob.attackPointWorldY;
 
-			lPlayerMobInstance.velocityX += Math.cos(lAngle) * lRepelPower;
-			lPlayerMobInstance.velocityY += Math.sin(lAngle) * lRepelPower * 0.025f;
+		final float lMobBX = pReceivingMob.worldPositionX;
+		final float lMobBY = pReceivingMob.worldPositionY;
 
-			pMobInstance.velocityX -= Math.cos(lAngle) * lRepelPower;
-			pMobInstance.velocityY -= Math.sin(lAngle) * lRepelPower;
+		final float lDistSq = Vector2f.distance2(lMobAX, lMobAY, lMobBX, lMobBY);
+
+		if (lDistSq <= lMaxDist * lMaxDist) {
+			pReceivingMob.dealDamage(1, true);
 
 		}
 
 	}
 
-	private boolean overlaps(CellEntity pEntityA, CellEntity pEntityB) {
-		final float lMaxDist = pEntityA.radius + pEntityB.radius;
+	private void updateEnemyPlayerCollision(LintfordCore pCore, Level pLevel, MobInstance pMobInstanceA, MobInstance pMobInstanceB) {
+		if (Math.abs(pMobInstanceB.cellX - pMobInstanceA.cellX) >= 2 || Math.abs(pMobInstanceB.cellY - pMobInstanceA.cellY) >= 2) {
+			return;
 
+		}
+
+		final float lMaxDist = pMobInstanceA.radius + pMobInstanceB.radius;
+
+		// then check the circus colls
+		if (getDistSq(pMobInstanceA, pMobInstanceB) < lMaxDist * lMaxDist) {
+			final float lAngle = (float) Math.atan2(pMobInstanceB.worldPositionY - pMobInstanceA.worldPositionY, pMobInstanceB.worldPositionX - pMobInstanceA.worldPositionX);
+			final float lRepelPower = 0.03f;
+
+			pMobInstanceB.velocityX += Math.cos(lAngle) * lRepelPower;
+			pMobInstanceB.velocityY += Math.sin(lAngle) * lRepelPower * 0.025f;
+
+			pMobInstanceA.velocityX -= Math.cos(lAngle) * lRepelPower;
+			pMobInstanceA.velocityY -= Math.sin(lAngle) * lRepelPower;
+
+			// assumes the player is always the first mob index (probably correct)
+			if (pMobInstanceA.isPlayerControlled) {
+				if (pMobInstanceB.damagesOnCollide)
+					pMobInstanceA.dealDamage(1, true);
+
+				if (pMobInstanceA.damagesOnCollide)
+					pMobInstanceB.dealDamage(1, true);
+
+			}
+
+		}
+
+	}
+
+	private float getDistSq(CellEntity pEntityA, CellEntity pEntityB) {
 		final float lMobAX = pEntityA.worldPositionX;
 		final float lMobAY = pEntityA.worldPositionY;
 
@@ -224,7 +314,7 @@ public class MobController extends BaseController {
 
 		final float lDistSq = Vector2f.distance2(lMobAX, lMobAY, lMobBX, lMobBY);
 
-		return lDistSq < lMaxDist * lMaxDist;
+		return lDistSq;
 	}
 
 }

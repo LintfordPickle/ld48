@@ -27,6 +27,8 @@ public class LevelRenderer extends BaseRenderer {
 	private static final Rectangle DIRT_TOP_DAMAGED_SRC_RECT = new Rectangle(192, 0, 32, 32);
 	private static final Rectangle AIR_DEBUG_SRC_RECT = new Rectangle(32, 0, 32, 32);
 
+	private static final Rectangle GOLD_SRC_RECT = new Rectangle(224, 0, 32, 32);
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -81,7 +83,7 @@ public class LevelRenderer extends BaseRenderer {
 		final float lBlockSize = GameConstants.BLOCK_SIZE;
 
 		for (int y = 0; y < GameConstants.LEVEL_TILES_HIGH; y++) {
-			for (int x = 0; x < GameConstants.LEVEL_TILES_HIGH; x++) {
+			for (int x = 0; x < GameConstants.LEVEL_TILES_WIDE; x++) {
 				final int lBlockIndex = lLevel.getLevelBlockType(x, y);
 				if (lBlockIndex == Level.LEVEL_TILE_COORD_INVALID)
 					continue;
@@ -97,6 +99,12 @@ public class LevelRenderer extends BaseRenderer {
 						lSrcRect = DIRT_TOP_SRC_RECT;
 
 					break;
+
+				case Level.LEVEL_TILE_INDEX_GOLD:
+					lSrcRect = GOLD_SRC_RECT;
+
+					break;
+
 				case Level.LEVEL_TILE_INDEX_DIRT:
 
 					if (lBlockHealth < 3) {
@@ -105,7 +113,7 @@ public class LevelRenderer extends BaseRenderer {
 						lSrcRect = DIRT_SRC_RECT;
 					break;
 				default:
-					lSrcRect = AIR_DEBUG_SRC_RECT;
+					// lSrcRect = AIR_DEBUG_SRC_RECT;
 				}
 
 				lTextureBatch.draw(mLevelTexture, lSrcRect, x * lBlockSize, y * lBlockSize, lBlockSize, lBlockSize, -0.01f, ColorConstants.WHITE);

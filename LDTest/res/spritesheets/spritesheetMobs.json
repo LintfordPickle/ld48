@@ -1,7 +1,7 @@
 {
-  "spriteSheetName": "SPRITESHEET_MOBS",
-  "textureName": "TEXTURE_MOBS",
-  "textureFilename": "res//textures//textureMobs.png",
+  "spriteSheetName": "SPRITESHEET_",
+  "textureName": "TEXTURE_",
+  "textureFilename": "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\res\\textures\\textureMobs.png",
   "frameMap": {
     "DWARF_IDLE_00": {
       "x": 0,
@@ -37,6 +37,17 @@
       "anchorPoints": []
     },
     "DWARF_IDLE_03": {
+      "x": 96,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_SWING_00": {
       "x": 0,
       "y": 32,
       "w": 32,
@@ -47,7 +58,7 @@
       "scaleY": 1.0,
       "anchorPoints": []
     },
-    "GOBLIN_IDLE_00": {
+    "DWARF_SWING_01": {
       "x": 32,
       "y": 32,
       "w": 32,
@@ -58,7 +69,7 @@
       "scaleY": 1.0,
       "anchorPoints": []
     },
-    "GOBLIN_IDLE_01": {
+    "DWARF_SWING_02": {
       "x": 64,
       "y": 32,
       "w": 32,
@@ -69,7 +80,18 @@
       "scaleY": 1.0,
       "anchorPoints": []
     },
-    "GOBLIN_IDLE_02": {
+    "DWARF_SWING_03": {
+      "x": 96,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_SWING_04": {
       "x": 0,
       "y": 64,
       "w": 32,
@@ -80,9 +102,97 @@
       "scaleY": 1.0,
       "anchorPoints": []
     },
-    "GOBLIN_IDLE_03": {
+    "GOBLIN_IDLE_00": {
       "x": 32,
       "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_IDLE_01": {
+      "x": 64,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_IDLE_02": {
+      "x": 96,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_IDLE_03": {
+      "x": 0,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_00": {
+      "x": 32,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_01": {
+      "x": 64,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_02": {
+      "x": 96,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_03": {
+      "x": 0,
+      "y": 128,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_04": {
+      "x": 32,
+      "y": 128,
       "w": 32,
       "h": 32,
       "pivotX": 0.0,
@@ -103,6 +213,17 @@
         "DWARF_IDLE_03"
       ]
     },
+    "DWARF_SWING": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "DWARF_SWING_00",
+        "DWARF_SWING_01",
+        "DWARF_SWING_02",
+        "DWARF_SWING_03",
+        "DWARF_SWING_04"
+      ]
+    },
     "GOBLIN_IDLE": {
       "loopAnimation": true,
       "frameDuration": 100,
@@ -111,6 +232,17 @@
         "GOBLIN_IDLE_01",
         "GOBLIN_IDLE_02",
         "GOBLIN_IDLE_03"
+      ]
+    },
+    "GOBLIN_SWING": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "GOBLIN_SWING_00",
+        "GOBLIN_SWING_01",
+        "GOBLIN_SWING_02",
+        "GOBLIN_SWING_03",
+        "GOBLIN_SWING_04"
       ]
     }
   }

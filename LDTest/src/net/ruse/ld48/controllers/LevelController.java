@@ -6,11 +6,12 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.particles.ParticleFrameworkController;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 import net.ruse.ld48.data.Level;
 
-public class LevelController extends BaseController {
+public class LevelController extends BaseController implements IProcessMouseInput {
 
 	// ---------------------------------------------
 	// Constants
@@ -22,18 +23,36 @@ public class LevelController extends BaseController {
 	// Variables
 	// ---------------------------------------------
 
+	private GameStateController mGameStateController;
 	private ParticleFrameworkController mParticleFrameworkController;
+	private ParticleSystemInstance mDigBlockParticles;
 
 	private Level mLevel;
-
-	private ParticleSystemInstance mDigBlockParticles;
+	private float mMouseCooldownTimer;
 
 	// ---------------------------------------------
 	// Properties
 	// ---------------------------------------------
 
+	@Override
+	public boolean isCoolDownElapsed() {
+		return mMouseCooldownTimer <= 0;
+	}
+
+	@Override
+	public void resetCoolDownTimer() {
+		mMouseCooldownTimer = 200;
+
+	}
+
 	public Level level() {
 		return mLevel;
+	}
+
+	@Override
+	public boolean isInitialized() {
+		return mGameStateController != null;
+
 	}
 
 	// ---------------------------------------------
@@ -52,14 +71,9 @@ public class LevelController extends BaseController {
 	// ---------------------------------------------
 
 	@Override
-	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void initialize(LintfordCore pCore) {
 		mParticleFrameworkController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, entityGroupID());
+		mGameStateController = (GameStateController) pCore.controllerManager().getControllerByNameRequired(GameStateController.CONTROLLER_NAME, entityGroupID());
 
 		mDigBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DIG");
 
@@ -73,9 +87,27 @@ public class LevelController extends BaseController {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-
 		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_R)) {
 			mLevel.loadLevel();
+
+		}
+
+		if (pCore.input().mouse().isMouseLeftButtonDownTimed(this)) {
+			final float lMouseWorldPositionX = pCore.gameCamera().getMouseWorldSpaceX();
+			final float lMouseWorldPositionY = pCore.gameCamera().getMouseWorldSpaceY();
+
+			final int lTileX = (int) (lMouseWorldPositionX / 32.f);
+			final int lTileY = (int) (lMouseWorldPositionY / 32.f);
+
+			final int lSelectedTileCoord = mLevel.getLevelTileCoord(lTileX, lTileY);
+
+			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)) {
+				mLevel.levelBlocks()[lSelectedTileCoord] = 1;
+
+			} else {
+				digLevel(lTileX, lTileY, (byte) 10);
+
+			}
 
 		}
 
@@ -83,12 +115,42 @@ public class LevelController extends BaseController {
 
 	}
 
+	@Override
+	public void update(LintfordCore pCore) {
+		super.update(pCore);
+
+		if (mMouseCooldownTimer > 0) {
+			mMouseCooldownTimer -= pCore.gameTime().elapsedTimeMilli();
+
+		}
+	}
+
 	// ---------------------------------------------
 	// Methods
 	// ---------------------------------------------
 
 	public void digLevel(int pTileX, int pTileY, byte pDamageAmt) {
-		mLevel.digBlock(pTileX, pTileY, pDamageAmt);
+		final int lBLockTypeIndex = mLevel.getLevelBlockType(pTileX, pTileY);
+		final boolean lWasBlockedRemoved = mLevel.digBlock(pTileX, pTileY, pDamageAmt);
+
+		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_AIR || lBLockTypeIndex == Level.LEVEL_TILE_INDEX_SOLID)
+			return;
+
+		final int lTileIndex = mLevel.getLevelTileCoord(pTileX, pTileY);
+		if (lTileIndex == Level.LEVEL_TILE_COORD_INVALID)
+			return;
+
+		if (lWasBlockedRemoved) {
+			if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_GOLD) {
+				mGameStateController.addGold(10);
+
+			}
+
+		}
+
+		final int lBlockType = mLevel.getLevelBlockType(pTileX, pTileY);
+		if (lBlockType <= 0)
+			return;
 
 		if (mDigBlockParticles != null) {
 			final float lTileCenterX = pTileX * 32.f + 16f;

@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import org.lwjgl.opengl.GL11;
 
 import net.lintford.library.GameInfo;
+import net.lintford.library.controllers.core.MouseCursorController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
@@ -69,6 +70,11 @@ public class BaseGame extends LintfordCore {
 	@Override
 	protected void onInitializeApp() {
 		super.onInitializeApp();
+
+		var lMouseController = new MouseCursorController(mControllerManager, CORE_ENTITY_GROUP_ID);
+		lMouseController.initialize(this);
+		lMouseController.loadCursorFromFile("default", "res//cursors//cursorDefault.png", 0, 0);
+		lMouseController.setCursor("default");
 
 		mScreenManager.addScreen(new GameScreen(mScreenManager));
 
