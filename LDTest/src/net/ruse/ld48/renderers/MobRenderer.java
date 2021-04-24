@@ -1,7 +1,10 @@
 package net.ruse.ld48.renderers;
 
+import org.lwjgl.opengl.GL11;
+
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.renderers.BaseRenderer;
@@ -74,6 +77,7 @@ public class MobRenderer extends BaseRenderer {
 
 			final float lMobX = lMobInstance.worldPositionX;
 			final float lMobY = lMobInstance.worldPositionY;
+			final float lMobR = lMobInstance.radius;
 
 			final var lMobSpriteInstance = lMobInstance.currentSprite;
 
@@ -87,6 +91,9 @@ public class MobRenderer extends BaseRenderer {
 			lMobSpriteInstance.update(pCore);
 
 			lSpriteBatch.draw(mMobSpriteSheet, lMobSpriteInstance, -0.1f, ColorConstants.WHITE);
+
+			GL11.glLineWidth(2.f);
+			Debug.debugManager().drawers().drawCircleImmediate(pCore.gameCamera(), lMobX, lMobY, lMobR);
 
 		}
 

@@ -6,6 +6,8 @@ public abstract class CellEntity extends WorldEntity {
 
 	private static final long serialVersionUID = 8037755641541119234L;
 
+	public float radius;
+
 	public int cellX;
 	public int cellY;
 
@@ -17,6 +19,9 @@ public abstract class CellEntity extends WorldEntity {
 
 	public CellEntity(int pPoolUid) {
 		super(pPoolUid);
+
+		radius = 16.f;
+
 	}
 
 }

@@ -20,7 +20,7 @@ public class CameraZoomController extends BaseController {
 
 	private ICamera mGameCamera;
 
-	private final int mTargetPixelsWide = 15 * GameConstants.BLOCK_SIZE;
+	private final int mTargetPixelsWide = 12 * GameConstants.BLOCK_SIZE;
 
 	// ---------------------------------------------
 	// Constructor

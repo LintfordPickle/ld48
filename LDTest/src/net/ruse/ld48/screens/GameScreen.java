@@ -164,7 +164,7 @@ public class GameScreen extends BaseGameScreen {
 	}
 
 	private void addEnemyMobs() {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			final var lEnemyMob = mMobManager.getFreePooledItem();
 
 			lEnemyMob.initialise(MobInstance.MOB_TYPE_GOBLIN);
