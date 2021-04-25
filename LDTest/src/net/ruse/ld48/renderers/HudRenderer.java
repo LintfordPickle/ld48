@@ -1,5 +1,7 @@
 package net.ruse.ld48.renderers;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
@@ -27,7 +29,11 @@ public class HudRenderer extends BaseRenderer {
 	private GameStateController mGameStateController;
 	private PlayerController mPlayerController;
 	private LevelController mLevelController;
+
 	private Texture mHudTexture;
+	private Texture mHelpTexture;
+
+	private boolean mShowHelp;
 
 	// --------------------------------------
 	// Properties
@@ -44,6 +50,8 @@ public class HudRenderer extends BaseRenderer {
 
 	public HudRenderer(RendererManager pRendererManager, int pEntityGroupID) {
 		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
+
+		mShowHelp = true;
 
 	}
 
@@ -64,7 +72,19 @@ public class HudRenderer extends BaseRenderer {
 		super.loadGLContent(pResourceManager);
 
 		mHudTexture = pResourceManager.textureManager().loadTexture("TEXTURE_HUD", "res/textures/textureHud.png", entityGroupID());
+		mHelpTexture = pResourceManager.textureManager().loadTexture("TEXTURE_HELP", "res/textures/textureHelp.png", entityGroupID());
 
+	}
+
+	@Override
+	public boolean handleInput(LintfordCore pCore) {
+
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_H)) {
+			mShowHelp = !mShowHelp;
+
+		}
+
+		return super.handleInput(pCore);
 	}
 
 	@Override
@@ -100,6 +120,11 @@ public class HudRenderer extends BaseRenderer {
 				lTextureBatch.draw(mHudTexture, 32, 32, 32, 32, lHeartPositionX, lHeartPositionY, 32.f * lTargetZoomFactor, 32.f * lTargetZoomFactor, -0.1f, ColorConstants.getBlackWithAlpha(.5f));
 
 			}
+
+		}
+
+		if (mShowHelp) {
+			lTextureBatch.draw(mHelpTexture, 0, 0, 640, 480, lHudRect, -0.1f, ColorConstants.WHITE);
 
 		}
 
