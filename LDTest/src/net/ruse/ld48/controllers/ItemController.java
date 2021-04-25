@@ -200,7 +200,7 @@ public class ItemController extends BaseController {
 		if (pItemInstance.timeAlive > 2000) {
 			pItemInstance.isPickedUp = true;
 
-			mScreenShakeController.shakeCamera(600.f, 2.f);
+			mScreenShakeController.shakeCamera(400.f, 3.f);
 
 			final int lTileX = pItemInstance.cellX;
 			final int lTileY = pItemInstance.cellY;

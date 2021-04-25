@@ -16,6 +16,7 @@ public class ShakeCamera extends Camera {
 	protected float mShakeMag;
 	protected float mShakeDur;
 	protected float mShakeTimer;
+	private boolean mCleanUp;
 
 	// ---------------------------------------------
 	// Constructor
@@ -33,7 +34,7 @@ public class ShakeCamera extends Camera {
 	@Override
 	public void update(LintfordCore pCore) {
 		if (mIsShaking) {
-
+			mCleanUp = true;
 			mShakeTimer += pCore.appTime().elapsedTimeMilli();
 
 			if (mShakeTimer > mShakeDur) {
@@ -52,7 +53,7 @@ public class ShakeCamera extends Camera {
 		}
 
 		super.update(pCore);
-		
+
 	}
 
 	// ---------------------------------------------
@@ -66,11 +67,11 @@ public class ShakeCamera extends Camera {
 		if (pDuration <= 0)
 			return;
 
-//		mIsShaking = true;
-//		mShakeDur = pDuration;
-//		mShakeMag = pMagnitude;
-//
-//		mShakeTimer = 0;
+		//		mIsShaking = true;
+		//		mShakeDur = pDuration;
+		//		mShakeMag = pMagnitude;
+		//
+		//		mShakeTimer = 0;
 
 	}
 

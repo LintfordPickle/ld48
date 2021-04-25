@@ -26,6 +26,7 @@ public class ScreenShakeController extends BaseController {
 	protected float mShakeMag;
 	protected float mShakeDur;
 	protected float mShakeTimer;
+	private boolean mNeedsCleanup;
 
 	protected final Vector2f mOffsetPosition = new Vector2f();
 
@@ -67,7 +68,7 @@ public class ScreenShakeController extends BaseController {
 			return;
 
 		if (mShakeTimer > 0.f) {
-
+			mNeedsCleanup = true;
 			mShakeTimer -= pCore.appTime().elapsedTimeMilli();
 
 			// normal time
@@ -80,6 +81,12 @@ public class ScreenShakeController extends BaseController {
 
 			mGameCamera.setCameraOffset(mOffsetPosition.x, mOffsetPosition.y);
 
+		} else if (mNeedsCleanup) {
+			mNeedsCleanup = false;
+			mOffsetPosition.x = 0.f;
+			mOffsetPosition.y = 0.f;
+
+			mGameCamera.setCameraOffset(mOffsetPosition.x, mOffsetPosition.y);
 		}
 
 	}
@@ -89,8 +96,14 @@ public class ScreenShakeController extends BaseController {
 	// ---------------------------------------------
 
 	public void shakeCamera(float pDuration, float pMagnitude) {
+		// don't interrupt large shakes with little ones
+		if (mShakeTimer > 0.f) {
+			if (mShakeMag > pMagnitude)
+				return;
+		}
+
 		mShakeMag = pMagnitude;
-		mShakeDur = pDuration;
+		mShakeDur = Math.max(pDuration, mShakeDur);
 
 		mShakeTimer = pDuration;
 
