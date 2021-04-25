@@ -1,6 +1,7 @@
 package net.ruse.ld48.data;
 
 import net.lintford.library.core.entity.WorldEntity;
+import net.ruse.ld48.GameConstants;
 
 public abstract class CellEntity extends WorldEntity {
 
@@ -21,6 +22,22 @@ public abstract class CellEntity extends WorldEntity {
 		super(pPoolUid);
 
 		radius = 16.f;
+
+	}
+
+	public void setPosition(float pWorldPositionX, float pWorldPositionY) {
+
+		worldPositionX = pWorldPositionX;
+		worldPositionY = pWorldPositionY;
+
+		cellX = (int) (worldPositionX / GameConstants.BLOCK_SIZE);
+		cellY = (int) (worldPositionY / GameConstants.BLOCK_SIZE);
+
+		fractionX = (worldPositionX - (cellX * GameConstants.BLOCK_SIZE)) / GameConstants.BLOCK_SIZE;
+		fractionY = (worldPositionY - (cellY * GameConstants.BLOCK_SIZE)) / GameConstants.BLOCK_SIZE;
+
+		velocityX = 0.f;
+		velocityY = 0.f;
 
 	}
 

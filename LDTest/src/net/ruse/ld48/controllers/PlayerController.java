@@ -19,11 +19,18 @@ public class PlayerController extends BaseController {
 	// Variables
 	// --------------------------------------
 
+	private ItemController mItemController;
 	private MobInstance mPlayerMobInstance;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	@Override
+	public boolean isInitialized() {
+		return mPlayerMobInstance != null;
+
+	}
 
 	public MobInstance playerMobInstance() {
 		return mPlayerMobInstance;
@@ -47,13 +54,8 @@ public class PlayerController extends BaseController {
 	// --------------------------------------
 
 	@Override
-	public boolean isInitialized() {
-		return mPlayerMobInstance != null;
-
-	}
-
-	@Override
 	public void initialize(LintfordCore pCore) {
+		mItemController = (ItemController) pCore.controllerManager().getControllerByNameRequired(ItemController.CONTROLLER_NAME, entityGroupID());
 
 	}
 
@@ -62,8 +64,6 @@ public class PlayerController extends BaseController {
 
 	}
 
-	// NOTE: Player cannot move when digging
-
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
 
@@ -71,14 +71,31 @@ public class PlayerController extends BaseController {
 
 		// Digging
 		mPlayerMobInstance.diggingFlag = false;
-		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
+		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_J)) {
 			mPlayerMobInstance.diggingFlag = true;
 
 		}
 
 		mPlayerMobInstance.swingingFlag = false;
-		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_RIGHT_SHIFT)) {
+		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_K)) {
 			mPlayerMobInstance.swingingFlag = true;
+
+		}
+
+		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_G) && mPlayerMobInstance.isInputCooldownElapsed()) {
+			final float lWorldPositionX = mPlayerMobInstance.worldPositionX;
+			final float lWorldPositionY = mPlayerMobInstance.worldPositionY;
+			final float lSignum = mPlayerMobInstance.isLeftFacing ? -1.f : 1.f;
+
+			if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
+				mItemController.addTnt(lWorldPositionX + lSignum * 32.f, lWorldPositionY, 0.f, -.01f);
+
+			} else {
+				mItemController.addTnt(lWorldPositionX, lWorldPositionY, lSignum * .15f, -.2f);
+
+			}
+
+			mPlayerMobInstance.inputCooldownTimer = 300;
 
 		}
 

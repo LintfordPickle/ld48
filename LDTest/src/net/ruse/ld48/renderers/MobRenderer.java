@@ -82,7 +82,7 @@ public class MobRenderer extends BaseRenderer {
 
 			String lCurrentAnimationName = lMobInstance.mobTypeName() + "_IDLE";
 
-			if (lMobInstance.diggingFlag || lMobInstance.swingingFlag) {
+			if ((lMobInstance.diggingFlag || lMobInstance.swingingFlag) && lMobInstance.swingAttackEnabled) {
 				lCurrentAnimationName = lMobInstance.mobTypeName() + "_SWING";
 
 			} else if (Math.abs(lMobInstance.velocityX) > 0.002f) {

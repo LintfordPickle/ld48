@@ -258,7 +258,7 @@ public class MobController extends BaseController {
 		}
 
 		// walk towards player if visible on same layer
-		if (Math.abs(lPlayerMobInstance.cellX) - Math.abs(pMobInstance.cellX) < 1) {
+		if (Math.abs(lPlayerMobInstance.cellY) - Math.abs(pMobInstance.cellY) < 1) {
 			if (pMobInstance.worldPositionX - 16.f < lPlayerMobInstance.worldPositionX) {
 				pMobInstance.velocityX += 0.005f;
 			}
@@ -345,6 +345,28 @@ public class MobController extends BaseController {
 		final float lDistSq = Vector2f.distance2(lMobAX, lMobAY, lMobBX, lMobBY);
 
 		return lDistSq;
+	}
+
+	public void dealDamageToMobsInRange(float pWorldX, float pWorldY, float pRadius, int pDamage, boolean pIncludePlayer) {
+
+		final var lMobList = mobManager().instances();
+		final int lMobCount = lMobList.size();
+		for (int i = 0; i < lMobCount; i++) {
+			final var lMobInstance = lMobList.get(i);
+
+			final float lMobBX = lMobInstance.worldPositionX;
+			final float lMobBY = lMobInstance.worldPositionY;
+
+			final float lDistSq = Vector2f.distance2(pWorldX, pWorldY, lMobBX, lMobBY);
+
+			if (lDistSq <= pRadius * pRadius) {
+				mBloodBlockParticles.spawnParticle(lMobBX, lMobBY, RandomNumbers.random(-150.f, 150.f), RandomNumbers.random(-200.f, -50.f));
+				lMobInstance.dealDamage(pDamage, true);
+
+			}
+
+		}
+
 	}
 
 }

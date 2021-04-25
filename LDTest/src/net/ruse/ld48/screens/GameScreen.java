@@ -8,17 +8,19 @@ import net.lintford.library.core.particles.ParticleFrameworkData;
 import net.lintford.library.renderers.particles.ParticleFrameworkRenderer;
 import net.lintford.library.screenmanager.ScreenManager;
 import net.lintford.library.screenmanager.screens.BaseGameScreen;
-import net.ruse.ld48.GameConstants;
 import net.ruse.ld48.controllers.CameraFollowController;
 import net.ruse.ld48.controllers.CameraZoomController;
 import net.ruse.ld48.controllers.GameStateController;
+import net.ruse.ld48.controllers.ItemController;
 import net.ruse.ld48.controllers.LevelController;
 import net.ruse.ld48.controllers.MobController;
 import net.ruse.ld48.controllers.PlayerController;
+import net.ruse.ld48.data.ItemManager;
 import net.ruse.ld48.data.Level;
 import net.ruse.ld48.data.MobInstance;
 import net.ruse.ld48.data.MobManager;
 import net.ruse.ld48.renderers.HudRenderer;
+import net.ruse.ld48.renderers.ItemRenderer;
 import net.ruse.ld48.renderers.LevelRenderer;
 import net.ruse.ld48.renderers.MobRenderer;
 
@@ -34,11 +36,13 @@ public class GameScreen extends BaseGameScreen {
 
 	// Data
 	private MobManager mMobManager;
+	private ItemManager mItemManager;
 	private Level mLevel;
 	private ParticleFrameworkData mParticleData;
 
 	// Controllers
 	private MobController mMobController;
+	private ItemController mItemController;
 	private PlayerController mPlayerController;
 	private LevelController mLevelController;
 	private CameraFollowController mCameraFollowController;
@@ -48,6 +52,7 @@ public class GameScreen extends BaseGameScreen {
 
 	// Renderers
 	private LevelRenderer mLevelRenderer;
+	private ItemRenderer mItemRenderer;
 	private MobRenderer mMobRenderer;
 	private ParticleFrameworkRenderer mParticleFrameworkRenderer;
 	private HudRenderer mHudRenderer;
@@ -61,6 +66,7 @@ public class GameScreen extends BaseGameScreen {
 
 		mLevel = new Level();
 		mMobManager = new MobManager();
+		mItemManager = new ItemManager();
 		mParticleData = new ParticleFrameworkData();
 
 		mShowInBackground = true;
@@ -146,7 +152,7 @@ public class GameScreen extends BaseGameScreen {
 		mMobController = new MobController(lControllerManager, mMobManager, entityGroupID());
 		mPlayerController = new PlayerController(lControllerManager, entityGroupID());
 		mParticleFrameworkController = new ParticleFrameworkController(lControllerManager, mParticleData, entityGroupID());
-
+		mItemController = new ItemController(lControllerManager, mItemManager, entityGroupID());
 		mGameStateController = new GameStateController(lControllerManager, entityGroupID());
 
 	}
@@ -159,6 +165,7 @@ public class GameScreen extends BaseGameScreen {
 		mMobController.initialize(pCore);
 		mParticleFrameworkController.initialize(pCore);
 		mGameStateController.initialize(pCore);
+		mItemController.initialize(pCore);
 
 	}
 
@@ -175,7 +182,13 @@ public class GameScreen extends BaseGameScreen {
 		mHudRenderer = new HudRenderer(rendererManager, entityGroupID());
 		mHudRenderer.initialize(pCore);
 
+		mItemRenderer = new ItemRenderer(rendererManager, entityGroupID());
+		mItemRenderer.initialize(pCore);
+
 	}
+
+	// ---------------------------------------------
+	// REFACTOR
 
 	private void addPlayerMob() {
 		final var lPlayerMob = mMobManager.getFreePooledItem();
@@ -197,13 +210,19 @@ public class GameScreen extends BaseGameScreen {
 
 	private void addEnemyMobs() {
 		for (int i = 0; i < DEBUG_NUM_ENEMIES; i++) {
-			final var lEnemyMob = mMobManager.getFreePooledItem();
+			MobInstance lEnemyMob = null;
 
-			lEnemyMob.initialise(MobInstance.MOB_TYPE_GOBLIN, 3);
-			lEnemyMob.damagesOnCollide = false;
-			lEnemyMob.swingAttackEnabled = true;
-			lEnemyMob.swingRange = 48.f;
-			lEnemyMob.isPlayerControlled = false;
+			final int lMobType = RandomNumbers.random(0, 2);
+
+			switch (lMobType) {
+			case 0:
+				lEnemyMob = getSpiderMob();
+				break;
+			default:
+			case 1:
+				lEnemyMob = getGoblinMob();
+				break;
+			}
 
 			final float lWorldPositionX = 256.f;//RandomNumbers.random(32.f, 96.f);
 			final float lWorldPositionY = 0;
@@ -223,4 +242,29 @@ public class GameScreen extends BaseGameScreen {
 
 	}
 
+	private MobInstance getSpiderMob() {
+		final var lEnemyMob = mMobManager.getFreePooledItem();
+
+		lEnemyMob.initialise(MobInstance.MOB_TYPE_SPIDER, 1);
+		lEnemyMob.damagesOnCollide = true;
+		lEnemyMob.swingAttackEnabled = false;
+		lEnemyMob.swingRange = 32.f;
+		lEnemyMob.isPlayerControlled = false;
+
+		return lEnemyMob;
+	}
+
+	private MobInstance getGoblinMob() {
+		final var lEnemyMob = mMobManager.getFreePooledItem();
+
+		lEnemyMob.initialise(MobInstance.MOB_TYPE_GOBLIN, 3);
+		lEnemyMob.damagesOnCollide = false;
+		lEnemyMob.swingAttackEnabled = true;
+		lEnemyMob.swingRange = 48.f;
+		lEnemyMob.isPlayerControlled = false;
+
+		return lEnemyMob;
+	}
+
 }
+ 

@@ -186,28 +186,34 @@ public class Level extends BaseInstanceData {
 
 	}
 
-	public boolean digBlock(int pTileX, int pTileY, byte pDamageAmount) {
-		// first check block is present
-		final int lTileIndex = getLevelTileCoord(pTileX, pTileY);
-		if (lTileIndex == LEVEL_TILE_COORD_INVALID)
+	public boolean digBlock(int pTileCoord, byte pDamageAmount) {
+		if (pTileCoord < 0 || pTileCoord >= GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH)
 			return false;
 
 		boolean wasBlockRemoved = false;
 
 		// then deduct damage
-		byte lBlockHealth = mLevelBlockHealth[lTileIndex];
+		byte lBlockHealth = mLevelBlockHealth[pTileCoord];
 
 		lBlockHealth -= pDamageAmount;
 		if (lBlockHealth < 0) {
 			lBlockHealth = 0;
-			mLevelBlockIndices[lTileIndex] = LEVEL_TILE_INDEX_AIR;
+			mLevelBlockIndices[pTileCoord] = LEVEL_TILE_INDEX_AIR;
 			wasBlockRemoved = true;
 
 		}
 
-		mLevelBlockHealth[lTileIndex] = lBlockHealth;
+		mLevelBlockHealth[pTileCoord] = lBlockHealth;
 
 		return wasBlockRemoved;
+	}
+
+	public boolean digBlock(int pTileX, int pTileY, byte pDamageAmount) {
+		final int lTileIndex = getLevelTileCoord(pTileX, pTileY);
+		if (lTileIndex == LEVEL_TILE_COORD_INVALID)
+			return false;
+
+		return digBlock(lTileIndex, pDamageAmount);
 
 	}
 

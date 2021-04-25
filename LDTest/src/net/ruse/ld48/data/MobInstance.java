@@ -10,6 +10,7 @@ public class MobInstance extends CellEntity {
 
 	public static final String MOB_TYPE_DWARF = "DWARF";
 	public static final String MOB_TYPE_GOBLIN = "GOBLIN";
+	public static final String MOB_TYPE_SPIDER = "SPIDER";
 
 	// --------------------------------------
 	// Constants
@@ -98,22 +99,6 @@ public class MobInstance extends CellEntity {
 
 		if (inputCooldownTimer > 0.0f)
 			inputCooldownTimer -= pCore.gameTime().elapsedTimeMilli();
-
-	}
-
-	public void setPosition(float pWorldPositionX, float pWorldPositionY) {
-
-		worldPositionX = pWorldPositionX;
-		worldPositionY = pWorldPositionY;
-
-		cellX = (int) (worldPositionX / GameConstants.BLOCK_SIZE);
-		cellY = (int) (worldPositionY / GameConstants.BLOCK_SIZE);
-
-		fractionX = worldPositionX - (cellX * GameConstants.BLOCK_SIZE);
-		fractionY = worldPositionY - (cellY * GameConstants.BLOCK_SIZE);
-
-		velocityX = 0.f;
-		velocityY = 0.f;
 
 	}
 
