@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
+import net.ruse.ld48.data.Level;
 import net.ruse.ld48.data.MobInstance;
 
 public class PlayerController extends BaseController {
@@ -19,6 +20,7 @@ public class PlayerController extends BaseController {
 	// Variables
 	// --------------------------------------
 
+	private LevelController mLevelController;
 	private ItemController mItemController;
 	private MobInstance mPlayerMobInstance;
 
@@ -56,6 +58,7 @@ public class PlayerController extends BaseController {
 	@Override
 	public void initialize(LintfordCore pCore) {
 		mItemController = (ItemController) pCore.controllerManager().getControllerByNameRequired(ItemController.CONTROLLER_NAME, entityGroupID());
+		mLevelController = (LevelController) pCore.controllerManager().getControllerByNameRequired(LevelController.CONTROLLER_NAME, entityGroupID());
 
 	}
 
@@ -82,7 +85,20 @@ public class PlayerController extends BaseController {
 			final float lSignum = mPlayerMobInstance.isLeftFacing ? -1.f : 1.f;
 
 			if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
-				mItemController.addTnt(lWorldPositionX + lSignum * 32.f, lWorldPositionY, 0.f, -.01f);
+				final var lLevel = mLevelController.level();
+				final int lPlayerMobTileCoord = lLevel.getLevelTileCoord(mPlayerMobInstance.cellX, mPlayerMobInstance.cellY);
+				boolean lIsAdjacentBlock = false;
+				if (lSignum < 0.f) { // left
+					if (lLevel.getLevelBlockType(lLevel.getLeftBlockIndex(lPlayerMobTileCoord)) != Level.LEVEL_TILE_INDEX_AIR) {
+						lIsAdjacentBlock = true;
+					}
+				} else {
+					if (lLevel.getLevelBlockType(lLevel.getRightBlockIndex(lPlayerMobTileCoord)) != Level.LEVEL_TILE_INDEX_AIR) {
+						lIsAdjacentBlock = true;
+					}
+				}
+				final float lOffsetX = lIsAdjacentBlock ? 0.f : lSignum * 32.f;
+				mItemController.addTnt(lWorldPositionX + lOffsetX, lWorldPositionY, 0.f, -.01f);
 
 			} else {
 				mItemController.addTnt(lWorldPositionX, lWorldPositionY, lSignum * .15f, -.2f);
