@@ -12,7 +12,6 @@ public class Level extends BaseInstanceData {
 
 	public static final int LEVEL_TILE_INDEX_AIR = 0;
 	public static final int LEVEL_TILE_INDEX_DIRT = 1;
-	public static final int LEVEL_TILE_INDEX_DIRT_TOP = 5;
 	public static final int LEVEL_TILE_INDEX_STONE = 2;
 	public static final int LEVEL_TILE_INDEX_ENTRY = 3;
 	public static final int LEVEL_TILE_INDEX_EXIT = 4;
@@ -39,6 +38,10 @@ public class Level extends BaseInstanceData {
 
 	public int[] levelBlocks() {
 		return mLevelBlockIndices;
+	}
+
+	public int getLevelBlockType(int pLevelTileCoord) {
+		return mLevelBlockIndices[pLevelTileCoord];
 	}
 
 	public int getLevelBlockType(int pTileX, int pTileY) {
@@ -113,8 +116,8 @@ public class Level extends BaseInstanceData {
 				final int lTileCoord = getLevelTileCoord(x, lFloorHeight);
 				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
 					continue;
-				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT_TOP;
-				mLevelBlockIndices[lTileCoord + GameConstants.LEVEL_TILES_WIDE] = LEVEL_TILE_INDEX_DIRT;
+				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+
 			}
 
 			{

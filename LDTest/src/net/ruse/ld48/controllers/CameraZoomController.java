@@ -22,6 +22,12 @@ public class CameraZoomController extends BaseController {
 
 	private final int mTargetPixelsWide = 12 * GameConstants.BLOCK_SIZE;
 
+	private float mTargetCameraZoom;
+
+	public float targetCameraZoom() {
+		return mTargetCameraZoom;
+	}
+
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
@@ -63,9 +69,9 @@ public class CameraZoomController extends BaseController {
 		super.update(pCore);
 
 		final float lCameraWidth = mGameCamera.windowWidth();
-		final float lTargetZoomFactor = lCameraWidth / mTargetPixelsWide;
+		mTargetCameraZoom = lCameraWidth / mTargetPixelsWide;
 
-		mGameCamera.setZoomFactor(lTargetZoomFactor);
+		mGameCamera.setZoomFactor(mTargetCameraZoom);
 
 	}
 

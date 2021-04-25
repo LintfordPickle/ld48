@@ -2,7 +2,7 @@
   "outputDataFilename": "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\res\\spritesheets\\spritesheetMobs.json",
   "outputImageFilename": "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\res\\textures\\textureMobs.png",
   "workingDirectory": "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs",
-  "spriteSheetName": "SPRITESHEET_",
+  "spriteSheetName": "SPRITESHEET_MOBS",
   "textureName": "TEXTURE_",
   "sortMode": "Area",
   "borderPadding": 0,
@@ -12,9 +12,9 @@
   "allowRotations": false,
   "spritePadding": 0,
   "textureWidthMax": 256,
-  "textureWidthActual": 128,
+  "textureWidthActual": 256,
   "textureHeightMax": 256,
-  "textureHeightActual": 160,
+  "textureHeightActual": 256,
   "forcePoTTextures": true,
   "autoSizeTexture": false,
   "itemFilenames": [
@@ -27,6 +27,11 @@
     "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\dwarf swing 02.png",
     "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\dwarf swing 03.png",
     "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\dwarf swing 04.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\dwarf walk 00.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\dwarf walk 01.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\dwarf walk 02.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\dwarf walk 03.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\dwarf walk 04.png",
     "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin idle 00.png",
     "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin idle 01.png",
     "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin idle 02.png",
@@ -35,7 +40,21 @@
     "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin swing 01.png",
     "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin swing 02.png",
     "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin swing 03.png",
-    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin swing 04.png"
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin swing 04.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin walk 00.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin walk 01.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin walk 02.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin walk 03.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\goblin walk 04.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\spider idle 00.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\spider idle 01.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\spider idle 02.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\spider idle 03.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\spider walk 00.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\spider walk 01.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\spider walk 02.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\spider walk 03.png",
+    "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\raw\\spritesheets\\mobs\\spider walk 04.png"
   ],
   "animationItems": {
     "DWARF_IDLE": {
@@ -78,6 +97,49 @@
         "GOBLIN_SWING_02",
         "GOBLIN_SWING_03",
         "GOBLIN_SWING_04"
+      ]
+    },
+    "DWARF_WALK": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "DWARF_WALK_00",
+        "DWARF_WALK_01",
+        "DWARF_WALK_02",
+        "DWARF_WALK_03",
+        "DWARF_WALK_04"
+      ]
+    },
+    "GOBLIN_WALK": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "GOBLIN_WALK_00",
+        "GOBLIN_WALK_01",
+        "GOBLIN_WALK_02",
+        "GOBLIN_WALK_03",
+        "GOBLIN_WALK_04"
+      ]
+    },
+    "SPIDER_IDLE": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "SPIDER_IDLE_00",
+        "SPIDER_IDLE_01",
+        "SPIDER_IDLE_02",
+        "SPIDER_IDLE_03"
+      ]
+    },
+    "SPIDER_WALK": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "SPIDER_WALK_00",
+        "SPIDER_WALK_01",
+        "SPIDER_WALK_02",
+        "SPIDER_WALK_03",
+        "SPIDER_WALK_04"
       ]
     }
   }

@@ -1,7 +1,7 @@
 {
-  "spriteSheetName": "SPRITESHEET_",
-  "textureName": "TEXTURE_",
-  "textureFilename": "D:\\dev\\java\\ludumdare\\ld48\\projects\\LDTest\\res\\textures\\textureMobs.png",
+  "spriteSheetName": "SPRITESHEET_MOBS",
+  "textureName": "TEXTURE_MOBS",
+  "textureFilename": "res//textures//textureMobs.png",
   "frameMap": {
     "DWARF_IDLE_00": {
       "x": 0,
@@ -48,8 +48,8 @@
       "anchorPoints": []
     },
     "DWARF_SWING_00": {
-      "x": 0,
-      "y": 32,
+      "x": 128,
+      "y": 0,
       "w": 32,
       "h": 32,
       "pivotX": 0.0,
@@ -59,8 +59,8 @@
       "anchorPoints": []
     },
     "DWARF_SWING_01": {
-      "x": 32,
-      "y": 32,
+      "x": 160,
+      "y": 0,
       "w": 32,
       "h": 32,
       "pivotX": 0.0,
@@ -70,8 +70,8 @@
       "anchorPoints": []
     },
     "DWARF_SWING_02": {
-      "x": 64,
-      "y": 32,
+      "x": 192,
+      "y": 0,
       "w": 32,
       "h": 32,
       "pivotX": 0.0,
@@ -81,8 +81,8 @@
       "anchorPoints": []
     },
     "DWARF_SWING_03": {
-      "x": 96,
-      "y": 32,
+      "x": 224,
+      "y": 0,
       "w": 32,
       "h": 32,
       "pivotX": 0.0,
@@ -93,7 +93,62 @@
     },
     "DWARF_SWING_04": {
       "x": 0,
-      "y": 64,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_WALK_00": {
+      "x": 32,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_WALK_01": {
+      "x": 64,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_WALK_02": {
+      "x": 96,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_WALK_03": {
+      "x": 128,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "DWARF_WALK_04": {
+      "x": 160,
+      "y": 32,
       "w": 32,
       "h": 32,
       "pivotX": 0.0,
@@ -103,8 +158,8 @@
       "anchorPoints": []
     },
     "GOBLIN_IDLE_00": {
-      "x": 32,
-      "y": 64,
+      "x": 192,
+      "y": 32,
       "w": 32,
       "h": 32,
       "pivotX": 0.0,
@@ -114,8 +169,8 @@
       "anchorPoints": []
     },
     "GOBLIN_IDLE_01": {
-      "x": 64,
-      "y": 64,
+      "x": 224,
+      "y": 32,
       "w": 32,
       "h": 32,
       "pivotX": 0.0,
@@ -125,7 +180,7 @@
       "anchorPoints": []
     },
     "GOBLIN_IDLE_02": {
-      "x": 96,
+      "x": 0,
       "y": 64,
       "w": 32,
       "h": 32,
@@ -136,6 +191,83 @@
       "anchorPoints": []
     },
     "GOBLIN_IDLE_03": {
+      "x": 32,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_00": {
+      "x": 64,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_01": {
+      "x": 96,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_02": {
+      "x": 128,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_03": {
+      "x": 160,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_SWING_04": {
+      "x": 192,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_WALK_00": {
+      "x": 224,
+      "y": 64,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "GOBLIN_WALK_01": {
       "x": 0,
       "y": 96,
       "w": 32,
@@ -146,7 +278,7 @@
       "scaleY": 1.0,
       "anchorPoints": []
     },
-    "GOBLIN_SWING_00": {
+    "GOBLIN_WALK_02": {
       "x": 32,
       "y": 96,
       "w": 32,
@@ -157,7 +289,7 @@
       "scaleY": 1.0,
       "anchorPoints": []
     },
-    "GOBLIN_SWING_01": {
+    "GOBLIN_WALK_03": {
       "x": 64,
       "y": 96,
       "w": 32,
@@ -168,7 +300,7 @@
       "scaleY": 1.0,
       "anchorPoints": []
     },
-    "GOBLIN_SWING_02": {
+    "GOBLIN_WALK_04": {
       "x": 96,
       "y": 96,
       "w": 32,
@@ -179,7 +311,51 @@
       "scaleY": 1.0,
       "anchorPoints": []
     },
-    "GOBLIN_SWING_03": {
+    "SPIDER_IDLE_00": {
+      "x": 128,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "SPIDER_IDLE_01": {
+      "x": 160,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "SPIDER_IDLE_02": {
+      "x": 192,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "SPIDER_IDLE_03": {
+      "x": 224,
+      "y": 96,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "SPIDER_WALK_00": {
       "x": 0,
       "y": 128,
       "w": 32,
@@ -190,8 +366,41 @@
       "scaleY": 1.0,
       "anchorPoints": []
     },
-    "GOBLIN_SWING_04": {
+    "SPIDER_WALK_01": {
       "x": 32,
+      "y": 128,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "SPIDER_WALK_02": {
+      "x": 64,
+      "y": 128,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "SPIDER_WALK_03": {
+      "x": 96,
+      "y": 128,
+      "w": 32,
+      "h": 32,
+      "pivotX": 0.0,
+      "pivotY": 0.0,
+      "scaleX": 1.0,
+      "scaleY": 1.0,
+      "anchorPoints": []
+    },
+    "SPIDER_WALK_04": {
+      "x": 128,
       "y": 128,
       "w": 32,
       "h": 32,
@@ -243,6 +452,49 @@
         "GOBLIN_SWING_02",
         "GOBLIN_SWING_03",
         "GOBLIN_SWING_04"
+      ]
+    },
+    "DWARF_WALK": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "DWARF_WALK_00",
+        "DWARF_WALK_01",
+        "DWARF_WALK_02",
+        "DWARF_WALK_03",
+        "DWARF_WALK_04"
+      ]
+    },
+    "GOBLIN_WALK": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "GOBLIN_WALK_00",
+        "GOBLIN_WALK_01",
+        "GOBLIN_WALK_02",
+        "GOBLIN_WALK_03",
+        "GOBLIN_WALK_04"
+      ]
+    },
+    "SPIDER_IDLE": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "SPIDER_IDLE_00",
+        "SPIDER_IDLE_01",
+        "SPIDER_IDLE_02",
+        "SPIDER_IDLE_03"
+      ]
+    },
+    "SPIDER_WALK": {
+      "loopAnimation": true,
+      "frameDuration": 100,
+      "animationSprites": [
+        "SPIDER_WALK_00",
+        "SPIDER_WALK_01",
+        "SPIDER_WALK_02",
+        "SPIDER_WALK_03",
+        "SPIDER_WALK_04"
       ]
     }
   }

@@ -3,6 +3,8 @@ package net.ruse.ld48.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Math;
+
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.controllers.core.particles.ParticleFrameworkController;
@@ -255,14 +257,19 @@ public class MobController extends BaseController {
 			return;
 		}
 
-		if (pMobInstance.worldPositionX - 16.f < lPlayerMobInstance.worldPositionX) {
-			pMobInstance.velocityX += 0.005f;
+		// walk towards player if visible on same layer
+		if (Math.abs(lPlayerMobInstance.cellX) - Math.abs(pMobInstance.cellX) < 1) {
+			if (pMobInstance.worldPositionX - 16.f < lPlayerMobInstance.worldPositionX) {
+				pMobInstance.velocityX += 0.005f;
+			}
+
+			if (pMobInstance.worldPositionX + 16.f > lPlayerMobInstance.worldPositionX) {
+				pMobInstance.velocityX -= 0.005f;
+			}
+
 		}
 
-		if (pMobInstance.worldPositionX + 16.f > lPlayerMobInstance.worldPositionX) {
-			pMobInstance.velocityX -= 0.005f;
-		}
-
+		// start attack if close enough to player
 		if (lDistSq < 32.f * 32.f)
 			pMobInstance.swingingFlag = true;
 		else

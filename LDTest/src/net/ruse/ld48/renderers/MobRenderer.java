@@ -2,7 +2,6 @@ package net.ruse.ld48.renderers;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.renderers.BaseRenderer;
@@ -16,6 +15,8 @@ public class MobRenderer extends BaseRenderer {
 	// --------------------------------------
 
 	public static final String RENDERER_NAME = "Mob Renderer";
+
+	private static final float FULL_FLASH_DUR = 150;
 
 	// --------------------------------------
 	// Variables
@@ -80,8 +81,12 @@ public class MobRenderer extends BaseRenderer {
 			final var lMobSpriteInstance = lMobInstance.currentSprite;
 
 			String lCurrentAnimationName = lMobInstance.mobTypeName() + "_IDLE";
+
 			if (lMobInstance.diggingFlag || lMobInstance.swingingFlag) {
 				lCurrentAnimationName = lMobInstance.mobTypeName() + "_SWING";
+
+			} else if (Math.abs(lMobInstance.velocityX) > 0.002f) {
+				lCurrentAnimationName = lMobInstance.mobTypeName() + "_WALK";
 
 			}
 
@@ -91,9 +96,11 @@ public class MobRenderer extends BaseRenderer {
 					lMobInstance.mCurrentAnimationName = lCurrentAnimationName;
 
 				}
-				continue;
 
 			}
+
+			if (lMobSpriteInstance == null)
+				continue;
 
 			lMobSpriteInstance.setCenterPosition(lMobX, lMobY);
 			lMobSpriteInstance.update(pCore);
@@ -101,7 +108,7 @@ public class MobRenderer extends BaseRenderer {
 			final float lMobWidth = lMobInstance.currentSprite.width();
 
 			var lTintColor = ColorConstants.WHITE;
-			if (!lMobInstance.isDamageCooldownElapsed() && lMobInstance.damageCooldownTimer % 200 < 100) {
+			if (!lMobInstance.isDamageCooldownElapsed() && lMobInstance.damageCooldownTimer % FULL_FLASH_DUR < FULL_FLASH_DUR * .5f) {
 				lTintColor = ColorConstants.getColor(100, 100, 100, 1);
 			}
 

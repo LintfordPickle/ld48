@@ -124,9 +124,9 @@ public class MobInstance extends CellEntity {
 		health -= pAmt;
 
 		if (isPlayerControlled)
-			damageCooldownTimer = 1250.f;
+			damageCooldownTimer = 1000.f;
 		else {
-			damageCooldownTimer = 250.f;
+			damageCooldownTimer = 200.f;
 		}
 
 	}
