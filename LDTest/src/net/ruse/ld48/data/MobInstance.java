@@ -41,6 +41,8 @@ public class MobInstance extends CellEntity {
 	public int health;
 	public float damageCooldownTimer;
 
+	public float jumpVelocity;
+
 	public float attackPointWorldX;
 	public float attackPointWorldY;
 	public float animationTimeSpeedMod = RandomNumbers.random(0.95f, 1.05f);

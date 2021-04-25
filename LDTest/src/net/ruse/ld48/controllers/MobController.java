@@ -38,6 +38,7 @@ public class MobController extends BaseController {
 	private MobManager mMobManager;
 	private final List<MobInstance> mMobInstancesToUpdate = new ArrayList<>();
 
+	private GameStateController mGameStateController;
 	private PlayerController mPlayerController;
 	private CameraFollowController mCameraFollowController;
 	private LevelController mLevelController;
@@ -81,6 +82,7 @@ public class MobController extends BaseController {
 		mPlayerController = (PlayerController) pCore.controllerManager().getControllerByNameRequired(PlayerController.CONTROLLER_NAME, entityGroupID());
 		mParticleFrameworkController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, entityGroupID());
 		mCameraFollowController = (CameraFollowController) pCore.controllerManager().getControllerByNameRequired(CameraFollowController.CONTROLLER_NAME, entityGroupID());
+		mGameStateController = (GameStateController) pCore.controllerManager().getControllerByNameRequired(GameStateController.CONTROLLER_NAME, entityGroupID());
 
 		mBloodBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_BLOOD");
 		mDustBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DUST");
@@ -120,7 +122,6 @@ public class MobController extends BaseController {
 			lMobInstance.update(pCore);
 
 			if (lMobInstance.swingingFlag && lMobInstance.isInputCooldownElapsed()) {
-
 				// calculate the point of the attack (in world space)
 				final int lSignum = lMobInstance.isLeftFacing ? -1 : 1;
 
@@ -131,7 +132,7 @@ public class MobController extends BaseController {
 					lMobInstance.attackPointWorldX = lMobInstance.worldPositionX + 24.f * lSignum;
 					lMobInstance.attackPointWorldY = lMobInstance.worldPositionY;
 
-					if (lMobInstance == lOtherMobInstance || !lOtherMobInstance.swingAttackEnabled)
+					if (lMobInstance == lOtherMobInstance /* || !lOtherMobInstance.swingAttackEnabled */)
 						continue;
 
 					lAnyoneHit = updateMobAttackCollisions(pCore, lLevel, lMobInstance, lOtherMobInstance) || lAnyoneHit;
@@ -173,7 +174,7 @@ public class MobController extends BaseController {
 
 		// gravity
 		pMobInstance.velocityY += 0.0096f;
-		pMobInstance.velocityY = MathHelper.clamp(pMobInstance.velocityY, -0.2f, 0.4f);
+		pMobInstance.velocityY = MathHelper.clamp(pMobInstance.velocityY, -0.3f, 0.4f);
 		pMobInstance.velocityX = MathHelper.clamp(pMobInstance.velocityX, -0.05f, 0.05f);
 
 		// don't change face when in combat
@@ -299,7 +300,7 @@ public class MobController extends BaseController {
 				if (pMobInstance.groundFlag) {
 					final int lMobTileCoord = lLevel.getLevelTileCoord(pMobInstance.cellX, pMobInstance.cellY);
 					if (lLevel.getLevelBlockType(lLevel.getRightBlockIndex(lMobTileCoord)) != 0) {
-						pMobInstance.velocityY = -.21f;
+						pMobInstance.velocityY = pMobInstance.jumpVelocity;
 						pMobInstance.groundFlag = false;
 
 					}
@@ -314,7 +315,7 @@ public class MobController extends BaseController {
 				if (pMobInstance.groundFlag) {
 					final int lMobTileCoord = lLevel.getLevelTileCoord(pMobInstance.cellX, pMobInstance.cellY);
 					if (lLevel.getLevelBlockType(lLevel.getLeftBlockIndex(lMobTileCoord)) != 0) {
-						pMobInstance.velocityY = -.21f;
+						pMobInstance.velocityY = pMobInstance.jumpVelocity;
 						pMobInstance.groundFlag = false;
 
 					}
@@ -442,7 +443,7 @@ public class MobController extends BaseController {
 
 	// --------------------------------------
 
-	public void startNewGame(long pSeed) {
+	public void startNewGame(int pLevelNumber) {
 		mobManager().mobInstances().clear();
 
 		addPlayerMob();
@@ -478,7 +479,7 @@ public class MobController extends BaseController {
 			if (lBlockType != Level.LEVEL_TILE_INDEX_AIR)
 				continue;
 
-			if (RandomNumbers.getRandomChance(40))
+			if (RandomNumbers.getRandomChance(mGameStateController.mobTileDiscardChance()))
 				continue;
 
 			MobInstance lEnemyMob = null;
@@ -510,10 +511,11 @@ public class MobController extends BaseController {
 	private MobInstance getSpiderMob() {
 		final var lEnemyMob = mMobManager.getFreePooledItem();
 
-		lEnemyMob.initialise(MobInstance.MOB_TYPE_SPIDER, 1);
+		lEnemyMob.initialise(MobInstance.MOB_TYPE_SPIDER, 2);
 		lEnemyMob.damagesOnCollide = true;
 		lEnemyMob.swingAttackEnabled = false;
 		lEnemyMob.swingRange = 32.f;
+		lEnemyMob.jumpVelocity = -.27f;
 		lEnemyMob.isPlayerControlled = false;
 
 		return lEnemyMob;
@@ -526,6 +528,7 @@ public class MobController extends BaseController {
 		lEnemyMob.damagesOnCollide = false;
 		lEnemyMob.swingAttackEnabled = true;
 		lEnemyMob.swingRange = 48.f;
+		lEnemyMob.jumpVelocity = -.21f;
 		lEnemyMob.isPlayerControlled = false;
 
 		return lEnemyMob;

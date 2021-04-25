@@ -179,7 +179,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 		mLevel.loadLevel();
 	}
 
-	public void startNewGame(long pSeed) {
+	public void startNewGame(int pLevelNumber) {
 		mLevel.loadLevel();
 
 	}

@@ -5,7 +5,6 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
-import net.lintford.library.core.maths.RandomNumbers;
 
 public class GameStateController extends BaseController {
 
@@ -31,13 +30,24 @@ public class GameStateController extends BaseController {
 	private float mTnTCooldownTimer;
 	public static final float TNT_COOLDOWN_TIME = 2500;
 
-	private int mCurrentGold;
+	private int mCurrentLevel;
 	private int mTargetGold;
+	private float mMobTileDiscardChance;
+
+	private int mCurrentGold;
 	private boolean mPlayerReachExit;
 
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public float mobTileDiscardChance() {
+		return mMobTileDiscardChance;
+	}
+
+	public int levelNumber() {
+		return mCurrentLevel;
+	}
 
 	public boolean canThrowTnt() {
 		return mTnTCooldownTimer <= 0;
@@ -127,7 +137,7 @@ public class GameStateController extends BaseController {
 	public boolean handleInput(LintfordCore pCore) {
 
 		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_R)) {
-			setupNewGame(10L);
+			setupNewGame(mCurrentLevel);
 
 		}
 
@@ -150,14 +160,31 @@ public class GameStateController extends BaseController {
 	// Methods
 	// --------------------------------------
 
-	public void setupNewGame(long pSeed) {
-		RandomNumbers.reseed(pSeed);
+	public void setupNewGame(int pLevelNumber) {
+		mCurrentLevel = pLevelNumber;
 		mCurrentGold = 0;
-		mTargetGold = 120;
 
-		mLevelController.startNewGame(pSeed);
-		mMobController.startNewGame(pSeed);
-		mItemController.startNewGame(pSeed);
+		switch (pLevelNumber) {
+		case 1:
+			mTargetGold = 120;
+			mMobTileDiscardChance = 80;
+			break;
+
+		default:
+		case 2:
+			mTargetGold = 200;
+			mMobTileDiscardChance = 65;
+			break;
+
+		case 3:
+			mTargetGold = 250;
+			mMobTileDiscardChance = 50F;
+			break;
+		}
+
+		mLevelController.startNewGame(mCurrentLevel);
+		mMobController.startNewGame(mCurrentLevel);
+		mItemController.startNewGame(mCurrentLevel);
 
 		mIsGameStarted = true;
 		mHasGameEnded = false;

@@ -58,13 +58,14 @@ public class GameScreen extends BaseGameScreen {
 	private ParticleFrameworkRenderer mParticleFrameworkRenderer;
 	private HudRenderer mHudRenderer;
 
+	private int mLevelNumber;
 	private boolean mShowHelpOnOpen;
 
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public GameScreen(ScreenManager pScreenManager, boolean pShowHelpOnOpen) {
+	public GameScreen(ScreenManager pScreenManager, boolean pShowHelpOnOpen, int pLevelNumber) {
 		super(pScreenManager);
 
 		mLevel = new Level();
@@ -73,6 +74,7 @@ public class GameScreen extends BaseGameScreen {
 		mParticleData = new ParticleFrameworkData();
 		mShowHelpOnOpen = pShowHelpOnOpen;
 
+		mLevelNumber = pLevelNumber;
 		mShowInBackground = true;
 
 	}
@@ -114,7 +116,7 @@ public class GameScreen extends BaseGameScreen {
 	public void handleInput(LintfordCore pCore) {
 
 		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
-			screenManager.addScreen(new PauseScreen(screenManager, "paused"));
+			screenManager.addScreen(new PauseScreen(screenManager, "paused", mLevelNumber));
 
 		}
 
@@ -130,13 +132,13 @@ public class GameScreen extends BaseGameScreen {
 			return;
 
 		if (mGameStateController.hasPlayerWon() && !pCoveredByOtherScreen) {
-			screenManager.addScreen(new GameLostScreen(screenManager, "You Won!"));
+			screenManager.addScreen(new GameLostScreen(screenManager, "You Won!", mLevelNumber));
 
 			mGameStateController.endGame();
 		}
 
 		else if (mGameStateController.isPlayerDead() && !pCoveredByOtherScreen) {
-			screenManager.addScreen(new GameLostScreen(screenManager, "You Died!"));
+			screenManager.addScreen(new GameLostScreen(screenManager, "You Died", mLevelNumber));
 
 			mGameStateController.endGame();
 
@@ -204,7 +206,7 @@ public class GameScreen extends BaseGameScreen {
 	// REFACTOR
 
 	private void startNewGame() {
-		mGameStateController.setupNewGame(DEBUG_TARGET_GOLD);
+		mGameStateController.setupNewGame(mLevelNumber);
 
 	}
 

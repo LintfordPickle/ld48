@@ -336,7 +336,7 @@ public class ItemController extends BaseController {
 
 	}
 
-	public void startNewGame(long pSeed) {
+	public void startNewGame(int pLevelNumber) {
 		itemManager().instances().clear();
 
 		// level exit

@@ -30,8 +30,12 @@ public class GameLostScreen extends MenuScreen {
 	// Constructor
 	// --------------------------------------
 
-	public GameLostScreen(ScreenManager pScreenManager, String pMenuTitle) {
-		super(pScreenManager, pMenuTitle);
+	private int mLevelNumber;
+
+	public GameLostScreen(ScreenManager pScreenManager, String pWindowTitle, int pLevelNumber) {
+		super(pScreenManager, pWindowTitle);
+
+		mLevelNumber = pLevelNumber;
 
 		final var lListLayout = new ListLayout(this);
 		lListLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
@@ -98,7 +102,7 @@ public class GameLostScreen extends MenuScreen {
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
 		case BUTTON_RESTART:
-			LoadingScreen.load(screenManager, false, new GameScreen(screenManager, false));
+			LoadingScreen.load(screenManager, false, new GameScreen(screenManager, false, mLevelNumber));
 			break;
 
 		case BUTTON_EXIT_TO_MENU:

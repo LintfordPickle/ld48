@@ -24,14 +24,17 @@ public class PauseScreen extends MenuScreen {
 	// Variables
 	// --------------------------------------
 
+	private int mLevelNumber;
 	protected Texture mUITexture;
 
 	// --------------------------------------
 	// Constructor
 	// --------------------------------------
 
-	public PauseScreen(ScreenManager pScreenManager, String pMenuTitle) {
+	public PauseScreen(ScreenManager pScreenManager, String pMenuTitle, int pLevelNumber) {
 		super(pScreenManager, pMenuTitle);
+
+		mLevelNumber = pLevelNumber;
 
 		final var lListLayout = new ListLayout(this);
 		lListLayout.layoutFillType(FILLTYPE.TAKE_WHATS_NEEDED);
@@ -98,7 +101,7 @@ public class PauseScreen extends MenuScreen {
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
 		case BUTTON_RESTART:
-			LoadingScreen.load(screenManager, false, new GameScreen(screenManager, false));
+			LoadingScreen.load(screenManager, false, new GameScreen(screenManager, false, mLevelNumber));
 			break;
 
 		case BUTTON_EXIT_TO_MENU:
