@@ -133,12 +133,12 @@ public class HudRenderer extends BaseRenderer {
 
 		final float lCooldownFullWidth = 62.f;
 		final float lCooldownWidth = mGameStateController.tntCooldownTimer() / GameStateController.TNT_COOLDOWN_TIME;
-		
+
 		final float lActualWidth = lCooldownFullWidth - (lCooldownWidth * lCooldownFullWidth);
-		
+
 		lTextureBatch.draw(mHudTexture, 0, 64, 64, 16, lHudRect.left() + 296, lHudRect.top() + lTopWindowPadding + 16f, 64.f * (lTargetZoomFactor), 16.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);
-		lTextureBatch.draw(mHudTexture, 0, 80, lActualWidth, 16, lHudRect.left() + 296, lHudRect.top() + lTopWindowPadding + 16f, lActualWidth * (lTargetZoomFactor),
-				16.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);
+		lTextureBatch.draw(mHudTexture, 0, 80, lActualWidth, 16, lHudRect.left() + 296, lHudRect.top() + lTopWindowPadding + 16f, lActualWidth * (lTargetZoomFactor), 16.f * (lTargetZoomFactor), -0.1f,
+				ColorConstants.WHITE);
 
 		// Coins
 		lTextureBatch.draw(mHudTexture, 0, 32, 32, 32, lHudRect.left() + 32, lHudRect.top() + lTopWindowPadding, 32.f * (lTargetZoomFactor), 32.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);

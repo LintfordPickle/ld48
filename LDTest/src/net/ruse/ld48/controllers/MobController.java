@@ -30,6 +30,8 @@ public class MobController extends BaseController {
 	private static final int DEBUG_PLAYER_HEALTH = 4;
 	private static final int DEBUG_NUM_ENEMIES = 6;
 
+	private static final int FALL_DAMAGE_HEIGHT = 2;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -213,7 +215,6 @@ public class MobController extends BaseController {
 		pMobInstance.groundFlag = false;
 		if (pMobInstance.fractionY > .7f && pLevel.hasCollision(pMobInstance.cellX, pMobInstance.cellY + 1)) {
 			pMobInstance.fractionY = 0.7f;
-			pMobInstance.groundFlag = true;
 
 			if (!lPrevGroundFlag) {
 				for (int i = 0; i < 5; i++) {
@@ -221,7 +222,16 @@ public class MobController extends BaseController {
 							RandomNumbers.random(-20.f, -60.f));
 
 				}
+
+				if (Math.abs(pMobInstance.cellY) - Math.abs(pMobInstance.lastGroundHeight) > FALL_DAMAGE_HEIGHT) {
+					pMobInstance.dealDamage(1, true);
+
+				}
+
 			}
+
+			pMobInstance.groundFlag = true;
+			pMobInstance.lastGroundHeight = pMobInstance.cellY;
 
 			if (Math.abs(pMobInstance.velocityX) > 0.01f && RandomNumbers.getRandomChance(33.f)) {
 				mDustBlockParticles.spawnParticle(pMobInstance.worldPositionX + RandomNumbers.random(-8.f, 8.f), pMobInstance.worldPositionY + 16.f, pMobInstance.velocityX * RandomNumbers.random(0.f, 150.f),
@@ -467,8 +477,6 @@ public class MobController extends BaseController {
 				lEnemyMob = getGoblinMob();
 				break;
 			}
-			
-			
 
 			final float lWorldPositionX = 256.f;//RandomNumbers.random(32.f, 96.f);
 			final float lWorldPositionY = 0;

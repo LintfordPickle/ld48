@@ -29,6 +29,8 @@ public class MobInstance extends CellEntity {
 	public boolean isPlayerControlled;
 
 	public boolean groundFlag;
+	public int lastGroundHeight;
+
 	public boolean swingingFlag;
 
 	public float inputCooldownTimer;
