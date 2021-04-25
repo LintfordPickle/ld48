@@ -251,7 +251,7 @@ public class ItemController extends BaseController {
 		}
 
 		final float lSignum = pItemInstance.velocityX > 0 ? 1.f : -1.f;
-		pItemInstance.rotationInRadians += pCore.gameTime().elapsedTimeMilli() * 0.01f * lSignum;
+		pItemInstance.rotationInRadians += pItemInstance.velocityX * pCore.gameTime().elapsedTimeMilli() * lSignum * .5f;
 
 		// BANG
 		if (pItemInstance.timeAlive > 2000) {
@@ -309,6 +309,9 @@ public class ItemController extends BaseController {
 	// --------------------------------------
 
 	public void addTnt(float pWorldX, float pWorldY, float pVelX, float pVelY) {
+		if (!mGameStateController.canThrowTnt())
+			return;
+
 		final var lFreeItemInstance = itemManager().getFreePooledItem();
 
 		lFreeItemInstance.setupItem(ItemManager.ITEM_TYPE_INDEX_TNT);
@@ -321,6 +324,7 @@ public class ItemController extends BaseController {
 		lFreeItemInstance.interactsWithMobs = false;
 
 		itemManager().addItemInstance(lFreeItemInstance);
+		mGameStateController.resetTntCooldown();
 
 	}
 

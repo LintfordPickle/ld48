@@ -1,5 +1,7 @@
 package net.ruse.ld48.screens;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.controllers.core.particles.ParticleFrameworkController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
@@ -107,6 +109,12 @@ public class GameScreen extends BaseGameScreen {
 
 	@Override
 	public void handleInput(LintfordCore pCore) {
+
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_ESCAPE)) {
+			screenManager.addScreen(new PauseScreen(screenManager, "paused"));
+
+		}
+
 		super.handleInput(pCore);
 
 	}
@@ -181,11 +189,11 @@ public class GameScreen extends BaseGameScreen {
 		mParticleFrameworkRenderer = new ParticleFrameworkRenderer(rendererManager, entityGroupID());
 		mParticleFrameworkRenderer.initialize(pCore);
 
-		mHudRenderer = new HudRenderer(rendererManager, entityGroupID());
-		mHudRenderer.initialize(pCore);
-
 		mItemRenderer = new ItemRenderer(rendererManager, entityGroupID());
 		mItemRenderer.initialize(pCore);
+
+		mHudRenderer = new HudRenderer(rendererManager, entityGroupID());
+		mHudRenderer.initialize(pCore);
 
 	}
 

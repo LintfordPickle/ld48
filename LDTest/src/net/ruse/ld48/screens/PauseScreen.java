@@ -11,7 +11,7 @@ import net.lintford.library.screenmanager.ScreenManagerConstants.FILLTYPE;
 import net.lintford.library.screenmanager.layouts.ListLayout;
 import net.lintford.library.screenmanager.screens.LoadingScreen;
 
-public class GameLostScreen extends MenuScreen {
+public class PauseScreen extends MenuScreen {
 
 	// --------------------------------------
 	// Constants
@@ -30,7 +30,7 @@ public class GameLostScreen extends MenuScreen {
 	// Constructor
 	// --------------------------------------
 
-	public GameLostScreen(ScreenManager pScreenManager, String pMenuTitle) {
+	public PauseScreen(ScreenManager pScreenManager, String pMenuTitle) {
 		super(pScreenManager, pMenuTitle);
 
 		final var lListLayout = new ListLayout(this);
@@ -102,7 +102,7 @@ public class GameLostScreen extends MenuScreen {
 			break;
 
 		case BUTTON_EXIT_TO_MENU:
-			// LoadingScreen.load(screenManager, false, new BackgroundScreen(screenManager), new MainMenuClientScreen(screenManager));
+			LoadingScreen.load(screenManager, false, new BackgroundScreen(screenManager), new MainMenuScreen(screenManager));
 
 			break;
 

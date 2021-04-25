@@ -9,10 +9,10 @@ import net.lintford.library.controllers.core.MouseCursorController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
-import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.ScreenManager;
-import net.ruse.ld48.screens.GameScreen;
+import net.ruse.ld48.screens.BackgroundScreen;
+import net.ruse.ld48.screens.MainMenuScreen;
 
 public class BaseGame extends LintfordCore {
 
@@ -52,16 +52,18 @@ public class BaseGame extends LintfordCore {
 	@Override
 	protected void showStartUpLogo(long pWindowHandle) {
 		// Show a mini-splash screen
-		Texture lTexture = mResourceManager.textureManager().loadTexture("TEXTURE_SPLASH", "res/textures/textureSplash.png", LintfordCore.CORE_ENTITY_GROUP_ID);
+		final var lTexture = mResourceManager.textureManager().loadTexture("TEXTURE_SPLASH", "res/textures/textureSplash.png", LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		GL11.glClearColor(0f, 0f, 0f, 1f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
-		TextureBatchPCT lTB = new TextureBatchPCT();
-		lTB.loadGLContent(mResourceManager);
-		lTB.begin(mHUD);
-		lTB.draw(lTexture, 0, 0, 640, 480, -320, -240, 640, 480, -0.1f, ColorConstants.WHITE);
-		lTB.end();
+		final var lHudRect = mHUD.boundingRectangle();
+
+		final var lTextureBatch = new TextureBatchPCT();
+		lTextureBatch.loadGLContent(mResourceManager);
+		lTextureBatch.begin(mHUD);
+		lTextureBatch.draw(lTexture, 0, 0, 640, 480, lHudRect, -0.1f, ColorConstants.WHITE);
+		lTextureBatch.end();
 
 		glfwSwapBuffers(pWindowHandle);
 
@@ -76,7 +78,8 @@ public class BaseGame extends LintfordCore {
 		lMouseController.loadCursorFromFile("default", "res//cursors//cursorDefault.png", 0, 0);
 		lMouseController.setCursor("default");
 
-		mScreenManager.addScreen(new GameScreen(mScreenManager));
+		mScreenManager.addScreen(new BackgroundScreen(mScreenManager));
+		mScreenManager.addScreen(new MainMenuScreen(mScreenManager));
 
 		mScreenManager.initialize();
 

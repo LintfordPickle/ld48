@@ -28,6 +28,9 @@ public class GameStateController extends BaseController {
 	private boolean mIsGameStarted = false;
 	private boolean mHasGameEnded = false;
 
+	private float mTnTCooldownTimer;
+	public static final float TNT_COOLDOWN_TIME = 2500;
+
 	private int mCurrentGold;
 	private int mTargetGold;
 	private boolean mPlayerReachExit;
@@ -35,6 +38,18 @@ public class GameStateController extends BaseController {
 	// --------------------------------------
 	// Properties
 	// --------------------------------------
+
+	public boolean canThrowTnt() {
+		return mTnTCooldownTimer <= 0;
+	}
+
+	public float tntCooldownTimer() {
+		return mTnTCooldownTimer;
+	}
+
+	public void resetTntCooldown() {
+		mTnTCooldownTimer = TNT_COOLDOWN_TIME;
+	}
 
 	public boolean isGameStarted() {
 		return mIsGameStarted;
@@ -123,6 +138,11 @@ public class GameStateController extends BaseController {
 	@Override
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
+
+		if (mTnTCooldownTimer > 0) {
+			mTnTCooldownTimer -= pCore.gameTime().elapsedTimeMilli();
+
+		}
 
 	}
 

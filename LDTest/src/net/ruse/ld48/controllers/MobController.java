@@ -209,10 +209,19 @@ public class MobController extends BaseController {
 
 		}
 
+		boolean lPrevGroundFlag = pMobInstance.groundFlag;
 		pMobInstance.groundFlag = false;
 		if (pMobInstance.fractionY > .7f && pLevel.hasCollision(pMobInstance.cellX, pMobInstance.cellY + 1)) {
 			pMobInstance.fractionY = 0.7f;
 			pMobInstance.groundFlag = true;
+
+			if (!lPrevGroundFlag) {
+				for (int i = 0; i < 5; i++) {
+					mDustBlockParticles.spawnParticle(pMobInstance.worldPositionX + RandomNumbers.random(-8.f, 8.f), pMobInstance.worldPositionY + 16.f, RandomNumbers.random(-100.f, 100.f),
+							RandomNumbers.random(-20.f, -60.f));
+
+				}
+			}
 
 			if (Math.abs(pMobInstance.velocityX) > 0.01f && RandomNumbers.getRandomChance(33.f)) {
 				mDustBlockParticles.spawnParticle(pMobInstance.worldPositionX + RandomNumbers.random(-8.f, 8.f), pMobInstance.worldPositionY + 16.f, pMobInstance.velocityX * RandomNumbers.random(0.f, 150.f),
@@ -458,6 +467,8 @@ public class MobController extends BaseController {
 				lEnemyMob = getGoblinMob();
 				break;
 			}
+			
+			
 
 			final float lWorldPositionX = 256.f;//RandomNumbers.random(32.f, 96.f);
 			final float lWorldPositionY = 0;

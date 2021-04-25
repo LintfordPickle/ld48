@@ -107,8 +107,8 @@ public class HudRenderer extends BaseRenderer {
 		final int lPlayerHealth = mPlayerController.playerMobInstance().health;
 
 		lTextureBatch.begin(pCore.HUD());
-		lTextureBatch.draw(mHudTexture, 0, 32, 32, 32, lHudRect.left() + 32, lHudRect.top() + lTopWindowPadding, 32.f * (lTargetZoomFactor), 32.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);
 
+		// Health
 		for (int i = 0; i < lFullHeartCount; i++) {
 			final float lHeartPositionX = lHudRect.right() - (lFullHeartCount * 24.f * lTargetZoomFactor) - 32.f + (i * 24.f * lTargetZoomFactor);
 			final float lHeartPositionY = lHudRect.top() + lTopWindowPadding;
@@ -128,6 +128,20 @@ public class HudRenderer extends BaseRenderer {
 
 		}
 
+		// Tnt Cooldown
+		lTextureBatch.draw(mHudTexture, 64, 32, 32, 32, lHudRect.left() + 256, lHudRect.top() + lTopWindowPadding, 32.f * (lTargetZoomFactor), 32.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);
+
+		final float lCooldownFullWidth = 62.f;
+		final float lCooldownWidth = mGameStateController.tntCooldownTimer() / GameStateController.TNT_COOLDOWN_TIME;
+		
+		final float lActualWidth = lCooldownFullWidth - (lCooldownWidth * lCooldownFullWidth);
+		
+		lTextureBatch.draw(mHudTexture, 0, 64, 64, 16, lHudRect.left() + 296, lHudRect.top() + lTopWindowPadding + 16f, 64.f * (lTargetZoomFactor), 16.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);
+		lTextureBatch.draw(mHudTexture, 0, 80, lActualWidth, 16, lHudRect.left() + 296, lHudRect.top() + lTopWindowPadding + 16f, lActualWidth * (lTargetZoomFactor),
+				16.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);
+
+		// Coins
+		lTextureBatch.draw(mHudTexture, 0, 32, 32, 32, lHudRect.left() + 32, lHudRect.top() + lTopWindowPadding, 32.f * (lTargetZoomFactor), 32.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);
 		lTextureBatch.end();
 
 		lFontUnit.begin(pCore.HUD());
@@ -135,4 +149,5 @@ public class HudRenderer extends BaseRenderer {
 		lFontUnit.end();
 
 	}
+
 }
