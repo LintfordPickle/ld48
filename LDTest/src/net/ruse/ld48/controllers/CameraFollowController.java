@@ -7,7 +7,9 @@ import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.camera.ICamera;
 import net.lintford.library.core.entity.WorldEntity;
+import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.maths.Vector2f;
+import net.ruse.ld48.GameConstants;
 
 public class CameraFollowController extends BaseController {
 
@@ -28,6 +30,8 @@ public class CameraFollowController extends BaseController {
 	private WorldEntity mTrackedEntity;
 	private boolean mIsTrackingPlayer;
 	private Vector2f mVelocity;
+
+	private final Rectangle mLevelAreaBounds = new Rectangle();
 
 	// ---------------------------------------------
 	// Properties
@@ -63,6 +67,11 @@ public class CameraFollowController extends BaseController {
 		//
 		mGameCamera = pCamera;
 		mIsTrackingPlayer = true;
+
+		final float lWidth = GameConstants.LEVEL_TILES_WIDE * GameConstants.BLOCK_SIZE;
+		final float lHeight = GameConstants.LEVEL_TILES_HIGH * GameConstants.BLOCK_SIZE;
+
+		mLevelAreaBounds.set(0, 0, lWidth, lHeight);
 
 	}
 
@@ -128,7 +137,29 @@ public class CameraFollowController extends BaseController {
 
 		mIsTrackingPlayer = mTrackedEntity != null;
 		if (mIsTrackingPlayer) {
-			mGameCamera.setPosition(mTrackedEntity.worldPositionX, mTrackedEntity.worldPositionY);
+
+			final float lCameraHalfWidth = mGameCamera.getWidth() * 0.5f;
+			final float lCameraHalfHeight = mGameCamera.getHeight() * 0.5f;
+
+			float lCurPositionX = mTrackedEntity.worldPositionX;
+			float lCurPositionY = mTrackedEntity.worldPositionY;
+
+			if (lCurPositionX - lCameraHalfWidth < mLevelAreaBounds.left()) {
+				lCurPositionX = mLevelAreaBounds.left() + lCameraHalfWidth;
+
+			}
+
+			if (lCurPositionX + lCameraHalfWidth > mLevelAreaBounds.right()) {
+				lCurPositionX = mLevelAreaBounds.right() - lCameraHalfWidth;
+
+			}
+
+			if (lCurPositionY + lCameraHalfHeight > mLevelAreaBounds.bottom()) {
+				lCurPositionY = mLevelAreaBounds.bottom() - lCameraHalfHeight;
+
+			}
+
+			mGameCamera.setPosition(lCurPositionX, lCurPositionY);
 
 		} else {
 			// Cap

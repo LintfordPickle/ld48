@@ -98,11 +98,10 @@ public class LevelRenderer extends BaseRenderer {
 
 		for (int y = floorHeight; y < GameConstants.LEVEL_TILES_HIGH; y++) {
 
-			final float lModAmt = 1.f - (float) ((float) y / (float) GameConstants.LEVEL_TILES_HIGH);
+			final float lModAmt = 1.f - (float) ((float) (y + 5.f) / (float) GameConstants.LEVEL_TILES_HIGH);
 			final var lColorConstant = ColorConstants.getColor(lModAmt, lModAmt, lModAmt, 1.f);
 
 			for (int x = 0; x < GameConstants.LEVEL_TILES_WIDE; x++) {
-
 				if (y == floorHeight) {
 					lTextureBatch.draw(mLevelTexture, BACKGROUND_TOP_FILL_SRC_RECT, x * lBlockSize, y * lBlockSize, lBlockSize, lBlockSize, -0.01f, lColorConstant);
 

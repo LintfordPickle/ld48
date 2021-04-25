@@ -6,6 +6,7 @@ import java.util.List;
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.maths.RandomNumbers;
 import net.ruse.ld48.GameConstants;
 import net.ruse.ld48.data.ItemInstance;
 import net.ruse.ld48.data.ItemManager;
@@ -101,7 +102,8 @@ public class ItemController extends BaseController {
 			lItemInstance.timeAlive += pCore.gameTime().elapsedTimeMilli();
 			lItemInstance.flashTimer += pCore.gameTime().elapsedTimeMilli();
 
-			updateItemPhysics(pCore, lLevel, lItemInstance);
+			if (lItemInstance.physicsEnabled)
+				updateItemPhysics(pCore, lLevel, lItemInstance);
 
 			switch (lItemInstance.itemTypeIndex) {
 			case ItemManager.ITEM_TYPE_INDEX_TNT:
@@ -228,6 +230,8 @@ public class ItemController extends BaseController {
 
 		lFreeItemInstance.setupItem(ItemManager.ITEM_TYPE_INDEX_TNT);
 		lFreeItemInstance.setPosition(pWorldX, pWorldY);
+		lFreeItemInstance.isPickUpAble = false;
+		lFreeItemInstance.physicsEnabled = true;
 		lFreeItemInstance.velocityX = pVelX;
 		lFreeItemInstance.velocityY = pVelY;
 		lFreeItemInstance.radius = 8.f;
@@ -246,6 +250,24 @@ public class ItemController extends BaseController {
 
 	public void startNewGame(long pSeed) {
 		itemManager().instances().clear();
+
+		// level exit
+		{
+			final var lItemInstance = itemManager().getFreePooledItem();
+			lItemInstance.isPickUpAble = false;
+			lItemInstance.physicsEnabled = false;
+			lItemInstance.rotationInRadians = 0.f;
+			lItemInstance.radius = 16.f;
+			lItemInstance.isFlashOn = false;
+			lItemInstance.setupItem(ItemManager.ITEM_TYPE_INDEX_LEVEL_EXIT);
+
+			final int lExitTileWorldX = RandomNumbers.random(1, GameConstants.LEVEL_TILES_WIDE - 2) * GameConstants.BLOCK_SIZE + (int) (GameConstants.BLOCK_SIZE * 0.5f);
+			final int lExitTileWorldY = (GameConstants.LEVEL_TILES_HIGH - 2) * GameConstants.BLOCK_SIZE + (int) (GameConstants.BLOCK_SIZE * 0.5f);
+			lItemInstance.setPosition(lExitTileWorldX, lExitTileWorldY);
+
+			itemManager().addItemInstance(lItemInstance);
+
+		}
 
 	}
 

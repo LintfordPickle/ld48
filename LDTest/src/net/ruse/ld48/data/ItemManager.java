@@ -19,6 +19,8 @@ public class ItemManager extends PoolInstanceManager<ItemInstance> {
 	public static final int ITEM_TYPE_INDEX_GOLD = 2;
 	public static final int ITEM_TYPE_INDEX_HEALTH = 3;
 
+	public static final int ITEM_TYPE_INDEX_LEVEL_EXIT = 100;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------

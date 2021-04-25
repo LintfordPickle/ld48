@@ -303,7 +303,12 @@ public class MobController extends BaseController {
 		final float lDistSq = Vector2f.distance2(lMobAX, lMobAY, lMobBX, lMobBY);
 
 		if (lDistSq <= lMaxDist * lMaxDist) {
-			mBloodBlockParticles.spawnParticle(lMobBX, lMobBY, RandomNumbers.random(-150.f, 150.f), RandomNumbers.random(-200.f, -50.f));
+			final int lNumBloodSplats = RandomNumbers.random(0, 5);
+			for (int i = 0; i < lNumBloodSplats; i++) {
+				mBloodBlockParticles.spawnParticle(lMobBX, lMobBY, RandomNumbers.random(-150.f, 150.f), RandomNumbers.random(-200.f, -50.f));
+
+			}
+
 			pReceivingMob.dealDamage(1, true);
 
 			return true;

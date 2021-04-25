@@ -8,6 +8,7 @@ import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 import net.ruse.ld48.controllers.ItemController;
+import net.ruse.ld48.data.ItemManager;
 
 public class ItemRenderer extends BaseRenderer {
 
@@ -20,7 +21,9 @@ public class ItemRenderer extends BaseRenderer {
 	private static final float FULL_FLASH_DUR = 150;
 
 	private static final Rectangle TNT_SRC_RECT = new Rectangle(0, 0, 32, 32);
-	private static final Rectangle GOLD_SRC_RECT = new Rectangle(32, 0, 32, 32);
+	private static final Rectangle TNT_PICKUP_SRC_RECT = new Rectangle(32, 0, 32, 32);
+	private static final Rectangle EXIT_SRC_RECT = new Rectangle(64, 0, 32, 32);
+	private static final Rectangle GOLD_SRC_RECT = new Rectangle(96, 0, 32, 32);
 
 	// --------------------------------------
 	// Variables
@@ -83,12 +86,28 @@ public class ItemRenderer extends BaseRenderer {
 			final float lItemRadius = lItemInstance.radius;
 
 			var lTintColor = ColorConstants.WHITE;
-			if (!lItemInstance.isFlashOn) {
+			if (lItemInstance.isFlashOn) {
 				lTintColor = ColorConstants.getColor(100, 100, 100, 1);
 			}
 
+			Rectangle lSrcRect = null;
+			switch (lItemInstance.itemTypeIndex) {
+			case ItemManager.ITEM_TYPE_INDEX_TNT:
+				lSrcRect = TNT_SRC_RECT;
+				break;
+
+			case ItemManager.ITEM_TYPE_INDEX_TNT_PICKUP:
+				lSrcRect = TNT_PICKUP_SRC_RECT;
+				break;
+
+			case ItemManager.ITEM_TYPE_INDEX_LEVEL_EXIT:
+				lSrcRect = EXIT_SRC_RECT;
+				break;
+
+			}
+
 			final float lRot = lItemInstance.rotationInRadians;
-			lTextureBatch.drawAroundCenter(mItemTexture, TNT_SRC_RECT, worldPosX, worldPosY, lItemRadius * 2, lItemRadius * 2.f, -0.1f, lRot, 0.0f, 0.0f, 1.f, lTintColor);
+			lTextureBatch.drawAroundCenter(mItemTexture, lSrcRect, worldPosX, worldPosY, lItemRadius * 2, lItemRadius * 2.f, -0.1f, lRot, 0.0f, 0.0f, 1.f, lTintColor);
 
 		}
 
