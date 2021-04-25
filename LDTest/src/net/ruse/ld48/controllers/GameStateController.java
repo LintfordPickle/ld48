@@ -1,8 +1,11 @@
 package net.ruse.ld48.controllers;
 
+import org.lwjgl.glfw.GLFW;
+
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.maths.RandomNumbers;
 
 public class GameStateController extends BaseController {
 
@@ -17,6 +20,10 @@ public class GameStateController extends BaseController {
 	// --------------------------------------
 
 	private PlayerController mPlayerController;
+
+	private LevelController mLevelController;
+	private ItemController mItemController;
+	private MobController mMobController;
 
 	private boolean mIsGameStarted = false;
 	private boolean mHasGameEnded = false;
@@ -76,11 +83,27 @@ public class GameStateController extends BaseController {
 	public void initialize(LintfordCore pCore) {
 		mPlayerController = (PlayerController) pCore.controllerManager().getControllerByNameRequired(PlayerController.CONTROLLER_NAME, entityGroupID());
 
+		mLevelController = (LevelController) pCore.controllerManager().getControllerByNameRequired(LevelController.CONTROLLER_NAME, entityGroupID());
+		mItemController = (ItemController) pCore.controllerManager().getControllerByNameRequired(ItemController.CONTROLLER_NAME, entityGroupID());
+		mMobController = (MobController) pCore.controllerManager().getControllerByNameRequired(MobController.CONTROLLER_NAME, entityGroupID());
+
 	}
 
 	@Override
 	public void unload() {
 		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean handleInput(LintfordCore pCore) {
+
+		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_R)) {
+			setupNewGame(10L);
+
+		}
+
+		return super.handleInput(pCore);
 
 	}
 
@@ -94,8 +117,13 @@ public class GameStateController extends BaseController {
 	// Methods
 	// --------------------------------------
 
-	public void setupNewGame(int pTargetGold) {
-		mTargetGold = pTargetGold;
+	public void setupNewGame(long pSeed) {
+		RandomNumbers.reseed(pSeed);
+		mTargetGold = RandomNumbers.random(400, 600);
+
+		mLevelController.startNewGame(pSeed);
+		mMobController.startNewGame(pSeed);
+		mItemController.startNewGame(pSeed);
 
 		mIsGameStarted = true;
 		mHasGameEnded = false;

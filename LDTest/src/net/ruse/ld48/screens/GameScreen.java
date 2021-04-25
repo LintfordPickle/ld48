@@ -3,7 +3,7 @@ package net.ruse.ld48.screens;
 import net.lintford.library.controllers.core.particles.ParticleFrameworkController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
-import net.lintford.library.core.maths.RandomNumbers;
+import net.lintford.library.core.camera.Camera;
 import net.lintford.library.core.particles.ParticleFrameworkData;
 import net.lintford.library.renderers.particles.ParticleFrameworkRenderer;
 import net.lintford.library.screenmanager.ScreenManager;
@@ -15,9 +15,9 @@ import net.ruse.ld48.controllers.ItemController;
 import net.ruse.ld48.controllers.LevelController;
 import net.ruse.ld48.controllers.MobController;
 import net.ruse.ld48.controllers.PlayerController;
+import net.ruse.ld48.controllers.ScreenShakeController;
 import net.ruse.ld48.data.ItemManager;
 import net.ruse.ld48.data.Level;
-import net.ruse.ld48.data.MobInstance;
 import net.ruse.ld48.data.MobManager;
 import net.ruse.ld48.renderers.HudRenderer;
 import net.ruse.ld48.renderers.ItemRenderer;
@@ -31,8 +31,6 @@ public class GameScreen extends BaseGameScreen {
 	// ---------------------------------------------
 
 	private static final int DEBUG_TARGET_GOLD = 120;
-	private static final int DEBUG_PLAYER_HEALTH = 4;
-	private static final int DEBUG_NUM_ENEMIES = 6;
 
 	// Data
 	private MobManager mMobManager;
@@ -41,6 +39,7 @@ public class GameScreen extends BaseGameScreen {
 	private ParticleFrameworkData mParticleData;
 
 	// Controllers
+	private ScreenShakeController mScreenShakeController;
 	private MobController mMobController;
 	private ItemController mItemController;
 	private PlayerController mPlayerController;
@@ -89,11 +88,6 @@ public class GameScreen extends BaseGameScreen {
 		initializeControllers(lCore);
 
 		createRenderers(lCore);
-
-		mLevelController.loadLevelFromFile("");
-
-		addPlayerMob();
-		addEnemyMobs();
 
 		startNewGame();
 
@@ -154,6 +148,7 @@ public class GameScreen extends BaseGameScreen {
 		mParticleFrameworkController = new ParticleFrameworkController(lControllerManager, mParticleData, entityGroupID());
 		mItemController = new ItemController(lControllerManager, mItemManager, entityGroupID());
 		mGameStateController = new GameStateController(lControllerManager, entityGroupID());
+		mScreenShakeController = new ScreenShakeController(lControllerManager, (Camera) mGameCamera, entityGroupID());
 
 	}
 
@@ -166,6 +161,7 @@ public class GameScreen extends BaseGameScreen {
 		mParticleFrameworkController.initialize(pCore);
 		mGameStateController.initialize(pCore);
 		mItemController.initialize(pCore);
+		mScreenShakeController.initialize(pCore);
 
 	}
 
@@ -190,81 +186,9 @@ public class GameScreen extends BaseGameScreen {
 	// ---------------------------------------------
 	// REFACTOR
 
-	private void addPlayerMob() {
-		final var lPlayerMob = mMobManager.getFreePooledItem();
-
-		lPlayerMob.initialise(MobInstance.MOB_TYPE_DWARF, DEBUG_PLAYER_HEALTH);
-		lPlayerMob.isPlayerControlled = true;
-		lPlayerMob.swingAttackEnabled = true;
-		lPlayerMob.damagesOnCollide = false;
-		lPlayerMob.setPosition(32.f, 0.f);
-		lPlayerMob.swingRange = 32.f;
-
-		mMobManager.addMobInstance(lPlayerMob);
-
-		mPlayerController.playerMobInstance(lPlayerMob);
-
-		mCameraFollowController.setFollowEntity(lPlayerMob);
-
-	}
-
-	private void addEnemyMobs() {
-		for (int i = 0; i < DEBUG_NUM_ENEMIES; i++) {
-			MobInstance lEnemyMob = null;
-
-			final int lMobType = RandomNumbers.random(0, 2);
-
-			switch (lMobType) {
-			case 0:
-				lEnemyMob = getSpiderMob();
-				break;
-			default:
-			case 1:
-				lEnemyMob = getGoblinMob();
-				break;
-			}
-
-			final float lWorldPositionX = 256.f;//RandomNumbers.random(32.f, 96.f);
-			final float lWorldPositionY = 0;
-
-			lEnemyMob.setPosition(lWorldPositionX, lWorldPositionY);
-
-			// TODO :Get valid platform from level
-
-			mMobManager.addMobInstance(lEnemyMob);
-
-		}
-
-	}
-
 	private void startNewGame() {
 		mGameStateController.setupNewGame(DEBUG_TARGET_GOLD);
 
 	}
 
-	private MobInstance getSpiderMob() {
-		final var lEnemyMob = mMobManager.getFreePooledItem();
-
-		lEnemyMob.initialise(MobInstance.MOB_TYPE_SPIDER, 1);
-		lEnemyMob.damagesOnCollide = true;
-		lEnemyMob.swingAttackEnabled = false;
-		lEnemyMob.swingRange = 32.f;
-		lEnemyMob.isPlayerControlled = false;
-
-		return lEnemyMob;
-	}
-
-	private MobInstance getGoblinMob() {
-		final var lEnemyMob = mMobManager.getFreePooledItem();
-
-		lEnemyMob.initialise(MobInstance.MOB_TYPE_GOBLIN, 3);
-		lEnemyMob.damagesOnCollide = false;
-		lEnemyMob.swingAttackEnabled = true;
-		lEnemyMob.swingRange = 48.f;
-		lEnemyMob.isPlayerControlled = false;
-
-		return lEnemyMob;
-	}
-
 }
- 

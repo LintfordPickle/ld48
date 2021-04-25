@@ -23,6 +23,7 @@ public class ItemController extends BaseController {
 	// Variables
 	// --------------------------------------
 
+	private ScreenShakeController mScreenShakeController;
 	private MobController mMobController;
 	private LevelController mLevelController;
 	private ItemManager mItemManager;
@@ -61,6 +62,7 @@ public class ItemController extends BaseController {
 	public void initialize(LintfordCore pCore) {
 		mLevelController = (LevelController) pCore.controllerManager().getControllerByNameRequired(LevelController.CONTROLLER_NAME, entityGroupID());
 		mMobController = (MobController) pCore.controllerManager().getControllerByNameRequired(MobController.CONTROLLER_NAME, entityGroupID());
+		mScreenShakeController = (ScreenShakeController) pCore.controllerManager().getControllerByNameRequired(ScreenShakeController.CONTROLLER_NAME, entityGroupID());
 
 	}
 
@@ -198,14 +200,16 @@ public class ItemController extends BaseController {
 		if (pItemInstance.timeAlive > 2000) {
 			pItemInstance.isPickedUp = true;
 
+			mScreenShakeController.shakeCamera(600.f, 2.f);
+
 			final int lTileX = pItemInstance.cellX;
 			final int lTileY = pItemInstance.cellY;
 			final int lTileCoord = pLevel.getLevelTileCoord(lTileX, lTileY);
 			pLevel.digBlock(lTileCoord, (byte) 50);
-			pLevel.digBlock(pLevel.getLeftBlockIndex(lTileCoord), (byte) 50);
-			pLevel.digBlock(pLevel.getRightBlockIndex(lTileCoord), (byte) 50);
-			pLevel.digBlock(pLevel.getTopBlockIndex(lTileCoord), (byte) 50);
-			pLevel.digBlock(pLevel.getBottomBlockIndex(lTileCoord), (byte) 50);
+			pLevel.digBlock(pLevel.getLeftBlockIndex(lTileCoord), (byte) 7);
+			pLevel.digBlock(pLevel.getRightBlockIndex(lTileCoord), (byte) 7);
+			pLevel.digBlock(pLevel.getTopBlockIndex(lTileCoord), (byte) 7);
+			pLevel.digBlock(pLevel.getBottomBlockIndex(lTileCoord), (byte) 7);
 
 			final float lWorldPositionX = pItemInstance.worldPositionX;
 			final float lWorldPositionY = pItemInstance.worldPositionY;
@@ -237,6 +241,11 @@ public class ItemController extends BaseController {
 	}
 
 	public void addHealth(float pWorldX, float pWorldY) {
+
+	}
+
+	public void startNewGame(long pSeed) {
+		itemManager().instances().clear();
 
 	}
 

@@ -133,7 +133,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 		final int lBLockTypeIndex = mLevel.getLevelBlockType(pTileX, pTileY);
 		final boolean lWasBlockedRemoved = mLevel.digBlock(pTileX, pTileY, pDamageAmt);
 
-		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_AIR || lBLockTypeIndex == Level.LEVEL_TILE_INDEX_SOLID)
+		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_AIR || lBLockTypeIndex == Level.LEVEL_TILE_INDEX_STONE)
 			return;
 
 		final int lTileIndex = mLevel.getLevelTileCoord(pTileX, pTileY);
@@ -167,6 +167,11 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 
 	public void loadLevelFromFile(String pFilename) {
 		mLevel.loadLevel();
+	}
+
+	public void startNewGame(long pSeed) {
+		mLevel.loadLevel();
+
 	}
 
 }

@@ -14,6 +14,10 @@ public class RandomNumbers {
 	// Methods
 	// --------------------------------------
 
+	public static void reseed(long pSeed) {
+		RANDOM = new Random(pSeed);
+	}
+
 	public static void reseed() {
 		RANDOM = new Random();
 	}

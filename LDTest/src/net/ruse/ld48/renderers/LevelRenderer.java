@@ -27,6 +27,9 @@ public class LevelRenderer extends BaseRenderer {
 	private static final Rectangle DIRT_TOP_DAMAGED_SRC_RECT = new Rectangle(192, 0, 32, 32);
 	private static final Rectangle AIR_DEBUG_SRC_RECT = new Rectangle(32, 0, 32, 32);
 
+	private static final Rectangle STONE_SRC_RECT = new Rectangle(96, 0, 32, 32);
+	private static final Rectangle STONE_DAMAGED_SRC_RECT = new Rectangle(128, 0, 32, 32);
+
 	private static final Rectangle GOLD_SRC_RECT = new Rectangle(224, 0, 32, 32);
 	private static final Rectangle GOLD_TOP_SRC_RECT = new Rectangle(64, 32, 32, 32);
 
@@ -143,6 +146,13 @@ public class LevelRenderer extends BaseRenderer {
 
 				var lSrcRect = NO_SRC_RECT;
 				switch (lBlockTypeIndex) {
+				case Level.LEVEL_TILE_INDEX_STONE:
+					if (lBlockHealth < 10) {
+						lSrcRect = STONE_DAMAGED_SRC_RECT;
+					} else
+						lSrcRect = STONE_SRC_RECT;
+					break;
+
 				case Level.LEVEL_TILE_INDEX_GOLD:
 					if (lTopBlockIndex != -1 && lLevel.getLevelBlockType(lTopBlockIndex) == 0) {
 						if (lBlockHealth < 3) {

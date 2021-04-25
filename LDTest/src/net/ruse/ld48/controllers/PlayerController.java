@@ -69,15 +69,9 @@ public class PlayerController extends BaseController {
 
 		final var lKeyboard = pCore.input().keyboard();
 
-		// Digging
-		mPlayerMobInstance.diggingFlag = false;
-		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_J)) {
-			mPlayerMobInstance.diggingFlag = true;
-
-		}
-
+		// Digging / Attacking
 		mPlayerMobInstance.swingingFlag = false;
-		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_K)) {
+		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_RIGHT_SHIFT)) {
 			mPlayerMobInstance.swingingFlag = true;
 
 		}
@@ -100,13 +94,13 @@ public class PlayerController extends BaseController {
 		}
 
 		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_A)) {
-			if (!mPlayerMobInstance.diggingFlag)
+			if (!mPlayerMobInstance.swingingFlag)
 				mPlayerMobInstance.velocityX -= .1f;
 
 		}
 
 		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_D)) {
-			if (!mPlayerMobInstance.diggingFlag)
+			if (!mPlayerMobInstance.swingingFlag)
 				mPlayerMobInstance.velocityX += .1f;
 
 		}
@@ -114,11 +108,6 @@ public class PlayerController extends BaseController {
 		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_SPACE) && mPlayerMobInstance.groundFlag) {
 			mPlayerMobInstance.velocityY = -.21f;
 			mPlayerMobInstance.groundFlag = false;
-
-		}
-
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_R)) {
-			mPlayerMobInstance.setPosition(0, 0);
 
 		}
 

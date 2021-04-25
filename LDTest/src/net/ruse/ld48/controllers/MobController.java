@@ -27,6 +27,9 @@ public class MobController extends BaseController {
 
 	public static final String CONTROLLER_NAME = "Mob Controller";
 
+	private static final int DEBUG_PLAYER_HEALTH = 4;
+	private static final int DEBUG_NUM_ENEMIES = 6;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -35,6 +38,7 @@ public class MobController extends BaseController {
 	private final List<MobInstance> mMobInstancesToUpdate = new ArrayList<>();
 
 	private PlayerController mPlayerController;
+	private CameraFollowController mCameraFollowController;
 	private LevelController mLevelController;
 
 	private ParticleFrameworkController mParticleFrameworkController;
@@ -75,6 +79,7 @@ public class MobController extends BaseController {
 		mLevelController = (LevelController) pCore.controllerManager().getControllerByNameRequired(LevelController.CONTROLLER_NAME, entityGroupID());
 		mPlayerController = (PlayerController) pCore.controllerManager().getControllerByNameRequired(PlayerController.CONTROLLER_NAME, entityGroupID());
 		mParticleFrameworkController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, entityGroupID());
+		mCameraFollowController = (CameraFollowController) pCore.controllerManager().getControllerByNameRequired(CameraFollowController.CONTROLLER_NAME, entityGroupID());
 
 		mBloodBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_BLOOD");
 		mDustBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DUST");
@@ -113,30 +118,29 @@ public class MobController extends BaseController {
 
 			lMobInstance.update(pCore);
 
-			if (lMobInstance.diggingFlag && lMobInstance.isInputCooldownElapsed()) {
-				final int lSignum = lMobInstance.isLeftFacing ? -1 : 1;
-
-				final boolean lSideWaysDigging = GameConstants.GAME_SIDEWAYS_DIGGING;
-
-				mLevelController.digLevel(lMobInstance.cellX + (lSideWaysDigging ? lSignum : 0), lMobInstance.cellY + 1, (byte) 1);
-				lMobInstance.inputCooldownTimer = 300;
-
-			}
-
 			if (lMobInstance.swingingFlag && lMobInstance.isInputCooldownElapsed()) {
 
 				// calculate the point of the attack (in world space)
-				final float lSignum = lMobInstance.isLeftFacing ? -1 : 1;
-				lMobInstance.attackPointWorldX = lMobInstance.worldPositionX + 32.f * lSignum;
-				lMobInstance.attackPointWorldY = lMobInstance.worldPositionY;
+				final int lSignum = lMobInstance.isLeftFacing ? -1 : 1;
 
+				boolean lAnyoneHit = false;
 				for (int j = 0; j < lNumMobs; j++) {
 					final var lOtherMobInstance = mMobInstancesToUpdate.get(j);
+
+					lMobInstance.attackPointWorldX = lMobInstance.worldPositionX + 24.f * lSignum;
+					lMobInstance.attackPointWorldY = lMobInstance.worldPositionY;
 
 					if (lMobInstance == lOtherMobInstance || !lOtherMobInstance.swingAttackEnabled)
 						continue;
 
-					updateMobAttackCollisions(pCore, lLevel, lMobInstance, lOtherMobInstance);
+					lAnyoneHit = updateMobAttackCollisions(pCore, lLevel, lMobInstance, lOtherMobInstance) || lAnyoneHit;
+
+				}
+
+				// Only dig if not in combat
+				if (!lAnyoneHit) {
+					final boolean lSideWaysDigging = GameConstants.GAME_SIDEWAYS_DIGGING;
+					mLevelController.digLevel(lMobInstance.cellX + (lSideWaysDigging ? lSignum : 0), lMobInstance.cellY + 1, (byte) 1);
 
 				}
 
@@ -171,7 +175,11 @@ public class MobController extends BaseController {
 		pMobInstance.velocityY = MathHelper.clamp(pMobInstance.velocityY, -0.2f, 0.4f);
 		pMobInstance.velocityX = MathHelper.clamp(pMobInstance.velocityX, -0.05f, 0.05f);
 
-		pMobInstance.isLeftFacing = pMobInstance.velocityX < 0f;
+		// don't change face when in combat
+		if (!pMobInstance.swingingFlag) {
+			pMobInstance.isLeftFacing = pMobInstance.velocityX < 0f;
+
+		}
 
 		pMobInstance.fractionX += pMobInstance.velocityX;
 		pMobInstance.fractionY += pMobInstance.velocityY;
@@ -277,10 +285,10 @@ public class MobController extends BaseController {
 
 	}
 
-	private void updateMobAttackCollisions(LintfordCore pCore, Level pLevel, MobInstance pAttackingMob, MobInstance pReceivingMob) {
+	private boolean updateMobAttackCollisions(LintfordCore pCore, Level pLevel, MobInstance pAttackingMob, MobInstance pReceivingMob) {
 		final int lMinCellClearance = 3;
 		if (Math.abs(pAttackingMob.cellX - pReceivingMob.cellX) >= lMinCellClearance || Math.abs(pAttackingMob.cellY - pReceivingMob.cellY) >= lMinCellClearance) {
-			return;
+			return false;
 
 		}
 
@@ -298,7 +306,11 @@ public class MobController extends BaseController {
 			mBloodBlockParticles.spawnParticle(lMobBX, lMobBY, RandomNumbers.random(-150.f, 150.f), RandomNumbers.random(-200.f, -50.f));
 			pReceivingMob.dealDamage(1, true);
 
+			return true;
+
 		}
+
+		return false;
 
 	}
 
@@ -367,6 +379,86 @@ public class MobController extends BaseController {
 
 		}
 
+	}
+
+	// --------------------------------------
+
+	public void startNewGame(long pSeed) {
+		mobManager().mobInstances().clear();
+
+		addPlayerMob();
+		addEnemyMobs();
+
+	}
+
+	private void addPlayerMob() {
+		final var lPlayerMob = mMobManager.getFreePooledItem();
+
+		lPlayerMob.initialise(MobInstance.MOB_TYPE_DWARF, DEBUG_PLAYER_HEALTH);
+		lPlayerMob.isPlayerControlled = true;
+		lPlayerMob.swingAttackEnabled = true;
+		lPlayerMob.damagesOnCollide = false;
+		lPlayerMob.setPosition(32.f, 0.f);
+		lPlayerMob.swingRange = 32.f;
+
+		mMobManager.addMobInstance(lPlayerMob);
+
+		mPlayerController.playerMobInstance(lPlayerMob);
+
+		mCameraFollowController.setFollowEntity(lPlayerMob);
+	}
+
+	private void addEnemyMobs() {
+		for (int i = 0; i < DEBUG_NUM_ENEMIES; i++) {
+			MobInstance lEnemyMob = null;
+
+			final int lMobType = RandomNumbers.random(0, 2);
+
+			switch (lMobType) {
+			case 0:
+				lEnemyMob = getSpiderMob();
+				break;
+			default:
+			case 1:
+				lEnemyMob = getGoblinMob();
+				break;
+			}
+
+			final float lWorldPositionX = 256.f;//RandomNumbers.random(32.f, 96.f);
+			final float lWorldPositionY = 0;
+
+			lEnemyMob.setPosition(lWorldPositionX, lWorldPositionY);
+
+			// TODO :Get valid platform from level
+
+			mMobManager.addMobInstance(lEnemyMob);
+
+		}
+
+	}
+
+	private MobInstance getSpiderMob() {
+		final var lEnemyMob = mMobManager.getFreePooledItem();
+
+		lEnemyMob.initialise(MobInstance.MOB_TYPE_SPIDER, 1);
+		lEnemyMob.damagesOnCollide = true;
+		lEnemyMob.swingAttackEnabled = false;
+		lEnemyMob.swingRange = 32.f;
+		lEnemyMob.isPlayerControlled = false;
+
+		return lEnemyMob;
+	}
+
+	private MobInstance getGoblinMob() {
+		final var lEnemyMob = mMobManager.getFreePooledItem();
+
+		lEnemyMob.initialise(MobInstance.MOB_TYPE_GOBLIN, 3);
+		lEnemyMob.damagesOnCollide = false;
+		lEnemyMob.swingAttackEnabled = true;
+		lEnemyMob.swingRange = 48.f;
+		lEnemyMob.isPlayerControlled = false;
+
+		return lEnemyMob;
 	}
 
 }

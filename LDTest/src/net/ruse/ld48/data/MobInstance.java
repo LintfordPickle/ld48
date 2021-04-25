@@ -2,7 +2,7 @@ package net.ruse.ld48.data;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
-import net.ruse.ld48.GameConstants;
+import net.lintford.library.core.maths.RandomNumbers;
 
 public class MobInstance extends CellEntity {
 
@@ -29,7 +29,6 @@ public class MobInstance extends CellEntity {
 	public boolean isPlayerControlled;
 
 	public boolean groundFlag;
-	public boolean diggingFlag;
 	public boolean swingingFlag;
 
 	public float inputCooldownTimer;
@@ -42,6 +41,7 @@ public class MobInstance extends CellEntity {
 
 	public float attackPointWorldX;
 	public float attackPointWorldY;
+	public float animationTimeSpeedMod = RandomNumbers.random(0.95f, 1.05f);
 
 	/* some mob swing for the enemies (e.g. goblins), and some deal damage on touch (e.g. spiders) */
 	public boolean damagesOnCollide;

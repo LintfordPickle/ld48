@@ -82,7 +82,7 @@ public class MobRenderer extends BaseRenderer {
 
 			String lCurrentAnimationName = lMobInstance.mobTypeName() + "_IDLE";
 
-			if ((lMobInstance.diggingFlag || lMobInstance.swingingFlag) && lMobInstance.swingAttackEnabled) {
+			if (lMobInstance.swingingFlag && lMobInstance.swingAttackEnabled) {
 				lCurrentAnimationName = lMobInstance.mobTypeName() + "_SWING";
 
 			} else if (Math.abs(lMobInstance.velocityX) > 0.002f) {
@@ -93,6 +93,7 @@ public class MobRenderer extends BaseRenderer {
 			if (lMobSpriteInstance == null || lMobInstance.mCurrentAnimationName == null || !lMobInstance.mCurrentAnimationName.equals(lCurrentAnimationName)) {
 				lMobInstance.currentSprite = mMobSpriteSheet.getSpriteInstance(lCurrentAnimationName);
 				if (lMobInstance.currentSprite != null) {
+					lMobInstance.currentSprite.timerMod = lMobInstance.animationTimeSpeedMod;
 					lMobInstance.mCurrentAnimationName = lCurrentAnimationName;
 
 				}

@@ -17,7 +17,6 @@ public class Level extends BaseInstanceData {
 	public static final int LEVEL_TILE_INDEX_EXIT = 4;
 
 	public static final int LEVEL_TILE_INDEX_GOLD = 6;
-	public static final int LEVEL_TILE_INDEX_SOLID = 7;
 
 	// ---------------------------------------------
 	// Constants
@@ -116,7 +115,9 @@ public class Level extends BaseInstanceData {
 				final int lTileCoord = getLevelTileCoord(x, lFloorHeight);
 				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
 					continue;
+
 				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+				mLevelBlockHealth[lTileCoord] = (byte) 5;
 
 			}
 
@@ -125,6 +126,8 @@ public class Level extends BaseInstanceData {
 				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
 					continue;
 				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+				mLevelBlockHealth[lTileCoord] = (byte) 5;
+
 			}
 
 		}
@@ -135,6 +138,7 @@ public class Level extends BaseInstanceData {
 				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
 					continue;
 				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+				mLevelBlockHealth[lTileCoord] = (byte) 5;
 			}
 
 			{
@@ -142,6 +146,7 @@ public class Level extends BaseInstanceData {
 				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
 					continue;
 				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+				mLevelBlockHealth[lTileCoord] = (byte) 5;
 			}
 
 		}
@@ -152,6 +157,16 @@ public class Level extends BaseInstanceData {
 			final int lTileCoord = RandomNumbers.random(lFloorHeight * GameConstants.LEVEL_TILES_WIDE, (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1);
 
 			mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
+			mLevelBlockHealth[lTileCoord] = (byte) 5;
+
+		}
+
+		final int lNumRandomStoneBlocks = (int) (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH * 0.2);
+		for (int i = 0; i < lNumRandomStoneBlocks; i++) {
+			final int lTileCoord = RandomNumbers.random(lFloorHeight * GameConstants.LEVEL_TILES_WIDE, (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1);
+
+			mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_STONE;
+			mLevelBlockHealth[lTileCoord] = (byte) 20;
 
 		}
 
@@ -161,13 +176,14 @@ public class Level extends BaseInstanceData {
 			final int lTileCoord = RandomNumbers.random((lFloorHeight + 1) * GameConstants.LEVEL_TILES_WIDE, (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1);
 
 			mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_GOLD;
+			mLevelBlockHealth[lTileCoord] = (byte) 7;
 
 		}
 
 	}
 
 	private void clearLevel() {
-		Arrays.fill(mLevelBlockHealth, (byte) 5);
+		Arrays.fill(mLevelBlockHealth, (byte) 0);
 		Arrays.fill(mLevelBlockIndices, LEVEL_TILE_INDEX_AIR);
 
 	}

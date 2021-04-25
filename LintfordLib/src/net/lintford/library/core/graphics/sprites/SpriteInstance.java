@@ -26,6 +26,7 @@ public class SpriteInstance extends Rectangle {
 
 	/** A timer to track when to change frames */
 	private float timer;
+	public float timerMod = 1.f;
 
 	/** If true, rotation and position values will be eased in/out within the time given. 0 for no easing. */
 	// private float interpolateTime;
@@ -135,6 +136,7 @@ public class SpriteInstance extends Rectangle {
 		loopingEnabled = pSpriteDef.loopEnabled();
 		animationEnabled = true;
 		mAreVerticesDirty = true;
+		timerMod = 1.f;
 
 		updateDimensionsOnCurrentFrame();
 
@@ -155,7 +157,7 @@ public class SpriteInstance extends Rectangle {
 			return;
 
 		if (animationEnabled) {
-			timer += lDeltaTime;
+			timer += lDeltaTime * timerMod;
 		}
 
 		// update the current frame
