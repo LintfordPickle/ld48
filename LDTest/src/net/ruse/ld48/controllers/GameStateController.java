@@ -30,6 +30,7 @@ public class GameStateController extends BaseController {
 
 	private int mCurrentGold;
 	private int mTargetGold;
+	private boolean mPlayerReachExit;
 
 	// --------------------------------------
 	// Properties
@@ -60,6 +61,18 @@ public class GameStateController extends BaseController {
 
 	public boolean isFullGoldCollected() {
 		return mCurrentGold >= mTargetGold;
+	}
+
+	public void exitReached() {
+		if (!isFullGoldCollected())
+			return;
+
+		mPlayerReachExit = true;
+
+	}
+
+	public boolean hasPlayerWon() {
+		return mPlayerReachExit && isFullGoldCollected();
 	}
 
 	public boolean isPlayerDead() {
@@ -119,7 +132,8 @@ public class GameStateController extends BaseController {
 
 	public void setupNewGame(long pSeed) {
 		RandomNumbers.reseed(pSeed);
-		mTargetGold = RandomNumbers.random(400, 600);
+		mCurrentGold = 0;
+		mTargetGold = 120;//RandomNumbers.random(400, 600);
 
 		mLevelController.startNewGame(pSeed);
 		mMobController.startNewGame(pSeed);
@@ -127,13 +141,11 @@ public class GameStateController extends BaseController {
 
 		mIsGameStarted = true;
 		mHasGameEnded = false;
+		mPlayerReachExit = false;
 
 	}
 
 	public void endGame() {
-		mTargetGold = 0;
-		mCurrentGold = 0;
-
 		mIsGameStarted = false;
 		mHasGameEnded = true;
 

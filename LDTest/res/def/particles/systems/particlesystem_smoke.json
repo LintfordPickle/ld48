@@ -1,16 +1,16 @@
 {
-	"name":"PARTICLESYSTEM_BLOOD",
-	"maxParticleCount":128,
+	"name":"PARTICLESYSTEM_SMOKE",
+	"maxParticleCount":256,
 	"textureName":"ParticleTexture",
 	"textureFilename":"res/textures/textureParticles.png",
 	"textureFilterMode":"0",
-	"particleLife":"500",
+	"particleLife":"400",
 	
 	"initializers" : [ 
 	
 		{ 
 			"className":"ParticleSourceRegionInitializer",
-			"srcX":32,
+			"srcX":0,
 			"srcY":0,
 			"srcW":16,
 			"srcH":16
@@ -18,22 +18,31 @@
 		
 		{ 
 			"className":"ParticleDestinationRegionInitializer",
-			"width":8,
-			"height":8
+			"width":16,
+			"height":16
 		}, 
 		
 		{
 			"className":"ParticleRandomSizeInitializer",
-			"minValue":0.7,
-			"maxValue":1.2
+			"minValue":0.5,
+			"maxValue":1.5
 		},
 		
 		{
+			"className":"ParticleFireColorInitializer",
+			"redMin":"255",
+			"redMax":"255",
+			"greenMin":"128",
+			"greenMax":"255",
+			"blueMin":"0",
+			"blueMax":"30"
+		},
+		{
 			"className":"ParticleRandomOffsetInitializer",
-			"minValue0":-3,
-			"maxValue0":3,
-			"minValue1":-2,
-			"maxValue1":2
+			"minValue0":-8,
+			"maxValue0":8,
+			"minValue1":-8,
+			"maxValue1":8
 		}
 	
 	],
@@ -45,7 +54,7 @@
 		}, 
 		{
 			"className":"ParticleGravityModifier",
-			"gravity": 0.98
+			"gravity": -0.98
 		}, 
 		{
 			"className":"ParticlePhysicsModifier"

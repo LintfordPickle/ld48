@@ -40,6 +40,9 @@ public class Level extends BaseInstanceData {
 	}
 
 	public int getLevelBlockType(int pLevelTileCoord) {
+		if (pLevelTileCoord < 0 || pLevelTileCoord > (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1)
+			return LEVEL_TILE_COORD_INVALID;
+
 		return mLevelBlockIndices[pLevelTileCoord];
 	}
 

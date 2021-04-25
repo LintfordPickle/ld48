@@ -257,6 +257,8 @@ public class MobController extends BaseController {
 	private void updateEnemyAi(LintfordCore pCore, Level pLevel, MobInstance pMobInstance) {
 		final var lPlayerMobInstance = mPlayerController.playerMobInstance();
 
+		final var lLevel = mLevelController.level();
+
 		final float lDistSq = getDistSq(lPlayerMobInstance, pMobInstance);
 		final float lSeeDistSq = 128 * 128;
 
@@ -269,10 +271,32 @@ public class MobController extends BaseController {
 		if (Math.abs(lPlayerMobInstance.cellY) - Math.abs(pMobInstance.cellY) < 1) {
 			if (pMobInstance.worldPositionX - 16.f < lPlayerMobInstance.worldPositionX) {
 				pMobInstance.velocityX += 0.005f;
+
+				if (pMobInstance.groundFlag) {
+					final int lMobTileCoord = lLevel.getLevelTileCoord(pMobInstance.cellX, pMobInstance.cellY);
+					if (lLevel.getLevelBlockType(lLevel.getRightBlockIndex(lMobTileCoord)) != 0) {
+						pMobInstance.velocityY = -.21f;
+						pMobInstance.groundFlag = false;
+
+					}
+
+				}
+
 			}
 
 			if (pMobInstance.worldPositionX + 16.f > lPlayerMobInstance.worldPositionX) {
 				pMobInstance.velocityX -= 0.005f;
+
+				if (pMobInstance.groundFlag) {
+					final int lMobTileCoord = lLevel.getLevelTileCoord(pMobInstance.cellX, pMobInstance.cellY);
+					if (lLevel.getLevelBlockType(lLevel.getLeftBlockIndex(lMobTileCoord)) != 0) {
+						pMobInstance.velocityY = -.21f;
+						pMobInstance.groundFlag = false;
+
+					}
+
+				}
+
 			}
 
 		}
@@ -308,6 +332,12 @@ public class MobController extends BaseController {
 				mBloodBlockParticles.spawnParticle(lMobBX, lMobBY, RandomNumbers.random(-150.f, 150.f), RandomNumbers.random(-200.f, -50.f));
 
 			}
+
+			final float lAngle = (float) Math.atan2(pReceivingMob.worldPositionY - pAttackingMob.worldPositionY, pReceivingMob.worldPositionX - pAttackingMob.worldPositionX);
+			final float lRepelPower = 0.3f;
+
+			pReceivingMob.velocityX += Math.cos(lAngle) * lRepelPower;
+			pReceivingMob.velocityY += Math.sin(lAngle) * lRepelPower * 0.05f;
 
 			pReceivingMob.dealDamage(1, true);
 

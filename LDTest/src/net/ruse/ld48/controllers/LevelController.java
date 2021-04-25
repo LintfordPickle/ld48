@@ -9,6 +9,7 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.input.IProcessMouseInput;
 import net.lintford.library.core.maths.RandomNumbers;
 import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
+import net.ruse.ld48.GameConstants;
 import net.ruse.ld48.data.Level;
 
 public class LevelController extends BaseController implements IProcessMouseInput {
@@ -129,16 +130,21 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 	// Methods
 	// ---------------------------------------------
 
-	public void digLevel(int pTileX, int pTileY, byte pDamageAmt) {
-		final int lBLockTypeIndex = mLevel.getLevelBlockType(pTileX, pTileY);
-		final boolean lWasBlockedRemoved = mLevel.digBlock(pTileX, pTileY, pDamageAmt);
-
-		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_AIR || lBLockTypeIndex == Level.LEVEL_TILE_INDEX_STONE)
-			return;
-
+	public boolean digLevel(int pTileX, int pTileY, byte pDamageAmt) {
 		final int lTileIndex = mLevel.getLevelTileCoord(pTileX, pTileY);
 		if (lTileIndex == Level.LEVEL_TILE_COORD_INVALID)
-			return;
+			return false;
+
+		return digLevel(lTileIndex, pDamageAmt);
+
+	}
+
+	public boolean digLevel(int pTileCoord, byte pDamageAmt) {
+		final int lBLockTypeIndex = mLevel.getLevelBlockType(pTileCoord);
+		final boolean lWasBlockedRemoved = mLevel.digBlock(pTileCoord, pDamageAmt);
+
+		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_AIR || lBLockTypeIndex == Level.LEVEL_TILE_INDEX_STONE)
+			return false;
 
 		if (lWasBlockedRemoved) {
 			if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_GOLD) {
@@ -148,13 +154,15 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 
 		}
 
-		final int lBlockType = mLevel.getLevelBlockType(pTileX, pTileY);
-		if (lBlockType <= 0)
-			return;
+		if (lBLockTypeIndex <= 0)
+			return false;
 
 		if (mDigBlockParticles != null) {
-			final float lTileCenterX = pTileX * 32.f + 16f;
-			final float lTileCenterY = pTileY * 32.f + 16f;
+			final int lTileX = pTileCoord % GameConstants.LEVEL_TILES_WIDE;
+			final int lTileY = pTileCoord / GameConstants.LEVEL_TILES_WIDE;
+
+			final float lTileCenterX = lTileX * 32.f + RandomNumbers.random(4.f, 28.f);
+			final float lTileCenterY = lTileY * 32.f + RandomNumbers.random(4.f, 28.f);
 
 			final float lVelocityX = RandomNumbers.random(-5.f, 5.f);
 			final float lVelocityY = -10.f + RandomNumbers.random(-5.f, 5.f);
@@ -162,6 +170,8 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 			mDigBlockParticles.spawnParticle(lTileCenterX, lTileCenterY, lVelocityX, lVelocityY, 0, 0, 16, 16, 64.f, 64.f);
 
 		}
+
+		return lWasBlockedRemoved;
 
 	}
 

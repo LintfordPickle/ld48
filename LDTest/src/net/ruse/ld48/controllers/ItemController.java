@@ -3,10 +3,15 @@ package net.ruse.ld48.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Math;
+
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
+import net.lintford.library.controllers.core.particles.ParticleFrameworkController;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.maths.RandomNumbers;
+import net.lintford.library.core.maths.Vector2f;
+import net.lintford.library.core.particles.particlesystems.ParticleSystemInstance;
 import net.ruse.ld48.GameConstants;
 import net.ruse.ld48.data.ItemInstance;
 import net.ruse.ld48.data.ItemManager;
@@ -24,10 +29,16 @@ public class ItemController extends BaseController {
 	// Variables
 	// --------------------------------------
 
+	private GameStateController mGameStateController;
 	private ScreenShakeController mScreenShakeController;
 	private MobController mMobController;
+	private PlayerController mPlayerController;
 	private LevelController mLevelController;
 	private ItemManager mItemManager;
+
+	private ParticleFrameworkController mParticleFrameworkController;
+	private ParticleSystemInstance mSmokeParticles;
+	private ParticleSystemInstance mTntParticles;
 
 	private final List<ItemInstance> itemsToUpdate = new ArrayList<>();
 
@@ -64,7 +75,12 @@ public class ItemController extends BaseController {
 		mLevelController = (LevelController) pCore.controllerManager().getControllerByNameRequired(LevelController.CONTROLLER_NAME, entityGroupID());
 		mMobController = (MobController) pCore.controllerManager().getControllerByNameRequired(MobController.CONTROLLER_NAME, entityGroupID());
 		mScreenShakeController = (ScreenShakeController) pCore.controllerManager().getControllerByNameRequired(ScreenShakeController.CONTROLLER_NAME, entityGroupID());
+		mPlayerController = (PlayerController) pCore.controllerManager().getControllerByNameRequired(PlayerController.CONTROLLER_NAME, entityGroupID());
+		mParticleFrameworkController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, entityGroupID());
+		mGameStateController = (GameStateController) pCore.controllerManager().getControllerByNameRequired(GameStateController.CONTROLLER_NAME, entityGroupID());
 
+		mSmokeParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_SMOKE");
+		mTntParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_TNT");
 	}
 
 	@Override
@@ -110,6 +126,45 @@ public class ItemController extends BaseController {
 				updateTntItem(pCore, lLevel, lItemInstance);
 				break;
 
+			}
+
+			// detect player/item collisions
+			handleItemInteraction(pCore, lItemInstance);
+
+		}
+
+	}
+
+	// --------------------------------------
+
+	private void handleItemInteraction(LintfordCore pCore, ItemInstance pItemInstance) {
+		if (!pItemInstance.interactsWithMobs)
+			return;
+
+		final var lPlayerMobInstance = mPlayerController.playerMobInstance();
+
+		// fast
+		if (Math.abs(lPlayerMobInstance.cellX - pItemInstance.cellX) >= 2 || Math.abs(lPlayerMobInstance.cellY - pItemInstance.cellY) >= 2) {
+			return;
+
+		}
+
+		final float lMaxDist = lPlayerMobInstance.radius + pItemInstance.radius;
+
+		final float lMobAX = lPlayerMobInstance.worldPositionX;
+		final float lMobAY = lPlayerMobInstance.worldPositionY;
+
+		final float lMobBX = pItemInstance.worldPositionX;
+		final float lMobBY = pItemInstance.worldPositionY;
+
+		final float lDistSq = Vector2f.distance2(lMobAX, lMobAY, lMobBX, lMobBY);
+
+		if (lDistSq < lMaxDist * lMaxDist) {
+			switch (pItemInstance.itemTypeIndex) {
+			case ItemManager.ITEM_TYPE_INDEX_LEVEL_EXIT:
+				mGameStateController.exitReached();
+
+				break;
 			}
 
 		}
@@ -208,16 +263,44 @@ public class ItemController extends BaseController {
 			final int lTileY = pItemInstance.cellY;
 			final int lTileCoord = pLevel.getLevelTileCoord(lTileX, lTileY);
 			pLevel.digBlock(lTileCoord, (byte) 50);
-			pLevel.digBlock(pLevel.getLeftBlockIndex(lTileCoord), (byte) 7);
-			pLevel.digBlock(pLevel.getRightBlockIndex(lTileCoord), (byte) 7);
-			pLevel.digBlock(pLevel.getTopBlockIndex(lTileCoord), (byte) 7);
-			pLevel.digBlock(pLevel.getBottomBlockIndex(lTileCoord), (byte) 7);
+
+			final int lNumFlashes = RandomNumbers.random(1, 3);
+			for (int i = 0; i < lNumFlashes; i++) {
+				mTntParticles.spawnParticle(pItemInstance.worldPositionX + RandomNumbers.random(-8.f, 8.f), pItemInstance.worldPositionY + RandomNumbers.random(-8.f, 8.f), 0, 0);
+
+			}
+
+			for (int i = 0; i < 2; i++) {
+				mSmokeParticles.spawnParticle(pItemInstance.worldPositionX, pItemInstance.worldPositionY, 0, 0);
+
+			}
+
+			tntDigTile(pLevel.getLeftBlockIndex(lTileCoord));
+			tntDigTile(pLevel.getRightBlockIndex(lTileCoord));
+			tntDigTile(pLevel.getTopBlockIndex(lTileCoord));
+			tntDigTile(pLevel.getBottomBlockIndex(lTileCoord));
 
 			final float lWorldPositionX = pItemInstance.worldPositionX;
 			final float lWorldPositionY = pItemInstance.worldPositionY;
 			final float lBlastRadius = 64.f;
 
 			mMobController.dealDamageToMobsInRange(lWorldPositionX, lWorldPositionY, lBlastRadius, 2, true);
+
+		}
+
+	}
+
+	private void tntDigTile(int pTileCoord) {
+		final boolean lBlockRemoved = mLevelController.digLevel(pTileCoord, (byte) 7);
+
+		if (!lBlockRemoved)
+			return;
+
+		final int lWorldPositionX = (pTileCoord % GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+		final int lWorldPositionY = (pTileCoord / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+
+		for (int i = 0; i < 3; i++) {
+			mSmokeParticles.spawnParticle(lWorldPositionX, lWorldPositionY, 0, 0);
 
 		}
 
@@ -234,14 +317,15 @@ public class ItemController extends BaseController {
 		lFreeItemInstance.physicsEnabled = true;
 		lFreeItemInstance.velocityX = pVelX;
 		lFreeItemInstance.velocityY = pVelY;
-		lFreeItemInstance.radius = 8.f;
+		lFreeItemInstance.radius = 16.f;
+		lFreeItemInstance.interactsWithMobs = false;
 
 		itemManager().addItemInstance(lFreeItemInstance);
 
 	}
 
 	public void addCoins(float pWorldX, float pWorldY, float pVelX, float pVelY) {
-
+		// lFreeItemInstance.interactsWithMobs = true;
 	}
 
 	public void addHealth(float pWorldX, float pWorldY) {
@@ -259,6 +343,7 @@ public class ItemController extends BaseController {
 			lItemInstance.rotationInRadians = 0.f;
 			lItemInstance.radius = 16.f;
 			lItemInstance.isFlashOn = false;
+			lItemInstance.interactsWithMobs = true;
 			lItemInstance.setupItem(ItemManager.ITEM_TYPE_INDEX_LEVEL_EXIT);
 
 			final int lExitTileWorldX = RandomNumbers.random(1, GameConstants.LEVEL_TILES_WIDE - 2) * GameConstants.BLOCK_SIZE + (int) (GameConstants.BLOCK_SIZE * 0.5f);

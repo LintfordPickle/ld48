@@ -1,39 +1,39 @@
 {
-	"name":"PARTICLESYSTEM_BLOOD",
-	"maxParticleCount":128,
+	"name":"PARTICLESYSTEM_TNT",
+	"maxParticleCount":64,
 	"textureName":"ParticleTexture",
 	"textureFilename":"res/textures/textureParticles.png",
 	"textureFilterMode":"0",
-	"particleLife":"500",
+	"particleLife":"50",
 	
 	"initializers" : [ 
 	
 		{ 
 			"className":"ParticleSourceRegionInitializer",
-			"srcX":32,
+			"srcX":48,
 			"srcY":0,
-			"srcW":16,
-			"srcH":16
+			"srcW":32,
+			"srcH":32
 		}, 
 		
 		{ 
 			"className":"ParticleDestinationRegionInitializer",
-			"width":8,
-			"height":8
+			"width":32,
+			"height":32
 		}, 
 		
 		{
 			"className":"ParticleRandomSizeInitializer",
-			"minValue":0.7,
-			"maxValue":1.2
+			"minValue":1.0,
+			"maxValue":1.5
 		},
 		
 		{
 			"className":"ParticleRandomOffsetInitializer",
-			"minValue0":-3,
-			"maxValue0":3,
-			"minValue1":-2,
-			"maxValue1":2
+			"minValue0":-16,
+			"maxValue0":16,
+			"minValue1":-8,
+			"maxValue1":8
 		}
 	
 	],
@@ -41,11 +41,8 @@
 	"modifiers" : [
 	
 		{
-			"className":"ParticleLifetimeAlphaFadeOutModifier"
-		}, 
-		{
 			"className":"ParticleGravityModifier",
-			"gravity": 0.98
+			"gravity": -0.98
 		}, 
 		{
 			"className":"ParticlePhysicsModifier"

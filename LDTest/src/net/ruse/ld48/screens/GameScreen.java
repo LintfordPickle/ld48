@@ -118,7 +118,13 @@ public class GameScreen extends BaseGameScreen {
 		if (mGameStateController.hasGameEnded())
 			return;
 
-		if (mGameStateController.isPlayerDead() && !pCoveredByOtherScreen) {
+		if (mGameStateController.hasPlayerWon() && !pCoveredByOtherScreen) {
+			screenManager.addScreen(new GameLostScreen(screenManager, "You Won!"));
+
+			mGameStateController.endGame();
+		}
+
+		else if (mGameStateController.isPlayerDead() && !pCoveredByOtherScreen) {
 			screenManager.addScreen(new GameLostScreen(screenManager, "You Died!"));
 
 			mGameStateController.endGame();

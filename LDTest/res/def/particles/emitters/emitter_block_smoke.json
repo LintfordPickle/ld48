@@ -1,0 +1,32 @@
+{
+	"name":"EMITTER_SMOKE",
+	"displayName":"EMITTER_SMOKE", 
+	
+	"childEmitters" :
+	[
+	    {
+	  		"name":"EMITTER_FIRE_CHILD_SMOKE",
+	  		"displayName":"EMITTER_FIRE_CHILD_SMOKE_1",
+			"particleSystemName":"PARTICLESYSTEM_SMOKE",
+			"emitTimeMin":40,
+			"emitTimeMax":80,
+			"emitAmountMin":4,
+			"emitAmountMax":6,
+			"PositionRelOffsetX":-10,
+			"PositionRelOffsetY": 0
+	  	},
+		{
+			"name":"EMITTER_FIRE_CHILD_SMOKE",
+			"displayName":"EMITTER_FIRE_CHILD_SMOKE_2",
+			"particleSystemName":"PARTICLESYSTEM_SMOKE",
+			"emitTimeMin":10,
+			"emitTimeMax":20,
+			"emitAmountMin":8,
+			"emitAmountMax":10,
+			"PositionRelOffsetX":10,
+			"PositionRelOffsetY":0
+	  	}
+	  	
+	]
+	
+}

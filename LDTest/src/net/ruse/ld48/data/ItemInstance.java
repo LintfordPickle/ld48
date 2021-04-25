@@ -15,6 +15,7 @@ public class ItemInstance extends CellEntity {
 	public int itemTypeIndex;
 	public float timeAlive;
 
+	public boolean interactsWithMobs;
 	public boolean physicsEnabled;
 	public boolean isPickUpAble;
 	public boolean isPickedUp;

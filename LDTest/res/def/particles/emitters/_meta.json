@@ -1,6 +1,7 @@
 {
 	rootDirectory:"res//def//particles//emitters//",
 	itemFileLocations = [
-		"emitter_block_dig"
+		"emitter_block_dig",
+		"emitter_block_smoke"
 	]
 }

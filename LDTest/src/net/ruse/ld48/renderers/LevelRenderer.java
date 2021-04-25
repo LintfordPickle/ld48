@@ -42,6 +42,7 @@ public class LevelRenderer extends BaseRenderer {
 
 	private LevelController mLevelController;
 	private Texture mLevelTexture;
+	private Texture mBackgroundTexture;
 
 	// --------------------------------------
 	// Constructor
@@ -72,11 +73,20 @@ public class LevelRenderer extends BaseRenderer {
 		super.loadGLContent(pResourceManager);
 
 		mLevelTexture = pResourceManager.textureManager().loadTexture("TEXTURE_LEVEL", "res/textures/textureLevel.png", entityGroupID());
+		mBackgroundTexture = pResourceManager.textureManager().loadTexture("TEXTURE_BACKGROUND", "res/textures/textureBackground.png", entityGroupID());
 
 	}
 
 	@Override
 	public void draw(LintfordCore pCore) {
+
+		final float lLevelWidth = GameConstants.LEVEL_TILES_WIDE * GameConstants.BLOCK_SIZE;
+
+		final var lTextureBatch = rendererManager().uiTextureBatch();
+		lTextureBatch.begin(pCore.gameCamera());
+		final var lala = (lLevelWidth / 256.f) * 256.f;
+		lTextureBatch.draw(mBackgroundTexture, 0, 0, lala, 256, 0, -128, lLevelWidth, 256, -0.9f, ColorConstants.WHITE);
+		lTextureBatch.end();
 
 		drawBackground(pCore);
 		drawForeground(pCore);

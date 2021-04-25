@@ -4,7 +4,9 @@
 	
 		"particlesystem_dig",
 		"particlesystem_blood",
-		"particlesystem_dust"
+		"particlesystem_dust",
+		"particlesystem_smoke",
+		"particlesystem_tnt"
 
 	]
 }
