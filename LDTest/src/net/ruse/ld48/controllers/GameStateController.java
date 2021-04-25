@@ -153,7 +153,7 @@ public class GameStateController extends BaseController {
 	public void setupNewGame(long pSeed) {
 		RandomNumbers.reseed(pSeed);
 		mCurrentGold = 0;
-		mTargetGold = 120;//RandomNumbers.random(400, 600);
+		mTargetGold = 120;
 
 		mLevelController.startNewGame(pSeed);
 		mMobController.startNewGame(pSeed);

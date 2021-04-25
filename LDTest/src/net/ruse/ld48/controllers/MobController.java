@@ -28,9 +28,8 @@ public class MobController extends BaseController {
 	public static final String CONTROLLER_NAME = "Mob Controller";
 
 	private static final int DEBUG_PLAYER_HEALTH = 4;
-	private static final int DEBUG_NUM_ENEMIES = 6;
 
-	private static final int FALL_DAMAGE_HEIGHT = 2;
+	private static final int FALL_DAMAGE_HEIGHT = 3;
 
 	// --------------------------------------
 	// Variables
@@ -460,6 +459,7 @@ public class MobController extends BaseController {
 		lPlayerMob.damagesOnCollide = false;
 		lPlayerMob.setPosition(32.f, 0.f);
 		lPlayerMob.swingRange = 32.f;
+		lPlayerMob.lastGroundHeight = lPlayerMob.cellY;
 
 		mMobManager.addMobInstance(lPlayerMob);
 
@@ -469,7 +469,18 @@ public class MobController extends BaseController {
 	}
 
 	private void addEnemyMobs() {
-		for (int i = 0; i < DEBUG_NUM_ENEMIES; i++) {
+		final var lLevel = mLevelController.level();
+		final int lNumTiles = GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH;
+
+		for (int i = 3 * GameConstants.LEVEL_TILES_WIDE; i < lNumTiles; i++) {
+			final int lBlockType = lLevel.getLevelBlockType(i);
+
+			if (lBlockType != Level.LEVEL_TILE_INDEX_AIR)
+				continue;
+
+			if (RandomNumbers.getRandomChance(40))
+				continue;
+
 			MobInstance lEnemyMob = null;
 
 			final int lMobType = RandomNumbers.random(0, 2);
@@ -484,12 +495,11 @@ public class MobController extends BaseController {
 				break;
 			}
 
-			final float lWorldPositionX = 256.f;//RandomNumbers.random(32.f, 96.f);
-			final float lWorldPositionY = 0;
+			final float lWorldPositionX = (i % GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE + GameConstants.BLOCK_SIZE * .5f;
+			final float lWorldPositionY = (i / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE + GameConstants.BLOCK_SIZE * .5f;
 
 			lEnemyMob.setPosition(lWorldPositionX, lWorldPositionY);
-
-			// TODO :Get valid platform from level
+			lEnemyMob.lastGroundHeight = lEnemyMob.cellY;
 
 			mMobManager.addMobInstance(lEnemyMob);
 
