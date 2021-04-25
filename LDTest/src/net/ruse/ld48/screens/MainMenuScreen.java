@@ -45,7 +45,7 @@ public class MainMenuScreen extends MenuScreen {
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
 		case BUTTON_START:
-			LoadingScreen.load(screenManager, false, new GameScreen(screenManager));
+			LoadingScreen.load(screenManager, false, new GameScreen(screenManager, true));
 			break;
 
 		case BUTTON_EXIT:

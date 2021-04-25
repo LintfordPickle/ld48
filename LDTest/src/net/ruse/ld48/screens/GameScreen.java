@@ -58,17 +58,20 @@ public class GameScreen extends BaseGameScreen {
 	private ParticleFrameworkRenderer mParticleFrameworkRenderer;
 	private HudRenderer mHudRenderer;
 
+	private boolean mShowHelpOnOpen;
+
 	// ---------------------------------------------
 	// Constructor
 	// ---------------------------------------------
 
-	public GameScreen(ScreenManager pScreenManager) {
+	public GameScreen(ScreenManager pScreenManager, boolean pShowHelpOnOpen) {
 		super(pScreenManager);
 
 		mLevel = new Level();
 		mMobManager = new MobManager();
 		mItemManager = new ItemManager();
 		mParticleData = new ParticleFrameworkData();
+		mShowHelpOnOpen = pShowHelpOnOpen;
 
 		mShowInBackground = true;
 
@@ -192,7 +195,7 @@ public class GameScreen extends BaseGameScreen {
 		mItemRenderer = new ItemRenderer(rendererManager, entityGroupID());
 		mItemRenderer.initialize(pCore);
 
-		mHudRenderer = new HudRenderer(rendererManager, entityGroupID());
+		mHudRenderer = new HudRenderer(rendererManager, entityGroupID(), mShowHelpOnOpen);
 		mHudRenderer.initialize(pCore);
 
 	}

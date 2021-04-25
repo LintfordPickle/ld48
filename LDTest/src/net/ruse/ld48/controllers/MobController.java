@@ -211,6 +211,11 @@ public class MobController extends BaseController {
 
 		}
 
+		if (!pMobInstance.groundFlag && pMobInstance.cellY < pMobInstance.lastGroundHeight) {
+			pMobInstance.lastGroundHeight = pMobInstance.cellY;
+
+		}
+
 		boolean lPrevGroundFlag = pMobInstance.groundFlag;
 		pMobInstance.groundFlag = false;
 		if (pMobInstance.fractionY > .7f && pLevel.hasCollision(pMobInstance.cellX, pMobInstance.cellY + 1)) {
@@ -223,8 +228,9 @@ public class MobController extends BaseController {
 
 				}
 
-				if (Math.abs(pMobInstance.cellY) - Math.abs(pMobInstance.lastGroundHeight) > FALL_DAMAGE_HEIGHT) {
-					pMobInstance.dealDamage(1, true);
+				final int lFallHeight = Math.abs(pMobInstance.cellY) - Math.abs(pMobInstance.lastGroundHeight);
+				if (lFallHeight > FALL_DAMAGE_HEIGHT) {
+					pMobInstance.dealDamage(lFallHeight / FALL_DAMAGE_HEIGHT, true);
 
 				}
 

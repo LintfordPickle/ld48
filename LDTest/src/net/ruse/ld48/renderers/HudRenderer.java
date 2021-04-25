@@ -48,10 +48,10 @@ public class HudRenderer extends BaseRenderer {
 	// Constructor
 	// --------------------------------------
 
-	public HudRenderer(RendererManager pRendererManager, int pEntityGroupID) {
+	public HudRenderer(RendererManager pRendererManager, int pEntityGroupID, boolean pShowHelp) {
 		super(pRendererManager, RENDERER_NAME, pEntityGroupID);
 
-		mShowHelp = true;
+		mShowHelp = pShowHelp;
 
 	}
 
@@ -129,15 +129,17 @@ public class HudRenderer extends BaseRenderer {
 		}
 
 		// Tnt Cooldown
-		lTextureBatch.draw(mHudTexture, 64, 32, 32, 32, lHudRect.left() + 256, lHudRect.top() + lTopWindowPadding, 32.f * (lTargetZoomFactor), 32.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);
+		lTextureBatch.draw(mHudTexture, 64, 32, 32, 32, lHudRect.centerX() - 32.f * lTargetZoomFactor, lHudRect.top() + lTopWindowPadding, 32.f * (lTargetZoomFactor), 32.f * (lTargetZoomFactor), -0.1f,
+				ColorConstants.WHITE);
 
 		final float lCooldownFullWidth = 62.f;
 		final float lCooldownWidth = mGameStateController.tntCooldownTimer() / GameStateController.TNT_COOLDOWN_TIME;
 
 		final float lActualWidth = lCooldownFullWidth - (lCooldownWidth * lCooldownFullWidth);
 
-		lTextureBatch.draw(mHudTexture, 0, 64, 64, 16, lHudRect.left() + 296, lHudRect.top() + lTopWindowPadding + 16f, 64.f * (lTargetZoomFactor), 16.f * (lTargetZoomFactor), -0.1f, ColorConstants.WHITE);
-		lTextureBatch.draw(mHudTexture, 0, 80, lActualWidth, 16, lHudRect.left() + 296, lHudRect.top() + lTopWindowPadding + 16f, lActualWidth * (lTargetZoomFactor), 16.f * (lTargetZoomFactor), -0.1f,
+		lTextureBatch.draw(mHudTexture, 0, 64, 64, 16, lHudRect.centerX(), lHudRect.top() + lTopWindowPadding + 8f * (lTargetZoomFactor), 64.f * (lTargetZoomFactor), 16.f * (lTargetZoomFactor), -0.1f,
+				ColorConstants.WHITE);
+		lTextureBatch.draw(mHudTexture, 0, 80, lActualWidth, 16, lHudRect.centerX(), lHudRect.top() + lTopWindowPadding + 8f * (lTargetZoomFactor), lActualWidth * (lTargetZoomFactor), 16.f * (lTargetZoomFactor), -0.1f,
 				ColorConstants.WHITE);
 
 		// Coins

@@ -98,7 +98,7 @@ public class PauseScreen extends MenuScreen {
 	protected void handleOnClick() {
 		switch (mClickAction.consume()) {
 		case BUTTON_RESTART:
-			LoadingScreen.load(screenManager, false, new GameScreen(screenManager));
+			LoadingScreen.load(screenManager, false, new GameScreen(screenManager, false));
 			break;
 
 		case BUTTON_EXIT_TO_MENU:
