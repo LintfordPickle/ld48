@@ -11,6 +11,7 @@ import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.textures.texturebatch.TextureBatchPCT;
 import net.lintford.library.screenmanager.ScreenManager;
+import net.ruse.ld48.controllers.SoundFxController;
 import net.ruse.ld48.screens.BackgroundScreen;
 import net.ruse.ld48.screens.MainMenuScreen;
 
@@ -70,6 +71,12 @@ public class BaseGame extends LintfordCore {
 	}
 
 	@Override
+	protected void oninitializeGL() {
+		super.oninitializeGL();
+
+	}
+
+	@Override
 	protected void onInitializeApp() {
 		super.onInitializeApp();
 
@@ -86,16 +93,16 @@ public class BaseGame extends LintfordCore {
 	}
 
 	@Override
-	protected void oninitializeGL() {
-		super.oninitializeGL();
-
-	}
-
-	@Override
 	protected void onLoadGLContent() {
 		super.onLoadGLContent();
 
 		mScreenManager.loadGLContent(mResourceManager);
+
+		final var lAudioManager = mResourceManager.audioManager();
+		lAudioManager.loadAudioFilesFromMetafile("res//audio//_meta.json");
+
+		var lSoundFxController = new SoundFxController(mControllerManager, mResourceManager.audioManager(), CORE_ENTITY_GROUP_ID);
+		lSoundFxController.initialize(this);
 
 	}
 

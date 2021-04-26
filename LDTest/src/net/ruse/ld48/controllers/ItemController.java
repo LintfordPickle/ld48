@@ -29,6 +29,7 @@ public class ItemController extends BaseController {
 	// Variables
 	// --------------------------------------
 
+	private SoundFxController mSoundFxController;
 	private GameStateController mGameStateController;
 	private ScreenShakeController mScreenShakeController;
 	private MobController mMobController;
@@ -78,6 +79,7 @@ public class ItemController extends BaseController {
 		mPlayerController = (PlayerController) pCore.controllerManager().getControllerByNameRequired(PlayerController.CONTROLLER_NAME, entityGroupID());
 		mParticleFrameworkController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, entityGroupID());
 		mGameStateController = (GameStateController) pCore.controllerManager().getControllerByNameRequired(GameStateController.CONTROLLER_NAME, entityGroupID());
+		mSoundFxController = (SoundFxController) pCore.controllerManager().getControllerByNameRequired(SoundFxController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mSmokeParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_SMOKE");
 		mTntParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_TNT");
@@ -259,6 +261,22 @@ public class ItemController extends BaseController {
 
 			mScreenShakeController.shakeCamera(400.f, 3.f);
 
+			final int lSoundVariationIndex = RandomNumbers.random(0, 4);
+			switch (lSoundVariationIndex) {
+			default:
+			case 1:
+				mSoundFxController.playSound(SoundFxController.SOUND_TnT1);
+				break;
+
+			case 2:
+				mSoundFxController.playSound(SoundFxController.SOUND_TnT2);
+				break;
+
+			case 3:
+				mSoundFxController.playSound(SoundFxController.SOUND_TnT3);
+				break;
+			}
+
 			final int lTileX = pItemInstance.cellX;
 			final int lTileY = pItemInstance.cellY;
 			final int lTileCoord = pLevel.getLevelTileCoord(lTileX, lTileY);
@@ -275,14 +293,24 @@ public class ItemController extends BaseController {
 
 			}
 
-			tntDigTile(pLevel.getLeftBlockIndex(lTileCoord));
-			tntDigTile(pLevel.getRightBlockIndex(lTileCoord));
+			final int lLeftTileCoord = pLevel.getLeftBlockIndex(lTileCoord);
+			tntDigTile(lLeftTileCoord);
+			tntDigTile(pLevel.getTopBlockIndex(lLeftTileCoord));
+			tntDigTile(pLevel.getBottomBlockIndex(lLeftTileCoord));
+
+			final int lRightTileCoord = pLevel.getRightBlockIndex(lTileCoord);
+			tntDigTile(lRightTileCoord);
+			tntDigTile(pLevel.getTopBlockIndex(lRightTileCoord));
+			tntDigTile(pLevel.getBottomBlockIndex(lRightTileCoord));
+
 			tntDigTile(pLevel.getTopBlockIndex(lTileCoord));
 			tntDigTile(pLevel.getBottomBlockIndex(lTileCoord));
 
+			// extended
+
 			final float lWorldPositionX = pItemInstance.worldPositionX;
 			final float lWorldPositionY = pItemInstance.worldPositionY;
-			final float lBlastRadius = 64.f;
+			final float lBlastRadius = 96.f;
 
 			mMobController.dealDamageToMobsInRange(lWorldPositionX, lWorldPositionY, lBlastRadius, 2, true);
 
@@ -313,6 +341,8 @@ public class ItemController extends BaseController {
 			return;
 
 		final var lFreeItemInstance = itemManager().getFreePooledItem();
+
+		mSoundFxController.playSound(SoundFxController.SOUND_TnTFuse);
 
 		lFreeItemInstance.setupItem(ItemManager.ITEM_TYPE_INDEX_TNT);
 		lFreeItemInstance.setPosition(pWorldX, pWorldY);

@@ -24,6 +24,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 	// Variables
 	// ---------------------------------------------
 
+	private SoundFxController mSoundFxController;
 	private GameStateController mGameStateController;
 	private ParticleFrameworkController mParticleFrameworkController;
 	private ParticleSystemInstance mDigBlockParticles;
@@ -75,6 +76,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 	public void initialize(LintfordCore pCore) {
 		mGameStateController = (GameStateController) pCore.controllerManager().getControllerByNameRequired(GameStateController.CONTROLLER_NAME, entityGroupID());
 		mParticleFrameworkController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, entityGroupID());
+		mSoundFxController = (SoundFxController) pCore.controllerManager().getControllerByNameRequired(SoundFxController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mDigBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DIG");
 
@@ -143,7 +145,12 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 		final int lBLockTypeIndex = mLevel.getLevelBlockType(pTileCoord);
 		final boolean lWasBlockedRemoved = mLevel.digBlock(pTileCoord, pDamageAmt);
 
-		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_AIR || lBLockTypeIndex == Level.LEVEL_TILE_INDEX_STONE)
+		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_STONE) {
+			mSoundFxController.playSound(SoundFxController.SOUND_DIG_STONE);
+			return false;
+		}
+
+		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_AIR)
 			return false;
 
 		if (lWasBlockedRemoved) {
@@ -156,6 +163,18 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 
 		if (lBLockTypeIndex <= 0)
 			return false;
+
+		final int lSoundVariationIndex = RandomNumbers.random(0, 2);
+		switch (lSoundVariationIndex) {
+		default:
+		case 0:
+			mSoundFxController.playSound(SoundFxController.SOUND_DIG_DIRT_1);
+			break;
+
+		case 1:
+			mSoundFxController.playSound(SoundFxController.SOUND_DIG_DIRT_2);
+			break;
+		}
 
 		if (mDigBlockParticles != null) {
 			final int lTileX = pTileCoord % GameConstants.LEVEL_TILES_WIDE;

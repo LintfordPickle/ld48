@@ -20,6 +20,8 @@ public class PlayerController extends BaseController {
 	// Variables
 	// --------------------------------------
 
+	private SoundFxController mSoundFxController;
+
 	private LevelController mLevelController;
 	private ItemController mItemController;
 	private MobInstance mPlayerMobInstance;
@@ -59,6 +61,7 @@ public class PlayerController extends BaseController {
 	public void initialize(LintfordCore pCore) {
 		mItemController = (ItemController) pCore.controllerManager().getControllerByNameRequired(ItemController.CONTROLLER_NAME, entityGroupID());
 		mLevelController = (LevelController) pCore.controllerManager().getControllerByNameRequired(LevelController.CONTROLLER_NAME, entityGroupID());
+		mSoundFxController = (SoundFxController) pCore.controllerManager().getControllerByNameRequired(SoundFxController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -123,6 +126,7 @@ public class PlayerController extends BaseController {
 
 		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_SPACE) && mPlayerMobInstance.groundFlag) {
 			mPlayerMobInstance.velocityY = -.21f;
+			mSoundFxController.playSound(SoundFxController.SOUND_JUMP);
 			mPlayerMobInstance.groundFlag = false;
 
 		}

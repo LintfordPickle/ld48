@@ -2,9 +2,72 @@
 	"AudioMetaDefinitions" : [
 	
 		{
-			"soundname":"",
-			"filepath":""
+			"soundname":"SOUND_DIG_DIRT_1",
+			"filepath":"res//audio//soundDigDirt1.wav"
+		},
+		{
+			"soundname":"SOUND_DIG_DIRT_2",
+			"filepath":"res//audio//soundDigDirt2.wav"
+		},
+		{
+			"soundname":"SOUND_DIG_STONE",
+			"filepath":"res//audio//soundDigStone.wav"
+		},
+		{
+			"soundname":"SOUND_JUMP",
+			"filepath":"res//audio//soundJump.wav"
+		},
+		{
+			"soundname":"SOUND_JUMP_BIG",
+			"filepath":"res//audio//soundBigJump.wav"
+		},
+		{
+			"soundname":"SOUND_GOLD_1",
+			"filepath":"res//audio//soundGold1.wav"
+		},
+		{
+			"soundname":"SOUND_GOLD_2",
+			"filepath":"res//audio//soundGold2.wav"
+		},
+		{
+			"soundname":"SOUND_HURT_1",
+			"filepath":"res//audio//soundHurt1.wav"
+		},
+		{
+			"soundname":"SOUND_HURT_2",
+			"filepath":"res//audio//soundHurt2.wav"
+		},
+		{
+			"soundname":"SOUND_HURT_3",
+			"filepath":"res//audio//soundHurt3.wav"
+		},
+		{
+			"soundname":"SOUND_HURT_4",
+			"filepath":"res//audio//soundHurt4.wav"
+		},
+		{
+			"soundname":"SOUND_SPIDER_HURT",
+			"filepath":"res//audio//soundSpiderHurt.wav"
+		},
+		{
+			"soundname":"SOUND_SWORD",
+			"filepath":"res//audio//soundSword.wav"
+		},
+		{
+			"soundname":"SOUND_TnT1",
+			"filepath":"res//audio//soundTnT1.wav"
+		},
+		{
+			"soundname":"SOUND_TnT2",
+			"filepath":"res//audio//soundTnT2.wav"
+		},
+		{
+			"soundname":"SOUND_TnT3",
+			"filepath":"res//audio//soundTnT3.wav"
+		},
+		{
+			"soundname":"SOUND_TnTFuse",
+			"filepath":"res//audio//soundTnTFuse.wav"
 		}
-		
 	]
 }

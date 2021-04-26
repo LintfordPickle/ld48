@@ -38,6 +38,7 @@ public class MobController extends BaseController {
 	private MobManager mMobManager;
 	private final List<MobInstance> mMobInstancesToUpdate = new ArrayList<>();
 
+	private SoundFxController mSoundFxController;
 	private GameStateController mGameStateController;
 	private PlayerController mPlayerController;
 	private CameraFollowController mCameraFollowController;
@@ -83,6 +84,7 @@ public class MobController extends BaseController {
 		mParticleFrameworkController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, entityGroupID());
 		mCameraFollowController = (CameraFollowController) pCore.controllerManager().getControllerByNameRequired(CameraFollowController.CONTROLLER_NAME, entityGroupID());
 		mGameStateController = (GameStateController) pCore.controllerManager().getControllerByNameRequired(GameStateController.CONTROLLER_NAME, entityGroupID());
+		mSoundFxController = (SoundFxController) pCore.controllerManager().getControllerByNameRequired(SoundFxController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mBloodBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_BLOOD");
 		mDustBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DUST");
@@ -146,7 +148,8 @@ public class MobController extends BaseController {
 
 				}
 
-				lMobInstance.inputCooldownTimer = 300;
+				lMobInstance.inputCooldownTimer = lMobInstance.isPlayerControlled ? 300 : 450;
+
 			}
 
 			if (!lMobInstance.isPlayerControlled) {
@@ -230,6 +233,10 @@ public class MobController extends BaseController {
 
 				final int lFallHeight = Math.abs(pMobInstance.cellY) - Math.abs(pMobInstance.lastGroundHeight);
 				if (lFallHeight > FALL_DAMAGE_HEIGHT) {
+
+					if (pMobInstance.isPlayerControlled)
+						playHurtSound();
+
 					pMobInstance.dealDamage(lFallHeight / FALL_DAMAGE_HEIGHT, true);
 
 				}
@@ -364,6 +371,8 @@ public class MobController extends BaseController {
 			pReceivingMob.velocityX += Math.cos(lAngle) * lRepelPower;
 			pReceivingMob.velocityY += Math.sin(lAngle) * lRepelPower * 0.05f;
 
+			playHurtSound();
+
 			pReceivingMob.dealDamage(1, true);
 
 			return true;
@@ -372,6 +381,25 @@ public class MobController extends BaseController {
 
 		return false;
 
+	}
+
+	private void playHurtSound() {
+		final int lHurtSoundIndex = RandomNumbers.random(0, 4);
+		switch (lHurtSoundIndex) {
+		default:
+		case 0:
+			mSoundFxController.playSound(SoundFxController.SOUND_HURT_1);
+			break;
+		case 1:
+			mSoundFxController.playSound(SoundFxController.SOUND_HURT_2);
+			break;
+		case 2:
+			mSoundFxController.playSound(SoundFxController.SOUND_HURT_3);
+			break;
+		case 3:
+			mSoundFxController.playSound(SoundFxController.SOUND_HURT_4);
+			break;
+		}
 	}
 
 	private void updateEnemyPlayerCollision(LintfordCore pCore, Level pLevel, MobInstance pMobInstanceA, MobInstance pMobInstanceB) {
@@ -493,6 +521,11 @@ public class MobController extends BaseController {
 			default:
 			case 1:
 				lEnemyMob = getGoblinMob();
+
+				final int lBlockBelowType = lLevel.getLevelBlockType(lLevel.getBottomBlockIndex(i));
+				if (lBlockBelowType == Level.LEVEL_TILE_INDEX_AIR)
+					continue;
+
 				break;
 			}
 

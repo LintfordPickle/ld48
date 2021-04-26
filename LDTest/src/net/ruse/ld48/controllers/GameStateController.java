@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
+import net.lintford.library.core.maths.RandomNumbers;
 
 public class GameStateController extends BaseController {
 
@@ -20,6 +21,7 @@ public class GameStateController extends BaseController {
 
 	private PlayerController mPlayerController;
 
+	private SoundFxController mSoundfxController;
 	private LevelController mLevelController;
 	private ItemController mItemController;
 	private MobController mMobController;
@@ -28,7 +30,7 @@ public class GameStateController extends BaseController {
 	private boolean mHasGameEnded = false;
 
 	private float mTnTCooldownTimer;
-	public static final float TNT_COOLDOWN_TIME = 2500;
+	public static final float TNT_COOLDOWN_TIME = 1500;
 
 	private int mCurrentLevel;
 	private int mTargetGold;
@@ -124,6 +126,7 @@ public class GameStateController extends BaseController {
 		mLevelController = (LevelController) pCore.controllerManager().getControllerByNameRequired(LevelController.CONTROLLER_NAME, entityGroupID());
 		mItemController = (ItemController) pCore.controllerManager().getControllerByNameRequired(ItemController.CONTROLLER_NAME, entityGroupID());
 		mMobController = (MobController) pCore.controllerManager().getControllerByNameRequired(MobController.CONTROLLER_NAME, entityGroupID());
+		mSoundfxController = (SoundFxController) pCore.controllerManager().getControllerByNameRequired(SoundFxController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 	}
 
@@ -199,6 +202,20 @@ public class GameStateController extends BaseController {
 	}
 
 	public void addGold(int pAmt) {
+
+		final int lSoundVariation = RandomNumbers.random(0, 2);
+		switch (lSoundVariation) {
+		default:
+		case 0:
+			mSoundfxController.playSound(SoundFxController.SOUND_GOLD_1);
+			break;
+
+		case 1:
+			mSoundfxController.playSound(SoundFxController.SOUND_GOLD_2);
+			break;
+
+		}
+
 		mCurrentGold += pAmt;
 
 	}
