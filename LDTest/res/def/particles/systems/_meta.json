@@ -3,6 +3,7 @@
 	"itemFileLocations" : [
 	
 		"particlesystem_dig",
+		"particlesystem_dig_noeffect",
 		"particlesystem_blood",
 		"particlesystem_dust",
 		"particlesystem_smoke",

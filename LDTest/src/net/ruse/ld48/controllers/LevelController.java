@@ -27,7 +27,9 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 	private SoundFxController mSoundFxController;
 	private GameStateController mGameStateController;
 	private ParticleFrameworkController mParticleFrameworkController;
+
 	private ParticleSystemInstance mDigBlockParticles;
+	private ParticleSystemInstance mDigNoEffectBlockParticles;
 
 	private Level mLevel;
 	private float mMouseCooldownTimer;
@@ -79,6 +81,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 		mSoundFxController = (SoundFxController) pCore.controllerManager().getControllerByNameRequired(SoundFxController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
 
 		mDigBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DIG");
+		mDigNoEffectBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DIG_NOEFFECT");
 
 	}
 
@@ -143,10 +146,32 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 
 	public boolean digLevel(int pTileCoord, byte pDamageAmt) {
 		final int lBLockTypeIndex = mLevel.getLevelBlockType(pTileCoord);
+
+		{
+			if (pTileCoord % GameConstants.LEVEL_TILES_WIDE == 0)
+				return false;
+			if (pTileCoord % GameConstants.LEVEL_TILES_WIDE == GameConstants.LEVEL_TILES_WIDE - 1)
+				return false;
+			if (pTileCoord > GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH- GameConstants.LEVEL_TILES_WIDE)
+				return false;
+		}
+
 		final boolean lWasBlockedRemoved = mLevel.digBlock(pTileCoord, pDamageAmt);
 
 		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_STONE) {
 			mSoundFxController.playSound(SoundFxController.SOUND_DIG_STONE);
+
+			final int lTileX = pTileCoord % GameConstants.LEVEL_TILES_WIDE;
+			final int lTileY = pTileCoord / GameConstants.LEVEL_TILES_WIDE;
+
+			final float lTileCenterX = lTileX * 32.f + RandomNumbers.random(4.f, 28.f);
+			final float lTileCenterY = lTileY * 32.f + RandomNumbers.random(4.f, 28.f);
+
+			final float lVelocityX = RandomNumbers.random(-5.f, 5.f);
+			final float lVelocityY = -10.f + RandomNumbers.random(-5.f, 5.f);
+
+			mDigNoEffectBlockParticles.spawnParticle(lTileCenterX, lTileCenterY, lVelocityX, lVelocityY, 0, 0, 16, 16, 64.f, 64.f);
+
 			return false;
 		}
 
