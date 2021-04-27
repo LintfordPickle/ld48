@@ -92,36 +92,6 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 	}
 
 	@Override
-	public boolean handleInput(LintfordCore pCore) {
-		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_R)) {
-			mLevel.loadLevel();
-
-		}
-
-		if (pCore.input().mouse().isMouseLeftButtonDownTimed(this)) {
-			final float lMouseWorldPositionX = pCore.gameCamera().getMouseWorldSpaceX();
-			final float lMouseWorldPositionY = pCore.gameCamera().getMouseWorldSpaceY();
-
-			final int lTileX = (int) (lMouseWorldPositionX / 32.f);
-			final int lTileY = (int) (lMouseWorldPositionY / 32.f);
-
-			final int lSelectedTileCoord = mLevel.getLevelTileCoord(lTileX, lTileY);
-
-			if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)) {
-				mLevel.levelBlocks()[lSelectedTileCoord] = 1;
-
-			} else {
-				digLevel(lTileX, lTileY, (byte) 10);
-
-			}
-
-		}
-
-		return super.handleInput(pCore);
-
-	}
-
-	@Override
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
@@ -152,7 +122,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 				return false;
 			if (pTileCoord % GameConstants.LEVEL_TILES_WIDE == GameConstants.LEVEL_TILES_WIDE - 1)
 				return false;
-			if (pTileCoord > GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH- GameConstants.LEVEL_TILES_WIDE)
+			if (pTileCoord > GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH - GameConstants.LEVEL_TILES_WIDE)
 				return false;
 		}
 

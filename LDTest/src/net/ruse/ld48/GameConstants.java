@@ -8,7 +8,7 @@ public class GameConstants {
 	public static final int WINDOW_WIDTH = 640;
 	public static final int WINDOW_HEIGHT = 480;
 
-	public static final boolean GAME_SIDEWAYS_DIGGING = true;
+	public static final boolean DEBUG_MODE = false;
 
 	// LEVELS
 

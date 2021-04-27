@@ -6,6 +6,7 @@ import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.maths.RandomNumbers;
+import net.ruse.ld48.GameConstants;
 
 public class GameStateController extends BaseController {
 
@@ -138,8 +139,7 @@ public class GameStateController extends BaseController {
 
 	@Override
 	public boolean handleInput(LintfordCore pCore) {
-
-		if (pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_R)) {
+		if (GameConstants.DEBUG_MODE && pCore.input().keyboard().isKeyDownTimed(GLFW.GLFW_KEY_R)) {
 			setupNewGame(mCurrentLevel);
 
 		}

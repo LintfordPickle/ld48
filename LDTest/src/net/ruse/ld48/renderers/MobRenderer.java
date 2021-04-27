@@ -4,8 +4,10 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
+import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
+import net.ruse.ld48.GameConstants;
 import net.ruse.ld48.controllers.MobController;
 
 public class MobRenderer extends BaseRenderer {
@@ -22,7 +24,8 @@ public class MobRenderer extends BaseRenderer {
 	// Variables
 	// --------------------------------------
 
-	SpriteSheetDefinition mMobSpriteSheet;
+	private SpriteSheetDefinition mMobSpriteSheet;
+	private Texture mLevelTexture;
 
 	private MobController mMobController;
 
@@ -55,6 +58,7 @@ public class MobRenderer extends BaseRenderer {
 		super.loadGLContent(pResourceManager);
 
 		mMobSpriteSheet = pResourceManager.spriteSheetManager().loadSpriteSheet("res/spritesheets/spritesheetMobs.json", entityGroupID());
+		mLevelTexture = pResourceManager.textureManager().loadTexture("TEXTURE_LEVEL", "res//textures//textureLevel.png", entityGroupID());
 
 	}
 
@@ -67,7 +71,9 @@ public class MobRenderer extends BaseRenderer {
 			return;
 
 		final var lSpriteBatch = rendererManager().uiSpriteBatch();
+		final var lTextureBatch = rendererManager().uiTextureBatch();
 
+		lTextureBatch.begin(pCore.gameCamera());
 		lSpriteBatch.begin(pCore.gameCamera());
 
 		final int lMobCount = lMobList.size();
@@ -121,9 +127,18 @@ public class MobRenderer extends BaseRenderer {
 
 			}
 
+			if (lMobInstance.swingingFlag && lMobInstance.lastSwingTileCoord != -1) {
+				final float lTileWorldPosX = (lMobInstance.lastSwingTileCoord % GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+				final float lTileWorldPosY = (lMobInstance.lastSwingTileCoord / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+
+				lTextureBatch.draw(mLevelTexture, 32, 0, 32, 32, lTileWorldPosX, lTileWorldPosY, 32, 32, -0.01f, ColorConstants.WHITE);
+
+			}
+
 		}
 
 		lSpriteBatch.end();
+		lTextureBatch.end();
 
 	}
 

@@ -47,6 +47,8 @@ public class MainMenuScreen extends MenuScreen {
 
 		layouts().add(lListLayout);
 
+		mPaddingTopNormalized = -50.f;
+
 		mESCBackEnabled = false;
 
 	}

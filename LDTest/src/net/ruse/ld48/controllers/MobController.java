@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joml.Math;
+import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
@@ -134,7 +135,7 @@ public class MobController extends BaseController {
 					lMobInstance.attackPointWorldX = lMobInstance.worldPositionX + 24.f * lSignum;
 					lMobInstance.attackPointWorldY = lMobInstance.worldPositionY;
 
-					if (lMobInstance == lOtherMobInstance /* || !lOtherMobInstance.swingAttackEnabled */)
+					if (lMobInstance == lOtherMobInstance)
 						continue;
 
 					lAnyoneHit = updateMobAttackCollisions(pCore, lLevel, lMobInstance, lOtherMobInstance) || lAnyoneHit;
@@ -142,9 +143,26 @@ public class MobController extends BaseController {
 				}
 
 				// Only dig if not in combat
+				lMobInstance.lastSwingTileCoord = -1;
 				if (!lAnyoneHit) {
-					final boolean lSideWaysDigging = GameConstants.GAME_SIDEWAYS_DIGGING;
-					mLevelController.digLevel(lMobInstance.cellX + (lSideWaysDigging ? lSignum : 0), lMobInstance.cellY + 1, (byte) 1);
+					final boolean lDigDirectionSet = lMobInstance.swingingFlagDirection != -1;
+
+					if (!lDigDirectionSet) {
+						mLevelController.digLevel(lMobInstance.cellX + lSignum, lMobInstance.cellY, (byte) 1);
+
+					} else {
+						final boolean lDigDown = lMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_S;
+
+						if (lDigDown) {
+							mLevelController.digLevel(lMobInstance.cellX, lMobInstance.cellY + 1, (byte) 1);
+
+						} else {
+							final int lDigDownDirection = lMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_A ? -1 : 1;
+							mLevelController.digLevel(lMobInstance.cellX + lDigDownDirection, lMobInstance.cellY + 1, (byte) 1);
+
+						}
+
+					}
 
 				}
 

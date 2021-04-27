@@ -32,6 +32,8 @@ public class MobInstance extends CellEntity {
 	public int lastGroundHeight;
 
 	public boolean swingingFlag;
+	public int swingingFlagDirection;
+	public int lastSwingTileCoord;
 
 	public float inputCooldownTimer;
 	private String mMobTypeName;

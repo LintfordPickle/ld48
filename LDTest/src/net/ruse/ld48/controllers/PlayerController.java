@@ -77,8 +77,19 @@ public class PlayerController extends BaseController {
 
 		// Digging / Attacking
 		mPlayerMobInstance.swingingFlag = false;
-		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_RIGHT_SHIFT)) {
+		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_RIGHT_SHIFT) || lKeyboard.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 			mPlayerMobInstance.swingingFlag = true;
+			mPlayerMobInstance.swingingFlagDirection = -1;
+			if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_S))
+				mPlayerMobInstance.swingingFlagDirection = GLFW.GLFW_KEY_S;
+
+			if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
+				if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_A))
+					mPlayerMobInstance.swingingFlagDirection = GLFW.GLFW_KEY_A;
+				if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_D))
+					mPlayerMobInstance.swingingFlagDirection = GLFW.GLFW_KEY_D;
+
+			}
 
 		}
 
@@ -132,6 +143,33 @@ public class PlayerController extends BaseController {
 		}
 
 		return super.handleInput(pCore);
+	}
+
+	@Override
+	public void update(LintfordCore pCore) {
+		super.update(pCore);
+
+		final var lLevel = mLevelController.level();
+		final boolean lDigDirectionSet = mPlayerMobInstance.swingingFlagDirection != -1;
+		final int lSignum = mPlayerMobInstance.isLeftFacing ? -1 : 1;
+
+		if (!lDigDirectionSet) {
+			mPlayerMobInstance.lastSwingTileCoord = lLevel.getLevelTileCoord(mPlayerMobInstance.cellX + lSignum, mPlayerMobInstance.cellY);
+
+		} else {
+			final boolean lDigDown = mPlayerMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_S;
+
+			if (lDigDown) {
+				mPlayerMobInstance.lastSwingTileCoord = lLevel.getLevelTileCoord(mPlayerMobInstance.cellX, mPlayerMobInstance.cellY + 1);
+
+			} else {
+				final int lDigDownDirection = mPlayerMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_A ? -1 : 1;
+				mPlayerMobInstance.lastSwingTileCoord = lLevel.getLevelTileCoord(mPlayerMobInstance.cellX + lDigDownDirection, mPlayerMobInstance.cellY + 1);
+
+			}
+
+		}
+
 	}
 
 }
