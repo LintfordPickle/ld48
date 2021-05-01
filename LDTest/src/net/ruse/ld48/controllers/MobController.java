@@ -28,10 +28,6 @@ public class MobController extends BaseController {
 
 	public static final String CONTROLLER_NAME = "Mob Controller";
 
-	private static final int DEBUG_PLAYER_HEALTH = 4;
-
-	private static final int FALL_DAMAGE_HEIGHT = 3;
-
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -124,7 +120,8 @@ public class MobController extends BaseController {
 
 			lMobInstance.update(pCore);
 
-			if (lMobInstance.swingingFlag && lMobInstance.isInputCooldownElapsed()) {
+			if (lMobInstance.isPlayerControlled && lMobInstance.swingingFlag && lMobInstance.isInputCooldownElapsed()) {
+
 				// calculate the point of the attack (in world space)
 				final int lSignum = lMobInstance.isLeftFacing ? -1 : 1;
 
@@ -138,31 +135,53 @@ public class MobController extends BaseController {
 					if (lMobInstance == lOtherMobInstance)
 						continue;
 
-					lAnyoneHit = updateMobAttackCollisions(pCore, lLevel, lMobInstance, lOtherMobInstance) || lAnyoneHit;
+					final boolean lThisMobHit = updateMobAttackCollisions(pCore, lLevel, lMobInstance, lOtherMobInstance);
+					lAnyoneHit |= lThisMobHit;
+
+					if (lThisMobHit && lMobInstance.isPlayerControlled) {
+						// lMobInstance.targetWorldCoord.set(-1, -1);
+
+						lMobInstance.targetWorldCoord.x = lOtherMobInstance.worldPositionX - GameConstants.BLOCK_SIZE * .5f;
+						lMobInstance.targetWorldCoord.y = lOtherMobInstance.worldPositionY - GameConstants.BLOCK_SIZE * .5f;
+						lMobInstance.targetTypeIndex = MobInstance.MOB_TARGET_TYPE_MOB;
+
+					}
 
 				}
 
-				// Only dig if not in combat
-				lMobInstance.lastSwingTileCoord = -1;
 				if (!lAnyoneHit) {
 					final boolean lDigDirectionSet = lMobInstance.swingingFlagDirection != -1;
 
 					if (!lDigDirectionSet) {
-						mLevelController.digLevel(lMobInstance.cellX + lSignum, lMobInstance.cellY, (byte) 1);
+						final int lTileCoord = lLevel.getLevelTileCoord(lMobInstance.cellX + lSignum, lMobInstance.cellY);
+						mLevelController.digLevel(lTileCoord, (byte) 1);
+
+						lMobInstance.targetWorldCoord.x = (lTileCoord % GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+						lMobInstance.targetWorldCoord.y = (lTileCoord / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
 
 					} else {
 						final boolean lDigDown = lMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_S;
 
 						if (lDigDown) {
-							mLevelController.digLevel(lMobInstance.cellX, lMobInstance.cellY + 1, (byte) 1);
+							final int lTileCoord = lLevel.getLevelTileCoord(lMobInstance.cellX, lMobInstance.cellY + 1);
+							mLevelController.digLevel(lTileCoord, (byte) 1);
+
+							lMobInstance.targetWorldCoord.x = (lTileCoord % GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+							lMobInstance.targetWorldCoord.y = (lTileCoord / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
 
 						} else {
 							final int lDigDownDirection = lMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_A ? -1 : 1;
-							mLevelController.digLevel(lMobInstance.cellX + lDigDownDirection, lMobInstance.cellY + 1, (byte) 1);
+							final int lTileCoord = lLevel.getLevelTileCoord(lMobInstance.cellX + lDigDownDirection, lMobInstance.cellY + 1);
+							mLevelController.digLevel(lTileCoord, (byte) 1);
+
+							lMobInstance.targetWorldCoord.x = (lTileCoord % GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+							lMobInstance.targetWorldCoord.y = (lTileCoord / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
 
 						}
 
 					}
+
+					lMobInstance.targetTypeIndex = MobInstance.MOB_TARGET_TYPE_BLOCK;
 
 				}
 
@@ -250,12 +269,12 @@ public class MobController extends BaseController {
 				}
 
 				final int lFallHeight = Math.abs(pMobInstance.cellY) - Math.abs(pMobInstance.lastGroundHeight);
-				if (lFallHeight > FALL_DAMAGE_HEIGHT) {
+				if (lFallHeight > GameConstants.MIN_HEIGHT_FALL_DAMAGE && GameConstants.MIN_HEIGHT_FALL_DAMAGE != 0) {
 
 					if (pMobInstance.isPlayerControlled)
 						playHurtSound();
 
-					pMobInstance.dealDamage(lFallHeight / FALL_DAMAGE_HEIGHT, true);
+					pMobInstance.dealDamage(lFallHeight / GameConstants.MIN_HEIGHT_FALL_DAMAGE, true);
 
 				}
 
@@ -360,10 +379,13 @@ public class MobController extends BaseController {
 	}
 
 	private boolean updateMobAttackCollisions(LintfordCore pCore, Level pLevel, MobInstance pAttackingMob, MobInstance pReceivingMob) {
-		final int lMinCellClearance = 3;
-		if (Math.abs(pAttackingMob.cellX - pReceivingMob.cellX) >= lMinCellClearance || Math.abs(pAttackingMob.cellY - pReceivingMob.cellY) >= lMinCellClearance) {
+		if (Math.abs(pAttackingMob.cellX - pReceivingMob.cellX) > pAttackingMob.minAttackCellClearanceX) {
 			return false;
 
+		}
+
+		if (Math.abs(pAttackingMob.cellY - pReceivingMob.cellY) > pAttackingMob.minAttackCellClearanceY) {
+			return false;
 		}
 
 		final float lMaxDist = 12.f + pReceivingMob.radius;
@@ -392,6 +414,9 @@ public class MobController extends BaseController {
 			playHurtSound();
 
 			pReceivingMob.dealDamage(1, true);
+
+			pAttackingMob.attackPointWorldX = pReceivingMob.worldPositionX;
+			pAttackingMob.attackPointWorldY = pReceivingMob.worldPositionY;
 
 			return true;
 
@@ -500,10 +525,12 @@ public class MobController extends BaseController {
 	private void addPlayerMob() {
 		final var lPlayerMob = mMobManager.getFreePooledItem();
 
-		lPlayerMob.initialise(MobInstance.MOB_TYPE_DWARF, DEBUG_PLAYER_HEALTH);
+		lPlayerMob.initialise(MobInstance.MOB_TYPE_DWARF, GameConstants.STARTING_PLAYER_HEALTH);
 		lPlayerMob.isPlayerControlled = true;
 		lPlayerMob.swingAttackEnabled = true;
 		lPlayerMob.damagesOnCollide = false;
+		lPlayerMob.minAttackCellClearanceX = 1;
+		lPlayerMob.minAttackCellClearanceY = 1;
 		lPlayerMob.setPosition(32.f, 0.f);
 		lPlayerMob.swingRange = 32.f;
 		lPlayerMob.lastGroundHeight = lPlayerMob.cellY;
@@ -559,6 +586,8 @@ public class MobController extends BaseController {
 
 	}
 
+	// TODO: ---> Refactor these out
+
 	private MobInstance getSpiderMob() {
 		final var lEnemyMob = mMobManager.getFreePooledItem();
 
@@ -568,6 +597,8 @@ public class MobController extends BaseController {
 		lEnemyMob.swingRange = 32.f;
 		lEnemyMob.jumpVelocity = -.27f;
 		lEnemyMob.isPlayerControlled = false;
+		lEnemyMob.minAttackCellClearanceX = 2;
+		lEnemyMob.minAttackCellClearanceY = 1;
 
 		return lEnemyMob;
 	}
@@ -581,6 +612,8 @@ public class MobController extends BaseController {
 		lEnemyMob.swingRange = 48.f;
 		lEnemyMob.jumpVelocity = -.21f;
 		lEnemyMob.isPlayerControlled = false;
+		lEnemyMob.minAttackCellClearanceX = 2;
+		lEnemyMob.minAttackCellClearanceY = 1;
 
 		return lEnemyMob;
 	}

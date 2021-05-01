@@ -8,7 +8,16 @@ public class GameConstants {
 	public static final int WINDOW_WIDTH = 640;
 	public static final int WINDOW_HEIGHT = 480;
 
+	// GENERAL
+
+	public static final int STARTING_PLAYER_HEALTH = 4;
+	public static final int MIN_HEIGHT_FALL_DAMAGE = 3;
+
+	// DEBUG
+
 	public static final boolean DEBUG_MODE = false;
+	public static final boolean DEBUG_GOD_MODE = false;
+	public static final boolean DEBUG_DRAW_MOB_COLLIDERS = false;
 
 	// LEVELS
 

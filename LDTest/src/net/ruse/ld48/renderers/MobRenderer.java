@@ -2,6 +2,7 @@ package net.ruse.ld48.renderers;
 
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
+import net.lintford.library.core.debug.Debug;
 import net.lintford.library.core.graphics.ColorConstants;
 import net.lintford.library.core.graphics.sprites.spritesheet.SpriteSheetDefinition;
 import net.lintford.library.core.graphics.textures.Texture;
@@ -9,6 +10,7 @@ import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
 import net.ruse.ld48.GameConstants;
 import net.ruse.ld48.controllers.MobController;
+import net.ruse.ld48.data.MobInstance;
 
 public class MobRenderer extends BaseRenderer {
 
@@ -80,9 +82,9 @@ public class MobRenderer extends BaseRenderer {
 		for (int i = 0; i < lMobCount; i++) {
 			final var lMobInstance = lMobList.get(i);
 
-			final float lMobX = lMobInstance.worldPositionX;
-			final float lMobY = lMobInstance.worldPositionY;
-			final float lMobR = lMobInstance.radius;
+			final float lMobWorldPositionX = lMobInstance.worldPositionX;
+			final float lMobWorldPositionY = lMobInstance.worldPositionY;
+			final float lMobRadius = lMobInstance.radius;
 
 			final var lMobSpriteInstance = lMobInstance.currentSprite;
 
@@ -109,7 +111,7 @@ public class MobRenderer extends BaseRenderer {
 			if (lMobSpriteInstance == null)
 				continue;
 
-			lMobSpriteInstance.setCenterPosition(lMobX, lMobY);
+			lMobSpriteInstance.setCenterPosition(lMobWorldPositionX, lMobWorldPositionY);
 			lMobSpriteInstance.update(pCore);
 
 			final float lMobWidth = lMobInstance.currentSprite.width();
@@ -120,18 +122,27 @@ public class MobRenderer extends BaseRenderer {
 			}
 
 			if (lMobInstance.isLeftFacing) {
-				lSpriteBatch.draw(mMobSpriteSheet, lMobSpriteInstance.currentSpriteFrame(), lMobX + 16.f, lMobY - 16.f, -lMobWidth, 32, -0.1f, lTintColor);
+				lSpriteBatch.draw(mMobSpriteSheet, lMobSpriteInstance.currentSpriteFrame(), lMobWorldPositionX + 16.f, lMobWorldPositionY - 16.f, -lMobWidth, 32, -0.1f, lTintColor);
 
 			} else {
-				lSpriteBatch.draw(mMobSpriteSheet, lMobSpriteInstance.currentSpriteFrame(), lMobX - 16.f, lMobY - 16.f, lMobWidth, 32, -0.1f, lTintColor);
+				lSpriteBatch.draw(mMobSpriteSheet, lMobSpriteInstance.currentSpriteFrame(), lMobWorldPositionX - 16.f, lMobWorldPositionY - 16.f, lMobWidth, 32, -0.1f, lTintColor);
 
 			}
 
-			if (lMobInstance.swingingFlag && lMobInstance.lastSwingTileCoord != -1) {
-				final float lTileWorldPosX = (lMobInstance.lastSwingTileCoord % GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
-				final float lTileWorldPosY = (lMobInstance.lastSwingTileCoord / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+			if (lMobInstance.swingingFlag && lMobInstance.isPlayerControlled) {
+				final float lTileWorldPosX = lMobInstance.targetWorldCoord.x;
+				final float lTileWorldPosY = lMobInstance.targetWorldCoord.y;
 
-				lTextureBatch.draw(mLevelTexture, 32, 0, 32, 32, lTileWorldPosX, lTileWorldPosY, 32, 32, -0.01f, ColorConstants.WHITE);
+				var tintColor = ColorConstants.WHITE;
+				if (lMobInstance.targetTypeIndex == MobInstance.MOB_TARGET_TYPE_MOB)
+					tintColor = ColorConstants.RED;
+
+				lTextureBatch.draw(mLevelTexture, 32, 0, 32, 32, lTileWorldPosX, lTileWorldPosY, 32, 32, -0.01f, tintColor);
+
+			}
+
+			if (GameConstants.DEBUG_DRAW_MOB_COLLIDERS) {
+				Debug.debugManager().drawers().drawCircleImmediate(pCore.gameCamera(), lMobWorldPositionX, lMobWorldPositionY, lMobRadius);
 
 			}
 

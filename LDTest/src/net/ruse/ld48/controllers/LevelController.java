@@ -92,6 +92,31 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 	}
 
 	@Override
+	public boolean handleInput(LintfordCore pCore) {
+
+		if (GameConstants.DEBUG_MODE) {
+			if (pCore.input().mouse().isMouseLeftButtonDownTimed(this)) {
+				final int lMouseTileX = (int) (pCore.gameCamera().getMouseWorldSpaceX() / GameConstants.BLOCK_SIZE);
+				final int lMouseTileY = (int) (pCore.gameCamera().getMouseWorldSpaceY() / GameConstants.BLOCK_SIZE);
+
+				if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)) {
+
+					// place block
+					mLevel.placeBlock(lMouseTileX, lMouseTileX, Level.LEVEL_TILE_INDEX_DIRT, (byte) 2);
+
+				} else {
+					mLevel.digBlock(lMouseTileX, lMouseTileX, (byte) 50);
+				}
+
+			}
+
+		}
+
+		return super.handleInput(pCore);
+
+	}
+
+	@Override
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 

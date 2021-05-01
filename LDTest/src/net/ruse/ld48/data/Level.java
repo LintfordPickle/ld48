@@ -18,6 +18,10 @@ public class Level extends BaseInstanceData {
 
 	public static final int LEVEL_TILE_INDEX_GOLD = 6;
 
+	public static final byte LEVEL_BLOCK_HEALTH_DIRT = (byte) 2;
+	public static final byte LEVEL_BLOCK_HEALTH_GOLD = (byte) 5;
+	public static final byte LEVEL_BLOCK_HEALTH_STONE = (byte) 7;
+
 	// ---------------------------------------------
 	// Constants
 	// ---------------------------------------------
@@ -120,7 +124,7 @@ public class Level extends BaseInstanceData {
 					continue;
 
 				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
-				mLevelBlockHealth[lTileCoord] = (byte) 5;
+				mLevelBlockHealth[lTileCoord] = LEVEL_BLOCK_HEALTH_DIRT;
 
 			}
 
@@ -129,7 +133,7 @@ public class Level extends BaseInstanceData {
 				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
 					continue;
 				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
-				mLevelBlockHealth[lTileCoord] = (byte) 5;
+				mLevelBlockHealth[lTileCoord] = LEVEL_BLOCK_HEALTH_DIRT;
 
 			}
 
@@ -141,7 +145,7 @@ public class Level extends BaseInstanceData {
 				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
 					continue;
 				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
-				mLevelBlockHealth[lTileCoord] = (byte) 5;
+				mLevelBlockHealth[lTileCoord] = LEVEL_BLOCK_HEALTH_DIRT;
 			}
 
 			{
@@ -149,7 +153,7 @@ public class Level extends BaseInstanceData {
 				if (lTileCoord == LEVEL_TILE_COORD_INVALID)
 					continue;
 				mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
-				mLevelBlockHealth[lTileCoord] = (byte) 5;
+				mLevelBlockHealth[lTileCoord] = LEVEL_BLOCK_HEALTH_DIRT;
 			}
 
 		}
@@ -160,7 +164,7 @@ public class Level extends BaseInstanceData {
 			final int lTileCoord = RandomNumbers.random(lFloorHeight * GameConstants.LEVEL_TILES_WIDE, (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1);
 
 			mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_DIRT;
-			mLevelBlockHealth[lTileCoord] = (byte) 5;
+			mLevelBlockHealth[lTileCoord] = LEVEL_BLOCK_HEALTH_DIRT;
 
 		}
 
@@ -169,7 +173,7 @@ public class Level extends BaseInstanceData {
 			final int lTileCoord = RandomNumbers.random(lFloorHeight * GameConstants.LEVEL_TILES_WIDE, (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1);
 
 			mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_STONE;
-			mLevelBlockHealth[lTileCoord] = (byte) 20;
+			mLevelBlockHealth[lTileCoord] = LEVEL_BLOCK_HEALTH_STONE;
 
 		}
 
@@ -179,7 +183,7 @@ public class Level extends BaseInstanceData {
 			final int lTileCoord = RandomNumbers.random((lFloorHeight + 1) * GameConstants.LEVEL_TILES_WIDE, (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1);
 
 			mLevelBlockIndices[lTileCoord] = LEVEL_TILE_INDEX_GOLD;
-			mLevelBlockHealth[lTileCoord] = (byte) 7;
+			mLevelBlockHealth[lTileCoord] = LEVEL_BLOCK_HEALTH_GOLD;
 
 		}
 
@@ -244,8 +248,19 @@ public class Level extends BaseInstanceData {
 		return mLevelBlockHealth[lTileCoord];
 	}
 
-	public boolean placeBlock() {
-		return false;
+	public boolean placeBlock(int pTileX, int pTileY, int pBlockTypeIndex, byte pBlockHealth) {
+		final int lTileCoord = getLevelTileCoord(pTileX, pTileY);
+		if (lTileCoord == LEVEL_TILE_COORD_INVALID)
+			return false;
+
+		final int lCurrentBlockTypeIndex = getLevelBlockType(lTileCoord);
+		if (lCurrentBlockTypeIndex != LEVEL_TILE_INDEX_AIR)
+			return false;
+
+		mLevelBlockIndices[lTileCoord] = pBlockTypeIndex;
+		mLevelBlockHealth[lTileCoord] = pBlockHealth;
+
+		return true;
 	}
 
 }

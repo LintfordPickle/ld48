@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
 import net.lintford.library.core.LintfordCore;
+import net.ruse.ld48.GameConstants;
 import net.ruse.ld48.data.Level;
 import net.ruse.ld48.data.MobInstance;
 
@@ -143,33 +144,6 @@ public class PlayerController extends BaseController {
 		}
 
 		return super.handleInput(pCore);
-	}
-
-	@Override
-	public void update(LintfordCore pCore) {
-		super.update(pCore);
-
-		final var lLevel = mLevelController.level();
-		final boolean lDigDirectionSet = mPlayerMobInstance.swingingFlagDirection != -1;
-		final int lSignum = mPlayerMobInstance.isLeftFacing ? -1 : 1;
-
-		if (!lDigDirectionSet) {
-			mPlayerMobInstance.lastSwingTileCoord = lLevel.getLevelTileCoord(mPlayerMobInstance.cellX + lSignum, mPlayerMobInstance.cellY);
-
-		} else {
-			final boolean lDigDown = mPlayerMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_S;
-
-			if (lDigDown) {
-				mPlayerMobInstance.lastSwingTileCoord = lLevel.getLevelTileCoord(mPlayerMobInstance.cellX, mPlayerMobInstance.cellY + 1);
-
-			} else {
-				final int lDigDownDirection = mPlayerMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_A ? -1 : 1;
-				mPlayerMobInstance.lastSwingTileCoord = lLevel.getLevelTileCoord(mPlayerMobInstance.cellX + lDigDownDirection, mPlayerMobInstance.cellY + 1);
-
-			}
-
-		}
-
 	}
 
 }

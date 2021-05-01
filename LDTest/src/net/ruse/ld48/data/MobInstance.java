@@ -3,6 +3,8 @@ package net.ruse.ld48.data;
 import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.graphics.sprites.SpriteInstance;
 import net.lintford.library.core.maths.RandomNumbers;
+import net.lintford.library.core.maths.Vector2f;
+import net.ruse.ld48.GameConstants;
 
 public class MobInstance extends CellEntity {
 
@@ -20,6 +22,10 @@ public class MobInstance extends CellEntity {
 
 	public static final float COOLDOWN_DIG = 300; // ms
 
+	public static final int MOB_TARGET_TYPE_NONE = 0;
+	public static final int MOB_TARGET_TYPE_BLOCK = 1;
+	public static final int MOB_TARGET_TYPE_MOB = 2;
+
 	// --------------------------------------
 	// Variables
 	// --------------------------------------
@@ -33,7 +39,11 @@ public class MobInstance extends CellEntity {
 
 	public boolean swingingFlag;
 	public int swingingFlagDirection;
-	public int lastSwingTileCoord;
+	public int minAttackCellClearanceX;
+	public int minAttackCellClearanceY;
+
+	public final Vector2f targetWorldCoord = new Vector2f();
+	public int targetTypeIndex = MOB_TARGET_TYPE_NONE;
 
 	public float inputCooldownTimer;
 	private String mMobTypeName;
@@ -112,7 +122,8 @@ public class MobInstance extends CellEntity {
 		if (respectCooldown && !isDamageCooldownElapsed() || GOD_MODE)
 			return;
 
-		health -= pAmt;
+		if (!(GameConstants.DEBUG_GOD_MODE && isPlayerControlled))
+			health -= pAmt;
 
 		if (isPlayerControlled)
 			damageCooldownTimer = 1000.f;
