@@ -3,6 +3,8 @@
 *.ap_
 *.jar
 
+LintfordLib/*.*
+
 # files for the dex VM
 *.dex
 
