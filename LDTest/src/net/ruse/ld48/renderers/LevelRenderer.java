@@ -156,7 +156,7 @@ public class LevelRenderer extends BaseRenderer {
 				var lSrcRect = NO_SRC_RECT;
 				switch (lBlockTypeIndex) {
 				case Level.LEVEL_TILE_INDEX_STONE:
-					if (lBlockHealth < 10) {
+					if (lBlockHealth < Level.LEVEL_BLOCK_HEALTH_STONE * .4f) {
 						lSrcRect = STONE_DAMAGED_SRC_RECT;
 					} else
 						lSrcRect = STONE_SRC_RECT;
@@ -164,7 +164,7 @@ public class LevelRenderer extends BaseRenderer {
 
 				case Level.LEVEL_TILE_INDEX_GOLD:
 					if (lTopBlockIndex != -1 && lLevel.getLevelBlockType(lTopBlockIndex) == 0) {
-						if (lBlockHealth < 3) {
+						if (lBlockHealth < Level.LEVEL_BLOCK_HEALTH_GOLD * .4f) {
 							lSrcRect = GOLD_TOP_SRC_RECT;
 						} else
 							lSrcRect = GOLD_TOP_SRC_RECT;
@@ -181,13 +181,13 @@ public class LevelRenderer extends BaseRenderer {
 
 				case Level.LEVEL_TILE_INDEX_DIRT:
 					if (lTopBlockIndex != -1 && lLevel.getLevelBlockType(lTopBlockIndex) == 0) {
-						if (lBlockHealth < 3) {
+						if (lBlockHealth < Level.LEVEL_BLOCK_HEALTH_DIRT * .4f) {
 							lSrcRect = DIRT_TOP_DAMAGED_SRC_RECT;
 						} else
 							lSrcRect = DIRT_TOP_SRC_RECT;
 
 					} else {
-						if (lBlockHealth < 3) {
+						if (lBlockHealth < Level.LEVEL_BLOCK_HEALTH_DIRT * .4f) {
 							lSrcRect = DIRT_DAMAGED_SRC_RECT;
 						} else
 							lSrcRect = DIRT_SRC_RECT;
