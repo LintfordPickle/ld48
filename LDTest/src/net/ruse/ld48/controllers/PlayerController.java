@@ -80,15 +80,18 @@ public class PlayerController extends BaseController {
 		mPlayerMobInstance.swingingFlag = false;
 		if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_RIGHT_SHIFT) || lKeyboard.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 			mPlayerMobInstance.swingingFlag = true;
-			mPlayerMobInstance.swingingFlagDirection = -1;
+			mPlayerMobInstance.swingingFlagDirectionKey = -1;
+			if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_W))
+				mPlayerMobInstance.swingingFlagDirectionKey = GLFW.GLFW_KEY_W;
+
 			if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_S))
-				mPlayerMobInstance.swingingFlagDirection = GLFW.GLFW_KEY_S;
+				mPlayerMobInstance.swingingFlagDirectionKey = GLFW.GLFW_KEY_S;
 
 			if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_S)) {
 				if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_A))
-					mPlayerMobInstance.swingingFlagDirection = GLFW.GLFW_KEY_A;
+					mPlayerMobInstance.swingingFlagDirectionKey = GLFW.GLFW_KEY_A;
 				if (lKeyboard.isKeyDown(GLFW.GLFW_KEY_D))
-					mPlayerMobInstance.swingingFlagDirection = GLFW.GLFW_KEY_D;
+					mPlayerMobInstance.swingingFlagDirectionKey = GLFW.GLFW_KEY_D;
 
 			}
 

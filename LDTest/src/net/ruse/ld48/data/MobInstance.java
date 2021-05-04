@@ -38,7 +38,7 @@ public class MobInstance extends CellEntity {
 	public int lastGroundHeight;
 
 	public boolean swingingFlag;
-	public int swingingFlagDirection;
+	public int swingingFlagDirectionKey;
 	public int minAttackCellClearanceX;
 	public int minAttackCellClearanceY;
 

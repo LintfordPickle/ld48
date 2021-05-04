@@ -150,7 +150,7 @@ public class MobController extends BaseController {
 				}
 
 				if (!lAnyoneHit) {
-					final boolean lDigDirectionSet = lMobInstance.swingingFlagDirection != -1;
+					final boolean lDigDirectionSet = lMobInstance.swingingFlagDirectionKey != -1;
 
 					if (!lDigDirectionSet) {
 						final int lTileCoord = lLevel.getLevelTileCoord(lMobInstance.cellX + lSignum, lMobInstance.cellY);
@@ -160,7 +160,8 @@ public class MobController extends BaseController {
 						lMobInstance.targetWorldCoord.y = (lTileCoord / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
 
 					} else {
-						final boolean lDigDown = lMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_S;
+						final boolean lDigDown = lMobInstance.swingingFlagDirectionKey == GLFW.GLFW_KEY_S;
+						final boolean lDigUp = lMobInstance.swingingFlagDirectionKey == GLFW.GLFW_KEY_W;
 
 						if (lDigDown) {
 							final int lTileCoord = lLevel.getLevelTileCoord(lMobInstance.cellX, lMobInstance.cellY + 1);
@@ -169,8 +170,17 @@ public class MobController extends BaseController {
 							lMobInstance.targetWorldCoord.x = (lTileCoord % GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
 							lMobInstance.targetWorldCoord.y = (lTileCoord / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
 
+						} else if (lDigUp) {
+							final int lDigLeft = lMobInstance.swingingFlagDirectionKey == GLFW.GLFW_KEY_A ? -1 : 0;
+							final int lDigRight = lMobInstance.swingingFlagDirectionKey == GLFW.GLFW_KEY_D ? +1 : 0;
+							final int lTileCoord = lLevel.getLevelTileCoord(lMobInstance.cellX + lDigLeft + lDigRight, lMobInstance.cellY - 1);
+							mLevelController.digLevel(lTileCoord, (byte) 1);
+
+							lMobInstance.targetWorldCoord.x = (lTileCoord % GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+							lMobInstance.targetWorldCoord.y = (lTileCoord / GameConstants.LEVEL_TILES_WIDE) * GameConstants.BLOCK_SIZE;
+
 						} else {
-							final int lDigDownDirection = lMobInstance.swingingFlagDirection == GLFW.GLFW_KEY_A ? -1 : 1;
+							final int lDigDownDirection = lMobInstance.swingingFlagDirectionKey == GLFW.GLFW_KEY_A ? -1 : 1;
 							final int lTileCoord = lLevel.getLevelTileCoord(lMobInstance.cellX + lDigDownDirection, lMobInstance.cellY + 1);
 							mLevelController.digLevel(lTileCoord, (byte) 1);
 
@@ -384,7 +394,8 @@ public class MobController extends BaseController {
 
 		}
 
-		if (Math.abs(pAttackingMob.cellY - pReceivingMob.cellY) > pAttackingMob.minAttackCellClearanceY) {
+		// The Y check is a little stricter to ensure no mobs attack up/down
+		if (Math.abs(pAttackingMob.cellY - pReceivingMob.cellY) >= pAttackingMob.minAttackCellClearanceY) {
 			return false;
 		}
 
@@ -405,11 +416,13 @@ public class MobController extends BaseController {
 
 			}
 
-			final float lAngle = (float) Math.atan2(pReceivingMob.worldPositionY - pAttackingMob.worldPositionY, pReceivingMob.worldPositionX - pAttackingMob.worldPositionX);
-			final float lRepelPower = 0.3f;
+			if (GameConstants.DEBUG_ENABLE_ATTACK_KNOCKBACK) {
+				final float lAngle = (float) Math.atan2(pReceivingMob.worldPositionY - pAttackingMob.worldPositionY, pReceivingMob.worldPositionX - pAttackingMob.worldPositionX);
+				final float lRepelPower = 0.3f;
 
-			pReceivingMob.velocityX += Math.cos(lAngle) * lRepelPower;
-			pReceivingMob.velocityY += Math.sin(lAngle) * lRepelPower * 0.05f;
+				pReceivingMob.velocityX += Math.cos(lAngle) * lRepelPower;
+				pReceivingMob.velocityY += Math.sin(lAngle) * lRepelPower * 0.05f;
+			}
 
 			playHurtSound();
 
@@ -458,11 +471,17 @@ public class MobController extends BaseController {
 			final float lAngle = (float) Math.atan2(pMobInstanceB.worldPositionY - pMobInstanceA.worldPositionY, pMobInstanceB.worldPositionX - pMobInstanceA.worldPositionX);
 			final float lRepelPower = 0.03f;
 
-			pMobInstanceB.velocityX += Math.cos(lAngle) * lRepelPower;
-			pMobInstanceB.velocityY += Math.sin(lAngle) * lRepelPower * 0.025f;
+			if (GameConstants.DEBUG_ENABLE_ATTACK_KNOCKBACK && !pMobInstanceB.isPlayerControlled) {
+				pMobInstanceB.velocityX += Math.cos(lAngle) * lRepelPower;
+				pMobInstanceB.velocityY += Math.sin(lAngle) * lRepelPower * 0.025f;
 
-			pMobInstanceA.velocityX -= Math.cos(lAngle) * lRepelPower;
-			pMobInstanceA.velocityY -= Math.sin(lAngle) * lRepelPower;
+			}
+
+			if (GameConstants.DEBUG_ENABLE_ATTACK_KNOCKBACK && !pMobInstanceA.isPlayerControlled) {
+				pMobInstanceA.velocityX -= Math.cos(lAngle) * lRepelPower;
+				pMobInstanceA.velocityY -= Math.sin(lAngle) * lRepelPower;
+
+			}
 
 			// assumes the player is always the first mob index (probably correct)
 			if (pMobInstanceA.isPlayerControlled) {
