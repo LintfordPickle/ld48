@@ -18,6 +18,7 @@ public class GameConstants {
 	public static final boolean DEBUG_MODE = false;
 	public static final boolean DEBUG_GOD_MODE = false;
 	public static final boolean DEBUG_DRAW_MOB_COLLIDERS = false;
+	public static final boolean DEBUG_ENABLE_ATTACK_KNOCKBACK = false;
 
 	// LEVELS
 
