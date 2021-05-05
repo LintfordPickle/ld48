@@ -24,6 +24,7 @@ public class ItemRenderer extends BaseRenderer {
 	private static final Rectangle TNT_PICKUP_SRC_RECT = new Rectangle(32, 0, 32, 32);
 	private static final Rectangle EXIT_SRC_RECT = new Rectangle(64, 0, 32, 32);
 	private static final Rectangle GOLD_SRC_RECT = new Rectangle(96, 0, 32, 32);
+	private static final Rectangle HEART_SRC_RECT = new Rectangle(0, 32, 32, 32);
 
 	// --------------------------------------
 	// Variables
@@ -102,6 +103,10 @@ public class ItemRenderer extends BaseRenderer {
 
 			case ItemManager.ITEM_TYPE_INDEX_LEVEL_EXIT:
 				lSrcRect = EXIT_SRC_RECT;
+				break;
+
+			case ItemManager.ITEM_TYPE_INDEX_HEALTH:
+				lSrcRect = HEART_SRC_RECT;
 				break;
 
 			}

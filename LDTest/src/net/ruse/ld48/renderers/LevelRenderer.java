@@ -25,13 +25,15 @@ public class LevelRenderer extends BaseRenderer {
 
 	private static final Rectangle DIRT_TOP_SRC_RECT = new Rectangle(64, 0, 32, 32);
 	private static final Rectangle DIRT_TOP_DAMAGED_SRC_RECT = new Rectangle(192, 0, 32, 32);
-	private static final Rectangle AIR_DEBUG_SRC_RECT = new Rectangle(32, 0, 32, 32);
 
 	private static final Rectangle STONE_SRC_RECT = new Rectangle(96, 0, 32, 32);
 	private static final Rectangle STONE_DAMAGED_SRC_RECT = new Rectangle(128, 0, 32, 32);
 
 	private static final Rectangle GOLD_SRC_RECT = new Rectangle(224, 0, 32, 32);
 	private static final Rectangle GOLD_TOP_SRC_RECT = new Rectangle(64, 32, 32, 32);
+	
+	private static final Rectangle HEART_SRC_RECT = new Rectangle(96, 32, 32, 32);
+	private static final Rectangle HEART_TOP_SRC_RECT = new Rectangle(128, 32, 32, 32);
 
 	private static final Rectangle BACKGROUND_FILL_SRC_RECT = new Rectangle(0, 32, 32, 32);
 	private static final Rectangle BACKGROUND_TOP_FILL_SRC_RECT = new Rectangle(32, 32, 32, 32);
@@ -141,7 +143,7 @@ public class LevelRenderer extends BaseRenderer {
 
 		for (int y = 0; y < GameConstants.LEVEL_TILES_HIGH; y++) {
 			final float lModAmt = 1.f - (float) ((float) y / (float) GameConstants.LEVEL_TILES_HIGH * 0.5f);
-			final var lColorConstant = ColorConstants.WHITE; // ColorConstants.getColor(lModAmt, lModAmt, lModAmt, 1.f);
+			final var lColorConstant = ColorConstants.getColor(lModAmt, lModAmt, lModAmt, 1.f);
 
 			for (int x = 0; x < GameConstants.LEVEL_TILES_WIDE; x++) {
 				final int lBlockTypeIndex = lLevel.getLevelBlockType(x, y);
@@ -174,6 +176,23 @@ public class LevelRenderer extends BaseRenderer {
 							lSrcRect = GOLD_SRC_RECT;
 						} else
 							lSrcRect = GOLD_SRC_RECT;
+
+					}
+
+					break;
+					
+				case Level.LEVEL_TILE_INDEX_HEART:
+					if (lTopBlockIndex != -1 && lLevel.getLevelBlockType(lTopBlockIndex) == 0) {
+						if (lBlockHealth < Level.LEVEL_BLOCK_HEALTH_HEART * .4f) {
+							lSrcRect = HEART_TOP_SRC_RECT;
+						} else
+							lSrcRect = HEART_TOP_SRC_RECT;
+
+					} else {
+						if (lBlockHealth < 3) {
+							lSrcRect = HEART_SRC_RECT;
+						} else
+							lSrcRect = HEART_SRC_RECT;
 
 					}
 

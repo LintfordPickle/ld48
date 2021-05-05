@@ -25,6 +25,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 	// ---------------------------------------------
 
 	private SoundFxController mSoundFxController;
+	private ItemController mItemController;
 	private GameStateController mGameStateController;
 	private ParticleFrameworkController mParticleFrameworkController;
 
@@ -79,6 +80,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 		mGameStateController = (GameStateController) pCore.controllerManager().getControllerByNameRequired(GameStateController.CONTROLLER_NAME, entityGroupID());
 		mParticleFrameworkController = (ParticleFrameworkController) pCore.controllerManager().getControllerByNameRequired(ParticleFrameworkController.CONTROLLER_NAME, entityGroupID());
 		mSoundFxController = (SoundFxController) pCore.controllerManager().getControllerByNameRequired(SoundFxController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mItemController = (ItemController) pCore.controllerManager().getControllerByNameRequired(ItemController.CONTROLLER_NAME, entityGroupID());
 
 		mDigBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DIG");
 		mDigNoEffectBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DIG_NOEFFECT");
@@ -140,7 +142,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 	}
 
 	public boolean digLevel(int pTileCoord, byte pDamageAmt) {
-		final int lBLockTypeIndex = mLevel.getLevelBlockType(pTileCoord);
+		final int lBlockTypeIndex = mLevel.getLevelBlockType(pTileCoord);
 
 		{
 			if (pTileCoord % GameConstants.LEVEL_TILES_WIDE == 0)
@@ -153,7 +155,7 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 
 		final boolean lWasBlockedRemoved = mLevel.digBlock(pTileCoord, pDamageAmt);
 
-		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_STONE) {
+		if (lBlockTypeIndex == Level.LEVEL_TILE_INDEX_STONE) {
 			mSoundFxController.playSound(SoundFxController.SOUND_DIG_STONE);
 
 			final int lTileX = pTileCoord % GameConstants.LEVEL_TILES_WIDE;
@@ -170,18 +172,29 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 			return false;
 		}
 
-		if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_AIR)
+		if (lBlockTypeIndex == Level.LEVEL_TILE_INDEX_HEART && lWasBlockedRemoved) {
+			final int lTileX = pTileCoord % GameConstants.LEVEL_TILES_WIDE;
+			final int lTileY = pTileCoord / GameConstants.LEVEL_TILES_WIDE;
+
+			final float lTileCenterX = lTileX * 32.f + RandomNumbers.random(4.f, 28.f);
+			final float lTileCenterY = lTileY * 32.f + RandomNumbers.random(4.f, 28.f);
+
+			mItemController.addHealth(lTileCenterX, lTileCenterY);
+
+		}
+
+		if (lBlockTypeIndex == Level.LEVEL_TILE_INDEX_AIR)
 			return false;
 
 		if (lWasBlockedRemoved) {
-			if (lBLockTypeIndex == Level.LEVEL_TILE_INDEX_GOLD) {
+			if (lBlockTypeIndex == Level.LEVEL_TILE_INDEX_GOLD) {
 				mGameStateController.addGold(10);
 
 			}
 
 		}
 
-		if (lBLockTypeIndex <= 0)
+		if (lBlockTypeIndex <= 0)
 			return false;
 
 		final int lSoundVariationIndex = RandomNumbers.random(0, 2);

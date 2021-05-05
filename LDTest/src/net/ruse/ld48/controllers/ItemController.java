@@ -167,6 +167,11 @@ public class ItemController extends BaseController {
 				mGameStateController.exitReached();
 
 				break;
+
+			case ItemManager.ITEM_TYPE_INDEX_HEALTH:
+				mPlayerController.playerMobInstance().tryAddHealth();
+				pItemInstance.isPickedUp = true;
+				break;
 			}
 
 		}
@@ -363,6 +368,25 @@ public class ItemController extends BaseController {
 	}
 
 	public void addHealth(float pWorldX, float pWorldY) {
+		if (!mGameStateController.canThrowTnt())
+			return;
+
+		final var lFreeItemInstance = itemManager().getFreePooledItem();
+
+		// TODO: Play a decent sound fx for heart drop
+		// mSoundFxController.playSound(SoundFxController.SOUND_TnTFuse);
+
+		lFreeItemInstance.setupItem(ItemManager.ITEM_TYPE_INDEX_HEALTH);
+		lFreeItemInstance.setPosition(pWorldX, pWorldY);
+		lFreeItemInstance.isPickUpAble = true;
+		lFreeItemInstance.physicsEnabled = true;
+		lFreeItemInstance.velocityX = 0;
+		lFreeItemInstance.velocityY = 0;
+		lFreeItemInstance.radius = 16.f;
+		lFreeItemInstance.interactsWithMobs = true;
+		lFreeItemInstance.isFlashOn = false;
+
+		itemManager().addItemInstance(lFreeItemInstance);
 
 	}
 

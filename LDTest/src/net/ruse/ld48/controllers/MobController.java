@@ -120,7 +120,7 @@ public class MobController extends BaseController {
 
 			lMobInstance.update(pCore);
 
-			if (lMobInstance.isPlayerControlled && lMobInstance.swingingFlag && lMobInstance.isInputCooldownElapsed()) {
+			if (lMobInstance.swingingFlag && lMobInstance.isInputCooldownElapsed()) {
 
 				// calculate the point of the attack (in world space)
 				final int lSignum = lMobInstance.isLeftFacing ? -1 : 1;

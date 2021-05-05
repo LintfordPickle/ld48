@@ -42,6 +42,9 @@ public class MobInstance extends CellEntity {
 	public int minAttackCellClearanceX;
 	public int minAttackCellClearanceY;
 
+	public int numberOfCoins;
+	public boolean dropsCoinsOnDeath;
+
 	public final Vector2f targetWorldCoord = new Vector2f();
 	public int targetTypeIndex = MOB_TARGET_TYPE_NONE;
 
@@ -51,6 +54,8 @@ public class MobInstance extends CellEntity {
 	public boolean isLeftFacing;
 
 	public int health;
+	public int maxHealth;
+
 	public float damageCooldownTimer;
 
 	public float jumpVelocity;
@@ -104,6 +109,7 @@ public class MobInstance extends CellEntity {
 	public void initialise(String pMobTypeName, int pHealth) {
 		mMobTypeName = pMobTypeName;
 		health = pHealth;
+		maxHealth = pHealth;
 
 	}
 
@@ -130,6 +136,12 @@ public class MobInstance extends CellEntity {
 		else {
 			damageCooldownTimer = 200.f;
 		}
+
+	}
+
+	public void tryAddHealth() {
+		if (health < maxHealth)
+			health++;
 
 	}
 
