@@ -20,8 +20,8 @@ public class Level extends BaseInstanceData {
 	public static final int LEVEL_TILE_INDEX_HEART = 7;
 
 	public static final byte LEVEL_BLOCK_HEALTH_DIRT = (byte) 2;
-	public static final byte LEVEL_BLOCK_HEALTH_GOLD = (byte) 5;
-	public static final byte LEVEL_BLOCK_HEALTH_STONE = (byte) 7;
+	public static final byte LEVEL_BLOCK_HEALTH_GOLD = (byte) 6;
+	public static final byte LEVEL_BLOCK_HEALTH_STONE = (byte) 10;
 	public static final byte LEVEL_BLOCK_HEALTH_HEART = (byte) 7;
 
 	// ---------------------------------------------
@@ -190,7 +190,7 @@ public class Level extends BaseInstanceData {
 		}
 
 		// heart blocks
-		final int lNumHeartBlocks = 100; // 20
+		final int lNumHeartBlocks = 20;
 		for (int i = 0; i < lNumHeartBlocks; i++) {
 			final int lTileCoord = RandomNumbers.random((lFloorHeight + 1) * GameConstants.LEVEL_TILES_WIDE, (GameConstants.LEVEL_TILES_WIDE * GameConstants.LEVEL_TILES_HIGH) - 1);
 

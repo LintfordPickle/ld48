@@ -21,6 +21,13 @@ public class ItemInstance extends CellEntity {
 	public boolean isPickedUp;
 	public boolean isFlashOn;
 	public float flashTimer;
+	public int value;
+
+	public float spriteFrameTimer;
+	public int spriteFrame;
+
+	public float velocityDecayOnHitX;
+	public float velocityDecayOnHitY;
 
 	// --------------------------------------
 	// Constructor
@@ -28,6 +35,9 @@ public class ItemInstance extends CellEntity {
 
 	public ItemInstance(int pPoolUid) {
 		super(pPoolUid);
+
+		velocityDecayOnHitX = 0.5f;
+		velocityDecayOnHitY = 0.5f;
 
 	}
 

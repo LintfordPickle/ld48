@@ -4,6 +4,8 @@ import net.lintford.library.core.LintfordCore;
 import net.lintford.library.core.ResourceManager;
 import net.lintford.library.core.geometry.Rectangle;
 import net.lintford.library.core.graphics.ColorConstants;
+import net.lintford.library.core.graphics.sprites.SpriteDefinition;
+import net.lintford.library.core.graphics.sprites.SpriteFrame;
 import net.lintford.library.core.graphics.textures.Texture;
 import net.lintford.library.renderers.BaseRenderer;
 import net.lintford.library.renderers.RendererManager;
@@ -18,13 +20,12 @@ public class ItemRenderer extends BaseRenderer {
 
 	public static final String RENDERER_NAME = "Item Renderer";
 
-	private static final float FULL_FLASH_DUR = 150;
-
 	private static final Rectangle TNT_SRC_RECT = new Rectangle(0, 0, 32, 32);
 	private static final Rectangle TNT_PICKUP_SRC_RECT = new Rectangle(32, 0, 32, 32);
 	private static final Rectangle EXIT_SRC_RECT = new Rectangle(64, 0, 32, 32);
-	private static final Rectangle GOLD_SRC_RECT = new Rectangle(96, 0, 32, 32);
 	private static final Rectangle HEART_SRC_RECT = new Rectangle(0, 32, 32, 32);
+
+	SpriteDefinition mCoinSpriteDefinition = new SpriteDefinition();
 
 	// --------------------------------------
 	// Variables
@@ -55,6 +56,12 @@ public class ItemRenderer extends BaseRenderer {
 	@Override
 	public void initialize(LintfordCore pCore) {
 		mItemController = (ItemController) pCore.controllerManager().getControllerByNameRequired(ItemController.CONTROLLER_NAME, entityGroupID());
+
+		mCoinSpriteDefinition.addFrame(new SpriteFrame(32, 32, 16, 16));
+		mCoinSpriteDefinition.addFrame(new SpriteFrame(48, 32, 16, 16));
+		mCoinSpriteDefinition.addFrame(new SpriteFrame(64, 32, 16, 16));
+		mCoinSpriteDefinition.addFrame(new SpriteFrame(48, 32, 16, 16));
+		mCoinSpriteDefinition.addFrame(new SpriteFrame(32, 32, 16, 16));
 
 	}
 
@@ -87,9 +94,9 @@ public class ItemRenderer extends BaseRenderer {
 			final float lItemRadius = lItemInstance.radius;
 
 			var lTintColor = ColorConstants.WHITE;
-			if (lItemInstance.isFlashOn) {
-				lTintColor = ColorConstants.getColor(100, 100, 100, 1);
-			}
+			//			if (lItemInstance.isFlashOn) {
+			//				lTintColor = ColorConstants.getColor(100, 100, 100, 1);
+			//			}
 
 			Rectangle lSrcRect = null;
 			switch (lItemInstance.itemTypeIndex) {
@@ -109,11 +116,19 @@ public class ItemRenderer extends BaseRenderer {
 				lSrcRect = HEART_SRC_RECT;
 				break;
 
+			case ItemManager.ITEM_TYPE_INDEX_COIN:
+				final var lTempRect = mCoinSpriteDefinition.getSpriteFrame(lItemInstance.spriteFrame);
+				if (lTempRect != null) {
+					lSrcRect = lTempRect;
+
+				}
+
+				break;
+
 			}
 
 			final float lRot = lItemInstance.rotationInRadians;
 			lTextureBatch.drawAroundCenter(mItemTexture, lSrcRect, worldPosX, worldPosY, lItemRadius * 2, lItemRadius * 2.f, -0.1f, lRot, 0.0f, 0.0f, 1.f, lTintColor);
-
 		}
 
 		lTextureBatch.end();

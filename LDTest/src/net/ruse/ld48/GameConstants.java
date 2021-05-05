@@ -16,9 +16,9 @@ public class GameConstants {
 	// DEBUG
 
 	public static final boolean DEBUG_MODE = false;
-	public static final boolean DEBUG_GOD_MODE = false;
-	public static final boolean DEBUG_DRAW_MOB_COLLIDERS = false;
-	public static final boolean DEBUG_ENABLE_ATTACK_KNOCKBACK = false;
+	public static boolean DEBUG_GOD_MODE = false;
+	public static boolean DEBUG_DRAW_MOB_COLLIDERS = false;
+	public static boolean DEBUG_ENABLE_ATTACK_KNOCKBACK = false;
 
 	// LEVELS
 
@@ -26,7 +26,5 @@ public class GameConstants {
 	public static final int LEVEL_TILES_HIGH = 50;
 
 	public static final int BLOCK_SIZE = 32;
-
-	public static final int GOLD_BLOCK_VALUE = 10;
 
 }

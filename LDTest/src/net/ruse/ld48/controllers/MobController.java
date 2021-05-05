@@ -40,6 +40,7 @@ public class MobController extends BaseController {
 	private PlayerController mPlayerController;
 	private CameraFollowController mCameraFollowController;
 	private LevelController mLevelController;
+	private ItemController mItemController;
 
 	private ParticleFrameworkController mParticleFrameworkController;
 	private ParticleSystemInstance mBloodBlockParticles;
@@ -82,6 +83,7 @@ public class MobController extends BaseController {
 		mCameraFollowController = (CameraFollowController) pCore.controllerManager().getControllerByNameRequired(CameraFollowController.CONTROLLER_NAME, entityGroupID());
 		mGameStateController = (GameStateController) pCore.controllerManager().getControllerByNameRequired(GameStateController.CONTROLLER_NAME, entityGroupID());
 		mSoundFxController = (SoundFxController) pCore.controllerManager().getControllerByNameRequired(SoundFxController.CONTROLLER_NAME, LintfordCore.CORE_ENTITY_GROUP_ID);
+		mItemController = (ItemController) pCore.controllerManager().getControllerByNameRequired(ItemController.CONTROLLER_NAME, entityGroupID());
 
 		mBloodBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_BLOOD");
 		mDustBlockParticles = mParticleFrameworkController.particleFrameworkData().particleSystemManager().getParticleSystemByName("PARTICLESYSTEM_DUST");
@@ -113,6 +115,12 @@ public class MobController extends BaseController {
 			final var lMobInstance = mMobInstancesToUpdate.get(i);
 
 			if (lMobInstance.health <= 0) {
+				final int lNumberOfCoinsOnDeath = lMobInstance.numberOfCoins;
+				final float lWorldPositionX = lMobInstance.worldPositionX;
+				final float lWorldPositionY = lMobInstance.worldPositionY;
+
+				mItemController.addCoinSplash(lWorldPositionX, lWorldPositionY, lNumberOfCoinsOnDeath);
+
 				lMobList.remove(lMobInstance);
 				continue;
 
@@ -618,8 +626,11 @@ public class MobController extends BaseController {
 		lEnemyMob.isPlayerControlled = false;
 		lEnemyMob.minAttackCellClearanceX = 2;
 		lEnemyMob.minAttackCellClearanceY = 1;
+		lEnemyMob.dropsCoinsOnDeath = true;
+		lEnemyMob.numberOfCoins = RandomNumbers.random(1, 2);
 
 		return lEnemyMob;
+
 	}
 
 	private MobInstance getGoblinMob() {
@@ -633,6 +644,8 @@ public class MobController extends BaseController {
 		lEnemyMob.isPlayerControlled = false;
 		lEnemyMob.minAttackCellClearanceX = 2;
 		lEnemyMob.minAttackCellClearanceY = 1;
+		lEnemyMob.dropsCoinsOnDeath = true;
+		lEnemyMob.numberOfCoins = RandomNumbers.random(2, 4);
 
 		return lEnemyMob;
 	}

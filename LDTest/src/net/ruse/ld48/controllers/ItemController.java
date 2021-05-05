@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.joml.Math;
+import org.lwjgl.glfw.GLFW;
 
 import net.lintford.library.controllers.BaseController;
 import net.lintford.library.controllers.core.ControllerManager;
@@ -24,6 +25,8 @@ public class ItemController extends BaseController {
 	// --------------------------------------
 
 	public static final String CONTROLLER_NAME = "Item Controller";
+
+	public static final byte TNT_BLOCK_DAMAGE = 6;
 
 	// --------------------------------------
 	// Variables
@@ -92,6 +95,20 @@ public class ItemController extends BaseController {
 	}
 
 	@Override
+	public boolean handleInput(LintfordCore pCore) {
+
+		if (pCore.input().keyboard().isKeyDown(GLFW.GLFW_KEY_I)) {
+			final float lWorldPositionX = pCore.gameCamera().getMouseWorldSpaceX();
+			final float lWorldPositionY = pCore.gameCamera().getMouseWorldSpaceY();
+
+			addCoins(lWorldPositionX, lWorldPositionY, RandomNumbers.random(-.1f, .1f), RandomNumbers.random(-0.3f, 0.f));
+
+		}
+
+		return super.handleInput(pCore);
+	}
+
+	@Override
 	public void update(LintfordCore pCore) {
 		super.update(pCore);
 
@@ -126,6 +143,10 @@ public class ItemController extends BaseController {
 			switch (lItemInstance.itemTypeIndex) {
 			case ItemManager.ITEM_TYPE_INDEX_TNT:
 				updateTntItem(pCore, lLevel, lItemInstance);
+				break;
+
+			case ItemManager.ITEM_TYPE_INDEX_COIN:
+				updateCoinItem(pCore, lLevel, lItemInstance);
 				break;
 
 			}
@@ -165,7 +186,11 @@ public class ItemController extends BaseController {
 			switch (pItemInstance.itemTypeIndex) {
 			case ItemManager.ITEM_TYPE_INDEX_LEVEL_EXIT:
 				mGameStateController.exitReached();
+				break;
 
+			case ItemManager.ITEM_TYPE_INDEX_COIN:
+				mGameStateController.addGold(1);
+				pItemInstance.isPickedUp = true;
 				break;
 
 			case ItemManager.ITEM_TYPE_INDEX_HEALTH:
@@ -192,7 +217,7 @@ public class ItemController extends BaseController {
 			pItemInstance.fractionX = lRadiusInItemSpace;
 
 			if (pItemInstance.velocityX < 0)
-				pItemInstance.velocityX = -pItemInstance.velocityX * .5f;
+				pItemInstance.velocityX = -pItemInstance.velocityX * pItemInstance.velocityDecayOnHitX;
 
 		}
 
@@ -200,7 +225,7 @@ public class ItemController extends BaseController {
 			pItemInstance.fractionX = 1.f - lRadiusInItemSpace;
 
 			if (pItemInstance.velocityX > 0)
-				pItemInstance.velocityX = -pItemInstance.velocityX * .5f;
+				pItemInstance.velocityX = -pItemInstance.velocityX * pItemInstance.velocityDecayOnHitX;
 
 		}
 
@@ -216,7 +241,7 @@ public class ItemController extends BaseController {
 			pItemInstance.fractionY = 1.f - lRadiusInItemSpace;
 
 			if (pItemInstance.velocityY > 0)
-				pItemInstance.velocityY = 0;
+				pItemInstance.velocityY = -pItemInstance.velocityY * pItemInstance.velocityDecayOnHitY;
 
 		}
 
@@ -323,8 +348,24 @@ public class ItemController extends BaseController {
 
 	}
 
+	private void updateCoinItem(LintfordCore pCore, Level pLevel, ItemInstance pItemInstance) {
+		pItemInstance.spriteFrameTimer -= pCore.gameTime().elapsedTimeMilli();
+
+		if (pItemInstance.spriteFrameTimer <= 0) {
+			pItemInstance.spriteFrameTimer = 100; // animation speed
+			pItemInstance.spriteFrame++;
+
+			if (pItemInstance.spriteFrame > 4) { // max frames
+				pItemInstance.spriteFrame = 0;
+
+			}
+
+		}
+
+	}
+
 	private void tntDigTile(int pTileCoord) {
-		final boolean lBlockRemoved = mLevelController.digLevel(pTileCoord, (byte) 7);
+		final boolean lBlockRemoved = mLevelController.digLevel(pTileCoord, TNT_BLOCK_DAMAGE);
 
 		if (!lBlockRemoved)
 			return;
@@ -357,14 +398,46 @@ public class ItemController extends BaseController {
 		lFreeItemInstance.velocityY = pVelY;
 		lFreeItemInstance.radius = 16.f;
 		lFreeItemInstance.interactsWithMobs = false;
+		lFreeItemInstance.spriteFrame = 0;
 
 		itemManager().addItemInstance(lFreeItemInstance);
 		mGameStateController.resetTntCooldown();
 
 	}
 
+	public void addCoinSplash(float pWorldX, float pWorldY, int pAmt) {
+		for (int j = 0; j < pAmt; j++) {
+			addCoins(pWorldX, pWorldY, RandomNumbers.random(-.1f, .1f), RandomNumbers.random(-0.3f, 0.f));
+
+		}
+
+	}
+
 	public void addCoins(float pWorldX, float pWorldY, float pVelX, float pVelY) {
-		// lFreeItemInstance.interactsWithMobs = true;
+		if (!mGameStateController.canThrowTnt())
+			return;
+
+		final var lFreeItemInstance = itemManager().getFreePooledItem();
+
+		// TODO: Play a decent sound fx for heart drop
+		// mSoundFxController.playSound(SoundFxController.SOUND_TnTFuse);
+
+		lFreeItemInstance.setupItem(ItemManager.ITEM_TYPE_INDEX_COIN);
+		lFreeItemInstance.setPosition(pWorldX, pWorldY);
+		lFreeItemInstance.velocityX = pVelX;
+		lFreeItemInstance.velocityY = pVelY;
+		lFreeItemInstance.velocityDecayOnHitX = 0.9f;
+		lFreeItemInstance.velocityDecayOnHitY = 0.95f;
+		lFreeItemInstance.isPickUpAble = true;
+		lFreeItemInstance.physicsEnabled = true;
+		lFreeItemInstance.radius = 8.f;
+		lFreeItemInstance.interactsWithMobs = true;
+		lFreeItemInstance.isFlashOn = true;
+		lFreeItemInstance.value = 1;
+		lFreeItemInstance.spriteFrame = 0;
+
+		itemManager().addItemInstance(lFreeItemInstance);
+
 	}
 
 	public void addHealth(float pWorldX, float pWorldY) {
@@ -382,9 +455,13 @@ public class ItemController extends BaseController {
 		lFreeItemInstance.physicsEnabled = true;
 		lFreeItemInstance.velocityX = 0;
 		lFreeItemInstance.velocityY = 0;
+		lFreeItemInstance.velocityDecayOnHitX = 0.4f;
+		lFreeItemInstance.velocityDecayOnHitY = 0.8f;
 		lFreeItemInstance.radius = 16.f;
 		lFreeItemInstance.interactsWithMobs = true;
 		lFreeItemInstance.isFlashOn = false;
+		lFreeItemInstance.value = 1;
+		lFreeItemInstance.spriteFrame = 0;
 
 		itemManager().addItemInstance(lFreeItemInstance);
 

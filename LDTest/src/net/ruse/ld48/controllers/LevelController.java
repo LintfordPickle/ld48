@@ -188,7 +188,13 @@ public class LevelController extends BaseController implements IProcessMouseInpu
 
 		if (lWasBlockedRemoved) {
 			if (lBlockTypeIndex == Level.LEVEL_TILE_INDEX_GOLD) {
-				mGameStateController.addGold(10);
+				final int lTileX = pTileCoord % GameConstants.LEVEL_TILES_WIDE;
+				final int lTileY = pTileCoord / GameConstants.LEVEL_TILES_WIDE;
+
+				final float lWorldPositionX = lTileX * GameConstants.BLOCK_SIZE;
+				final float lWorldPositionY = lTileY * GameConstants.BLOCK_SIZE;
+
+				mItemController.addCoinSplash(lWorldPositionX, lWorldPositionY, RandomNumbers.random(7, 11));
 
 			}
 
